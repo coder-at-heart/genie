@@ -1,0 +1,18 @@
+{
+  "name": "lnk7/genie",
+  "description": "Advanced WordPress Programmer's Toolkit",
+  "type": "library",
+  "require": {
+    "php": "^7.1.0",
+    "twig/twig": "^2.1",
+    "doctrine/inflector": "^1.1",
+    "inlinestyle/inlinestyle": "dev-master"
+  },
+  "preferred-install": "dist",
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "Lnk7\\Genie\\": "src"
+    }
+  }
+}
