@@ -13,11 +13,16 @@ use Twig\TwigFilter;
  *
  * Wrapper around twig
  *
- * @package Genie
+ * @package Lnk7\Genie
  */
 
 class View {
 
+    /**
+     * Twig Object
+     *
+     * @var
+     */
 	static $twig;
 
 
@@ -30,13 +35,17 @@ class View {
 
 
 
+    /**
+     * Wordpress Init Hook
+     *
+     */
 	public static function init() {
 
 		$debug = WP_DEBUG;
 		$cache = ! WP_DEBUG;
 
 		$pathArray = apply_filters( 'genie_view_folders', [
-			plugin_dir_path( __FILE__ ) . 'Tables',
+			plugin_dir_path( __FILE__ ) . 'Views',
 		] );
 
 		$fileLoader = new FilesystemLoader( $pathArray );
@@ -62,13 +71,7 @@ class View {
 		$filter = new TwigFilter( 'json', Tools::class . '::jsonSafe' );
 		$twig->addFilter( $filter );
 
-		$filter = new TwigFilter( 'slashes', Tools::class . '::addSlashes' );
-		$twig->addFilter( $filter );
-
 		$filter = new TwigFilter( 'wpautop', 'wpautop' );
-		$twig->addFilter( $filter );
-
-		$filter = new TwigFilter( 'bytes', Tools::class . '::formatBytes' );
 		$twig->addFilter( $filter );
 
 		self::$twig = $twig;
@@ -76,6 +79,14 @@ class View {
 
 
 
+    /**
+     * Make a view, and parse shortcodes.
+     *
+     * @param $view
+     * @param array $vars
+     *
+     * @return string
+     */
 	public static function make( $view, $vars = [] ) {
 
 		if ( is_object( $vars ) ) {
@@ -94,6 +105,13 @@ class View {
 
 
 
+    /**
+     * View shortcode
+     *
+     * @param $attributes
+     *
+     * @return string
+     */
 	public static function view( $attributes ) {
 
 		$a = (object) shortcode_atts( [
@@ -111,6 +129,11 @@ class View {
 
 
 
+    /**
+     * Get cache folder for Twig
+     *
+     * @return string
+     */
 	private static function getCacheFolder() {
 
 		$upload     = wp_upload_dir();

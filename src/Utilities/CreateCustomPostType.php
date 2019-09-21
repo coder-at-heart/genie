@@ -7,7 +7,7 @@ namespace Lnk7\Genie\Utilities;
  *
  * A handy wrapper around register_post_type
  *
- * @package Genie\Utilities
+ * @package Lnk7\Genie\Utilities
  */
 class CreateCustomPostType {
 

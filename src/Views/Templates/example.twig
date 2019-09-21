@@ -1,0 +1,10 @@
+{% extends "Templates/layouts/main.twig" %}
+
+{% block content %}
+
+    <p>Hello {{ name }}!</p>
+    {% if page.show_text %}
+        <p>{{ text|wpautop }}</p>
+    {% endif %}
+
+{% endblock %}

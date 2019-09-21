@@ -5,9 +5,9 @@ namespace Lnk7\Genie;
 /**
  * Class Options
  *
- * Manage vitol options in wp_options table
+ * Mana options in wp_options table
  *
- * @package Genie
+ * @package Lnk7\Genie
  */
 class Options {
 

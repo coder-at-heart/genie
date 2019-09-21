@@ -5,130 +5,128 @@ namespace Lnk7\Genie;
 /**
  * Class Pagination
  *
- * Currently Not used.
- *
- * @package Genie
+ * @package Lnk7\Genie
  */
 class Pagination {
 
-	/**
-	 * An array of results (usually from get_posts)
-	 *
-	 * @var
-	 */
-	var $data;
+    /**
+     * An array of results (usually from get_posts)
+     *
+     * @var
+     */
+    var $data;
 
-	/**
-	 * What page are we currently showing?
-	 *
-	 * @var mixed
-	 */
-	var $page;
+    /**
+     * What page are we currently showing?
+     *
+     * @var mixed
+     */
+    var $page;
 
-	/**
-	 * The total number of results
-	 * @var int
-	 */
-	var $total;
+    /**
+     * The total number of results
+     * @var int
+     */
+    var $total;
 
-	/**
-	 * The total number of pages
-	 *
-	 * @var float
-	 */
-	var $totalPages;
+    /**
+     * The total number of pages
+     *
+     * @var float
+     */
+    var $totalPages;
 
-	/**
-	 * The number of results per page
-	 *
-	 * @var int
-	 */
-	var $limit = 10;
+    /**
+     * The number of results per page
+     *
+     * @var int
+     */
+    var $limit = 10;
 
-	/**
-	 * results offset
-	 *
-	 * @var int
-	 */
-	var $offset;
-
-
-
-	/**
-	 * Static constructor
-	 *
-	 * @param $array
-	 *
-	 * @return Pagination
-	 */
-	public static function create( $array ) {
-
-		return new static ( $array );
-	}
+    /**
+     * results offset
+     *
+     * @var int
+     */
+    var $offset;
 
 
 
-	/**
-	 * Pagination constructor.
-	 *
-	 * @param $array
-	 */
-	public function __construct( $array ) {
+    /**
+     * Static constructor
+     *
+     * @param $array
+     *
+     * @return Pagination
+     */
+    public static function create( $array ) {
 
-		$this->data       = $array;
-		$this->total      = count( $this->data );
-		$this->totalPages = ceil( $this->total / $this->limit );
-		$this->page       = get_query_var( 'page-num' ) ?: 1;
-		$this->page       = max( $this->page, 1 );
-		$this->page       = min( $this->page, $this->totalPages );
-		$this->offset     = ( $this->page - 1 ) * $this->limit;
-		if ( $this->offset < 0 ) {
-			$this->offset = 0;
-		}
-
-		return $this;
-	}
+        return new static ( $array );
+    }
 
 
 
-	/**
-	 * @return array|string|void
-	 */
-	public function getLinks() {
+    /**
+     * Pagination constructor.
+     *
+     * @param $array
+     */
+    public function __construct( $array ) {
 
-		return paginate_links( [
-			'base'      => add_query_arg( [ 'page-num' => '%#%' ] ),
-			'format'    => '?paged=%#%',
-			'mid_size'  => 2,
-			'prev_text' => __( '&laquo;' ),
-			'next_text' => __( '&raquo;' ),
-			'total'     => $this->totalPages,
-			'current'   => $this->page,
-		] );
-	}
+        $this->data       = $array;
+        $this->total      = count( $this->data );
+        $this->totalPages = ceil( $this->total / $this->limit );
+        $this->page       = get_query_var( 'page-num' ) ?: 1;
+        $this->page       = max( $this->page, 1 );
+        $this->page       = min( $this->page, $this->totalPages );
+        $this->offset     = ( $this->page - 1 ) * $this->limit;
+        if ( $this->offset < 0 ) {
+            $this->offset = 0;
+        }
 
-
-
-	/**
-	 * get the Page
-	 *
-	 * @return mixed
-	 */
-	public function getPage() {
-
-		return $this->page;
-	}
+        return $this;
+    }
 
 
 
-	/**
-	 * Resturn the results
-	 *
-	 * @return array
-	 */
-	public function getResults() {
+    /**
+     * @return array|string|void
+     */
+    public function getLinks() {
 
-		return array_slice( $this->data, $this->offset, $this->limit );
-	}
+        return paginate_links( [
+            'base'      => add_query_arg( [ 'page-num' => '%#%' ] ),
+            'format'    => '?paged=%#%',
+            'mid_size'  => 2,
+            'prev_text' => __( '&laquo;' ),
+            'next_text' => __( '&raquo;' ),
+            'total'     => $this->totalPages,
+            'current'   => $this->page,
+        ] );
+    }
+
+
+
+    /**
+     * get the Page
+     *
+     * @return mixed
+     */
+    public function getPage() {
+
+        return $this->page;
+    }
+
+
+
+    /**
+     * Resturn the results
+     *
+     * @return array
+     */
+    public function getResults() {
+
+        return array_slice( $this->data, $this->offset, $this->limit );
+    }
 
 }

@@ -1,12 +1,14 @@
 <?php
 
-namespace Lnk7\Genie;
+namespace Lnk7\Genie\Utilities;
+
+use Lnk7\Genie\Cache;
 
 /**
  * Simple wrapper for Wordpress wp_remote_post
  *
  * Class API
- * @package Genie
+ * @package Lnk7\Genie
  */
 class API {
 

@@ -6,7 +6,7 @@ namespace Lnk7\Genie\Abstracts;
  * Used to store and handle a data object.
  *
  * Class BusinessObject
- * @package Genie\Abstracts
+ * @package Lnk7\Genie\Abstracts
  */
 Abstract class BusinessObject {
 

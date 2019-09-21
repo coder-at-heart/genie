@@ -7,7 +7,7 @@ namespace Lnk7\Genie;
  *
  * PHP Session Handler
  *
- * @package Genie
+ * @package Lnk7\Genie
  *
  */
 class Session {
@@ -204,6 +204,13 @@ class Session {
 		return $lookAt;
 	}
 
+
+
+    /**
+     * Get the session ID
+     *
+     * @return string
+     */
 	public static function getSessionID() {
 		return session_id();
 	}

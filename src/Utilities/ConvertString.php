@@ -15,7 +15,7 @@ use Doctrine\Common\Inflector\Inflector;
  *
  * ConvertString::From('Monkey Bar)->toPlural()->toTitleCase()->return();
  *
- * @package Genie
+ * @package Lnk7\Genie
  */
 class ConvertString {
 

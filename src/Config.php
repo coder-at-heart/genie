@@ -10,7 +10,7 @@ namespace Lnk7\Genie;
 class Config {
 
 	/**
-	 * get a config value
+	 * Get a config value
 	 *
 	 * @param      $value
 	 * @param bool $default

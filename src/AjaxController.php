@@ -4,7 +4,10 @@ namespace Lnk7\Genie;
 
 /**
  * Class AjaxController
- * @package Genie
+ *
+ * TODO:: Use Cote's version
+ *
+ * @package Lnk7\Genie
  */
 
 class AjaxController {
@@ -53,30 +56,30 @@ class AjaxController {
 	public static function handleAjaxCall() {
 
 		if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
-			static::fail( _x( 'Only POST Requests Accepted', 'Ajax fail message when no request is not made via POST', 'vitol-plugin' ) );
+			static::fail( _x( 'Only POST Requests Accepted', 'Ajax fail message when no request is not made via POST', 'lnk7-genie' ) );
 		}
 
 		$inputJSON = file_get_contents( 'php://input' );
 
 		if ( ! $inputJSON ) {
-			static::fail( _x( 'No Input Detected', 'Ajax Fail message when no input detected ', 'vitol-plugin' ) );
+			static::fail( _x( 'No Input Detected', 'Ajax Fail message when no input detected ', 'lnk7-genie' ) );
 		}
 
 		$data = json_decode( $inputJSON );
 
 		if ( ! isset( $data->handler ) ) {
-			static::fail( _x( 'No Hander Set', 'Ajax Fail message when no action is set on input', 'vitol-plugin' ) );
+			static::fail( _x( 'No Hander Set', 'Ajax Fail message when no action is set on input', 'lnk7-genie' ) );
 		}
 		$handler = sanitize_text_field( $data->handler );
 
 		if ( ! isset( static::$handlers[ $handler ] ) ) {
-			static::fail( _x( 'No handler registered for this action', 'Ajax Fail message when an action has been requested which has no handler ', 'vitol-plugin' ) );
+			static::fail( _x( 'No handler registered for this action', 'Ajax Fail message when an action has been requested which has no handler ', 'lnk7-genie' ) );
 		}
 
 		$call = static::$handlers[ $handler ];
 
 		if ( ! is_callable( $call ) ) {
-			static::fail( _x( 'Handler Not Callable', 'Ajax Fail message when the handler is not callable', 'vitol-plugin' ) );
+			static::fail( _x( 'Handler Not Callable', 'Ajax Fail message when the handler is not callable', 'lnk7-genie' ) );
 		}
 
 		$results = call_user_func( $call, $data );
@@ -126,7 +129,7 @@ class AjaxController {
 	private static function end( $array ) {
 
 		if ( ! is_array( $array ) ) {
-			static::fail( _x( 'Handler did not return an Array', 'Ajax Fail message when the handler did not return an array', 'vitol-plugin' ) );
+			static::fail( _x( 'Handler did not return an Array', 'Ajax Fail message when the handler did not return an array', 'lnk7-genie' ) );
 		}
 
 		print json_encode( $array );

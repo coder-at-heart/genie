@@ -14,7 +14,7 @@ use Lnk7\Genie\Tools;
  *  - Avoids having to create schema in the backend
  *  - Dynamically create schema
  *
- * @package Genie
+ * @package Lnk7\Genie
  */
 class CreateSchema {
 

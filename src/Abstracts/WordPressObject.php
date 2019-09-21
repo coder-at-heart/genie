@@ -16,7 +16,7 @@ use WP_Post;
  *
  * Abstract class for all Custom post types. This is the engine of the Vitol Intranet
  *
- * @package Genie\Abstracts
+ * @package Lnk7\Genie\Abstracts
  */
 abstract class WordPressObject implements JsonSerializable {
 
@@ -624,7 +624,6 @@ abstract class WordPressObject implements JsonSerializable {
     function __get( $var ) {
 
         if ( ! is_object( $this->data ) ) {
-            Log::Error( 'Data is not an object', $this );
 
             return false;
         }

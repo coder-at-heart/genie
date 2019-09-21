@@ -7,7 +7,7 @@ namespace Lnk7\Genie;
  *
  * Simple Object Cache
  *
- * @package Genie
+ * @package Lnk7\Genie
  */
 
 class Registry {

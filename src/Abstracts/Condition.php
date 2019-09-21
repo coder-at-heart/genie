@@ -7,7 +7,7 @@ namespace Lnk7\Genie\Abstracts;
  *
  * Used to generate ACF conditions
  *
- * @package Genie\Abstracts
+ * @package Lnk7\Genie\Abstracts
  */
 Abstract class Condition {
 

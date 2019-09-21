@@ -7,7 +7,7 @@ namespace Lnk7\Genie\Utilities;
  *
  * Wrapper around the register_taxonomy function
  *
- * @package Genie\Utilities
+ * @package Lnk7\Genie\Utilities
  */
 class CreateTaxonomy {
 

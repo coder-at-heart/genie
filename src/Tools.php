@@ -6,7 +6,7 @@ use Lnk7\Genie\WordPressObjects\Page;
 
 /**
  * Class Tools
- * @package Genie
+ * @package Lnk7\Genie
  */
 class Tools {
 
