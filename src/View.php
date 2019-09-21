@@ -44,9 +44,7 @@ class View {
 		$debug = WP_DEBUG;
 		$cache = ! WP_DEBUG;
 
-		$pathArray = apply_filters( 'genie_view_folders', [
-			plugin_dir_path( __FILE__ ) . 'Views',
-		] );
+		$pathArray = apply_filters( 'genie_view_folders', [] );
 
 		$fileLoader = new FilesystemLoader( $pathArray );
 		$loader     = new ChainLoader( [ $fileLoader ] );
