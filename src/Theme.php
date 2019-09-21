@@ -16,11 +16,9 @@ class Theme {
      */
     public static function Setup() {
 
-        add_filter( 'genie_view_folders', static::class . '::genie_view_folders', 10, 1 );
         add_filter( 'genie_view_before_render', static::class . '::genie_view_before_render', 10, 1 );
 
     }
-
 
 
     /**
@@ -54,15 +52,6 @@ class Theme {
         return $vars;
     }
 
-
-
-
-    public static function genie_view_folders( $folders ) {
-
-        $folders[] = get_stylesheet_directory() . '/views';
-
-        return $folders;
-    }
 
 
 

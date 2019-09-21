@@ -27,6 +27,7 @@ class Genie {
         BackgroundJob::Setup();
         View::Setup();
         CacheBust::Setup();
+        Theme::Setup();
 
         // Wordpress Objects
         Post::Setup();

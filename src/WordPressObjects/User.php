@@ -19,6 +19,37 @@ class User implements JsonSerializable {
 
 
     /**
+     * User constructor.
+     *
+     * @param null|WP_User|string $user
+     */
+    function __construct( $user = null ) {
+
+        // How do we work out who is using the site?
+        if ( is_null( $user ) ) {
+            $user = get_user_by( 'id', get_current_user_id() );
+        } else if ( is_int( $user ) ) {
+            $user = get_user_by( 'id', $user );
+        } else if ( filter_var( $user, FILTER_VALIDATE_EMAIL ) ) {
+            $user = get_user_by( 'email', $user );
+        }
+
+        if ( $user ) {
+            $acfKey = 'user_' . $user->ID;
+            $fields = get_fields( $acfKey );
+            if ( is_array( $fields ) ) {
+                foreach ( $fields as $key => $value ) {
+                    $user->$key = $value;
+                }
+            }
+            $this->user = $user;
+        }
+
+    }
+
+
+
+    /**
      * TODO: not happy about this
      */
     public static function Setup() {
@@ -49,35 +80,6 @@ class User implements JsonSerializable {
     public static function getCurrent() {
 
         return new static();
-    }
-
-
-
-    /**
-     * User constructor.
-     *
-     * @param null|WP_User|string $user
-     */
-    function __construct( $user = null ) {
-
-        // How do we work out who is using the site?
-        if ( is_null( $user ) ) {
-            $user = get_user_by( 'id', get_current_user_id() );
-        } else if ( is_int( $user ) ) {
-            $user = get_user_by( 'id', $user );
-        } else if ( filter_var( $user, FILTER_VALIDATE_EMAIL ) ) {
-            $user = get_user_by( 'email', $user );
-        }
-
-        if ( $user ) {
-            $acfKey = 'user_' . $user->ID;
-            $fields = get_fields( $acfKey );
-            foreach ( $fields as $key => $value ) {
-                $user->$key = $value;
-            }
-            $this->user = $user;
-        }
-
     }
 
 
