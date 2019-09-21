@@ -4,11 +4,11 @@
   "version": "0.1.2",
   "type": "library",
   "license": "MIT",
-    "authors": [
+  "authors": [
     {
       "name": "Sunil Kumar Jaiswal",
       "email": "sk@lnk7.com",
-      "homepage": "https://lnk7.com",
+      "homepage": "https://lnk7.com"
     }
   ],
   "require": {
