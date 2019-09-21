@@ -33,9 +33,6 @@ class Genie {
         Page::Setup();
         User::Setup();
 
-        // Register Templates
-        Example::Setup();
-
     }
 
 
