@@ -4,15 +4,22 @@
   "version": "0.1.3",
   "type": "library",
   "license": "MIT",
+  "authors": [
+    {
+      "name": "Sunil Kumar Jaiswal",
+      "email": "sk@lnk7.com",
+      "homepage": "https://lnk7.com"
+    }
+  ],
   "require": {
     "php": "^7.2.0",
     "ext-curl": "*",
     "ext-json": "*",
     "twig/twig": "^2.1",
     "doctrine/inflector": "^1.1",
-    "inlinestyle/inlinestyle": "dev-master"
+    "inlinestyle/inlinestyle": "^1.2.7"
   },
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "autoload": {
     "psr-4": {
       "Lnk7\\Genie\\": "src"
