@@ -3,7 +3,6 @@
 namespace Lnk7\Genie;
 
 use Lnk7\Genie\Plugins\ACF;
-use Lnk7\Genie\Templates\Example;
 use Lnk7\Genie\WordPressObjects\Page;
 use Lnk7\Genie\WordPressObjects\Post;
 use Lnk7\Genie\WordPressObjects\User;
