@@ -4,6 +4,13 @@
   "version": "0.1.2",
   "type": "library",
   "license": "MIT",
+    "authors": [
+    {
+      "name": "Sunil Kumar Jaiswal",
+      "email": "sk@lnk7.com",
+      "homepage": "https://lnk7.com",
+    }
+  ],
   "require": {
     "php": "^7.2.0",
     "ext-curl": "*",
