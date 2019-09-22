@@ -184,9 +184,15 @@ abstract class WordPressObject implements JsonSerializable {
         $fields = static::getFields();
 
         foreach ( $fields as $field ) {
-            if ( $field['override'] && in_array( $field['override'], WordPress::$postFields ) ) {
-
-                $data[ $field['override'] ] = $postarr['acf'][ $field['key'] ];
+            if ( $field['override'] ) {
+                $value = $postarr['acf'][ $field['key'] ];
+                $field = $field['override'];
+                if ( is_callable( $field ) ) {
+                    list( $field, $value ) = call_user_func( $field['override'], $value );
+                }
+                if ( in_array( $field, WordPress::$postFields ) ) {
+                    $data[ $field ] = $value;
+                }
             }
         }
 
