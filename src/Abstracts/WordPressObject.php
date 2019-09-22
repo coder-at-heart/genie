@@ -4,8 +4,9 @@ namespace Lnk7\Genie\Abstracts;
 
 use JsonSerializable;
 use Lnk7\Genie\Cache;
-use Lnk7\Genie\Log;
+use Lnk7\Genie\Data\WordPress;
 use Lnk7\Genie\Registry;
+use Lnk7\Genie\Tools;
 use Lnk7\Genie\Utilities\ConvertString;
 use ReflectionClass;
 use WP_Error;
@@ -76,37 +77,34 @@ abstract class WordPressObject implements JsonSerializable {
 
 
     /**
-     * Setup Wordpress Hooks, filters and register necessary method calls.
+     * Return a new instance of the Object
      */
-    public static function Setup() {
-        add_action( 'acf/save_post', static::class . '::acf_save_post', 20 );
-        add_action( 'init', static::class . '::init', 20 );
-        add_filter( 'manage_edit-' . static::$postType . '_columns', static::class . '::columnsHeaders' );
-        add_action( 'manage_' . static::$postType . '_posts_custom_column', static::class . '::columnContent', 10, 2 );
-        add_filter( 'post_type_link', static::class . '::post_type_link', 10, 2 );
-        add_filter( 'genie_view_before_render', static::class . '::genie_view_before_render', 10, 1 );
-        add_filter( 'use_block_editor_for_post_type', static::class . '::use_block_editor_for_post_type', 10, 2 );
+    function __construct( $id = null ) {
+
+        if ( ! $id ) {
+            return;
+        }
+        $this->id = $id;
+
+        $this->data = get_post_meta( $id, static::getCacheKey(), true );
+        if ( ! $this->data ) {
+            $this->data = static::generate( $id );
+        }
+
+        // Post processing .. . For anything that should not be cached.
+        $this->data = apply_filters( 'genie_' . static::$postType . '_load', $this->data );
     }
 
 
 
     /**
-     * Generate Object and cache
+     * Cache key used for this post_type
      *
-     * @param $post_id
+     * @return string
      */
-    public static function acf_save_post( $post_id ) {
+    protected static function getCacheKey() {
 
-        global $post;
-
-        if ( ! $post or $post->post_type != static::$postType ) {
-            return;
-        }
-
-        // Generate Cache
-        if ( static::$cache ) {
-            static::generate( $post_id );
-        }
+        return Cache::getCachePrefix() . '_object';
     }
 
 
@@ -150,13 +148,86 @@ abstract class WordPressObject implements JsonSerializable {
 
 
     /**
-     * Cache key used for this post_type
-     *
-     * @return string
+     * Setup Wordpress Hooks, filters and register necessary method calls.
      */
-    protected static function getCacheKey() {
+    public static function Setup() {
+        add_filter( 'wp_insert_post_data', static::class . '::wp_insert_post_data', 10, 2 );
+        add_action( 'acf/save_post', static::class . '::acf_after_save_post', 20 );
+        add_action( 'init', static::class . '::init', 20 );
+        add_filter( 'manage_edit-' . static::$postType . '_columns', static::class . '::columnsHeaders' );
+        add_action( 'manage_' . static::$postType . '_posts_custom_column', static::class . '::columnContent', 10, 2 );
+        add_filter( 'post_type_link', static::class . '::post_type_link', 10, 2 );
+        add_filter( 'genie_view_before_render', static::class . '::genie_view_before_render', 10, 1 );
+        add_filter( 'use_block_editor_for_post_type', static::class . '::use_block_editor_for_post_type', 10, 2 );
+    }
 
-        return Cache::getCachePrefix() . '_object';
+
+
+    /**
+     * ACF before the post is saved.
+     *
+     * We can override some of the wordpress fields here.
+     *
+     */
+    public static function wp_insert_post_data( $data, $postarr ) {
+
+        // Bail early if no data sent.
+        if ( empty( $postarr['acf'] ) ) {
+            return $data;
+        }
+
+        // Not this post type?
+        $postType = $data['post_type'];
+        if ( $postType != static::$postType ) {
+            return $data;
+        }
+
+        $fields = static::getFields();
+
+        foreach ( $fields as $field ) {
+            if ( $field['override'] && in_array( $field['override'], WordPress::$postFields ) ) {
+
+                $newValue                    = $postarr['acf'][ $field['key'] ];
+                $data[ $field['override'] ] = apply_filters( 'genie_override_' . static::$postType . '_' . $field['name'], $newValue, $field, $postarr );
+            }
+        }
+
+        return $data;
+
+    }
+
+
+
+    /**
+     * get the field defintions
+     *
+     * @return mixed|null
+     */
+    public static function getFields() {
+        return Registry::get( 'fields', static::class );
+
+    }
+
+
+
+    /**
+     * Generate Object and cache
+     *
+     * @param $post_id
+     */
+    public static function acf_after_save_post( $post_id ) {
+
+        global $post;
+
+
+        if ( ! $post or $post->post_type != static::$postType ) {
+            return;
+        }
+
+        // Generate Cache
+        if ( static::$cache ) {
+            static::generate( $post_id );
+        }
     }
 
 
@@ -543,18 +614,6 @@ abstract class WordPressObject implements JsonSerializable {
 
 
     /**
-     * get the field defintions
-     *
-     * @return mixed|null
-     */
-    public static function getFields() {
-        return Registry::get( 'fields', static::class );
-
-    }
-
-
-
-    /**
      * Get the full Schema Definition
      *
      * @return mixed|null
@@ -589,27 +648,6 @@ abstract class WordPressObject implements JsonSerializable {
 
         return $fieldArray;
 
-    }
-
-
-
-    /**
-     * Return a new instance of the Object
-     */
-    function __construct( $id = null ) {
-
-        if ( ! $id ) {
-            return;
-        }
-        $this->id = $id;
-
-        $this->data = get_post_meta( $id, static::getCacheKey(), true );
-        if ( ! $this->data ) {
-            $this->data = static::generate( $id );
-        }
-
-        // Post processing .. . For anything that should not be cached.
-        $this->data = apply_filters( 'genie_' . static::$postType . '_load', $this->data );
     }
 
 
