@@ -7,19 +7,16 @@ use Lnk7\Genie\Utilities\ConvertString;
 Abstract class Field {
 
     /**
-     * Field type - Must be overridden
+     * ACF field type - Must be overridden
      *
      * @var string
      */
     protected $type = 'text';
 
-    /**
-     * @var bool
-     */
-    protected $noKey = false;
-
     /**#
-     * meta Query data type
+     * Meta Query data type.
+     *
+     * Not being used now, Will be handy later on
      *
      * Possible values are 'NUMERIC', 'BINARY', 'CHAR', 'DATE', 'DATETIME', 'DECIMAL', 'SIGNED', 'TIME', 'UNSIGNED'.
      *
@@ -35,20 +32,19 @@ Abstract class Field {
     protected $settings = [
 
         /* (string) Unique identifier for the field. Must begin with 'field_' */
-        'key'      => '',
+        'key'               => '',
 
         /* (string) Visible when editing the field value */
-        'label'    => '',
+        'label'             => '',
 
         /* (string) Used to save and load data. Single word, no spaces. Underscores and dashes allowed */
-        'name'     => '',
+        'name'              => '',
 
         /* hack - cant seem to figure out how ACF adds _name to locally imported groups.
             This is needed by the acf_format_value function */
-        '_name'    => '',
-        '_prepare' => 0,
-        '_valid'   => 0,
-
+        '_name'             => '',
+        '_prepare'          => 0,
+        '_valid'            => 0,
         'prepend'           => '',
         'append'            => '',
 
@@ -84,10 +80,10 @@ Abstract class Field {
         /* Add to search Index */
         'searchable'        => true,
 
-        /* Display Only */
+        /* Does this field not have any input?  Tab & Message */
         'displayOnly'       => false,
 
-        /* Can override  WordPress Field */
+        /* WordPress post field to override on save (e.g post_title) */
         'override'          => false,
 
     ];
@@ -182,23 +178,6 @@ Abstract class Field {
 
 
     /**
-     * Allows overriding wordpress fields
-     *
-     * @param $field
-     *
-     * @return $this
-     */
-    public function override( $field ) {
-
-        $this->set( 'override', $field );
-
-        return $this;
-    }
-
-
-
-
-    /**
      * Should the contents of this field be indexed ?
      *
      * @param bool $value
@@ -242,6 +221,22 @@ Abstract class Field {
     public static function Called( $name ) {
 
         return new static( $name );
+    }
+
+
+
+    /**
+     * Allows overriding wordpress fields
+     *
+     * @param $field
+     *
+     * @return $this
+     */
+    public function override( $field ) {
+
+        $this->set( 'override', $field );
+
+        return $this;
     }
 
 

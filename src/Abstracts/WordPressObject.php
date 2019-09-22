@@ -6,7 +6,6 @@ use JsonSerializable;
 use Lnk7\Genie\Cache;
 use Lnk7\Genie\Data\WordPress;
 use Lnk7\Genie\Registry;
-use Lnk7\Genie\Tools;
 use Lnk7\Genie\Utilities\ConvertString;
 use ReflectionClass;
 use WP_Error;
@@ -187,10 +186,11 @@ abstract class WordPressObject implements JsonSerializable {
         foreach ( $fields as $field ) {
             if ( $field['override'] && in_array( $field['override'], WordPress::$postFields ) ) {
 
-                $newValue                    = $postarr['acf'][ $field['key'] ];
-                $data[ $field['override'] ] = apply_filters( 'genie_override_' . static::$postType . '_' . $field['name'], $newValue, $field, $postarr );
+                $data[ $field['override'] ] = $postarr['acf'][ $field['key'] ];
             }
         }
+
+        $data = apply_filters( 'genie_override_' . static::$postType, $data, $postarr );
 
         return $data;
 
@@ -218,7 +218,6 @@ abstract class WordPressObject implements JsonSerializable {
     public static function acf_after_save_post( $post_id ) {
 
         global $post;
-
 
         if ( ! $post or $post->post_type != static::$postType ) {
             return;
