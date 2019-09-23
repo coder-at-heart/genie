@@ -22,7 +22,7 @@ class Genie {
 
         Session::Setup();
         WordPress::Setup();
-        AjaxController::Setup();
+        Ajax::Setup();
         BackgroundJob::Setup();
         View::Setup();
         CacheBust::Setup();

@@ -10,7 +10,7 @@ use Lnk7\Genie\Cache;
  * Class API
  * @package Lnk7\Genie
  */
-class API {
+class ApiCall {
 
 	/**
 	 * url for the API call
@@ -99,14 +99,14 @@ class API {
 	 *
 	 * @var int
 	 */
-	var $cacheFor = 300 ;
+	var $cacheFor = 300;
 
 
 
 	/**
 	 * Nice way to initialise
 	 *
-	 * $call = API::call('https://www.somedomain.com')
+	 * $call = API::to('https://www.somedomain.com')
 	 *   ->body(['a'=>1,'b'=>2 ])
 	 *   ->send();
 	 *
@@ -115,9 +115,9 @@ class API {
 	 *
 	 * @param $url
 	 *
-	 * @return API
+	 * @return ApiCall
 	 */
-	public static function call( $url ) {
+	public static function to( $url ) {
 
 		return new static( $url );
 	}
@@ -133,7 +133,7 @@ class API {
 	 */
 	public static function get( $url, $vars = [] ) {
 
-		$call = static::call( $url )
+		$call = static::to( $url )
 			->usingMethod( 'GET' )
 			->withBody( $vars )
 			->send();
@@ -157,7 +157,7 @@ class API {
 
 	public static function post( $url, $vars ) {
 
-		$call = static::call( $url )
+		$call = static::to( $url )
 			->withBody( $vars )
 			->send();
 		if ( $call->wasSuccessful() ) {
@@ -219,13 +219,13 @@ class API {
 
 
 	/**
-	 * Add a josn Body. cannot be used at the same time as withBody()
+	 * Add a json Body. cannot be used at the same time as withBody()
 	 *
 	 * @param $json
 	 *
 	 * @return $this
 	 */
-	public function addJson( $json ) {
+	public function withJson( $json ) {
 
 		$this->withBody( $json );
 		$this->setDataFormat( 'body' );
@@ -254,9 +254,7 @@ class API {
 
 
 	/**
-	 * Do Not Cache Results
-	 *
-	 * @param int $seconds
+	 * Disable the Cache
 	 *
 	 * @return $this
 	 */
@@ -382,8 +380,8 @@ class API {
 			] ) );
 
 		if ( false === ( $this->response = get_transient( $key ) ) or ! $this->cache ) {
-			// It wasn't there, so regenerate the data and save the transient
 
+		    // It wasn't there, so regenerate the data and save the transient
 			$this->response = wp_remote_post( $this->url, [
 					'method'      => $this->method,
 					'timeout'     => $this->timeout,
