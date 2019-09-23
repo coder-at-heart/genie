@@ -515,10 +515,14 @@ abstract class WordPressObject implements JsonSerializable {
             if ( $field['name'] === $name ) {
                 return $field['key'];
             }
-            if ( isset( $fields['sub_fields'] ) ) {
-                return static::findKey( $name, $fields['sub_fields'] );
+            if ( isset( $field['sub_fields'] ) ) {
+                $found = static::findKey( $name, $field['sub_fields'] );
+                if($found) {
+                    return $found;
+                }
             }
         }
+        return false;
     }
 
 
