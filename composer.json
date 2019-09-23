@@ -3,14 +3,7 @@
   "description": "Advanced WordPress Programmer's Toolkit",
   "version": "0.1.10",
   "type": "library",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Sunil Kumar Jaiswal",
-      "email": "sk@lnk7.com",
-      "homepage": "https://lnk7.com"
-    }
-  ],
+  "license": "GPL-2.0-or-later",
   "require": {
     "php": "^7.2.0",
     "ext-curl": "*",
