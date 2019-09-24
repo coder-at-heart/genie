@@ -615,7 +615,7 @@ abstract class WordPressObject implements JsonSerializable {
 
         $reflect = new ReflectionClass( static::class );
 
-        $vars['_objects'] = array_merge( $vars['_objects'], [ $reflect->getShortName() => new static ] );
+//        $vars['_objects'] = array_merge( $vars['_objects'], [ $reflect->getShortName() => new static ] );
 
         return $vars;
     }
