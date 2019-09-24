@@ -33,6 +33,7 @@ class Genie {
         Page::Setup();
         User::Setup();
 
+
     }
 
 
