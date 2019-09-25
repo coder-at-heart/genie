@@ -49,8 +49,8 @@ class Request {
 
         if ( $body ) {
             static::$data = array_merge( static::$data, json_decode( $body, true ) );
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                Response::Failure('Invalid json');
+            if ( json_last_error() !== JSON_ERROR_NONE ) {
+                Response::Failure( [ 'message' => 'Invalid json' ] );
             }
         }
 

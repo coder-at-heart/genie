@@ -8,9 +8,12 @@ use ReflectionMethod;
 
 class Ajax {
 
-    //Registered Ajax paths
+    /**
+     * An array of paths to use for ajax calls
+     *
+     * @var array
+     */
     static $paths = [];
-
 
 
     /**
@@ -60,7 +63,7 @@ class Ajax {
         $requestPath = $_REQUEST['request'];
 
         if ( ! isset( static::$paths[ $requestPath ] ) ) {
-            Response::NotFound( "{$requestPath}, not found" );
+            Response::NotFound( [ 'message' => "{$requestPath}, not found" ] );
         }
         $callback = static::$paths[ $requestPath ];
 
@@ -73,7 +76,7 @@ class Ajax {
             $name  = $param->getName();
             $value = Request::get( $name );
             if ( ! $param->isOptional() and ! isset( $value ) ) {
-                Response::Failure( "required parameter {$name} is missing" );
+                Response::Failure( [ 'message' => "required parameter {$name} is missing" ] );
             }
             $callbackParams[ $name ] = $value;
         }
