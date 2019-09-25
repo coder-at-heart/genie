@@ -2,8 +2,8 @@
 
 namespace Lnk7\Genie;
 
-use lnk7\Genie\Library\Request;
-use lnk7\Genie\Library\Response;
+use Lnk7\Genie\Library\Request;
+use Lnk7\Genie\Library\Response;
 use ReflectionMethod;
 
 class Ajax {
