@@ -1,4 +1,4 @@
-#Genie: The Advanced Wordpress Programmer's Toolkit
+# Genie: The Advanced Wordpress Programmer's Toolkit
 
 Quick overview
 - ACF Pro abstraction with `CreateSchema` 
@@ -11,17 +11,17 @@ Quick overview
 - Background Job Processing `BackgrounJob`
 - Handy Ajax Controller `AjaxController`
  
-##Installation
+## Installation
 
 `composer require "lnk7\genie"`
 
-##Usage in a Theme
+## Usage in a Theme
 
 Check the Genie Theme for usage examples
 
 https://bitbucket.org/lnk7/genie-theme/
 
-##Use as a Plugin
+## Use as a Plugin
 
 Create a plugin folder.
 
