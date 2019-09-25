@@ -22,6 +22,8 @@ class Tools {
 
     }
 
+
+
     public static function stripSlashesArray( $value ) {
         $value = is_array( $value ) ?
             array_map( 'stripslashes_deep', $value ) :
@@ -29,6 +31,25 @@ class Tools {
 
         return $value;
     }
+
+
+
+    /**
+     * Check if a String is JSON and return the object or the original string.
+     *
+     * @param $string
+     *
+     * @return bool|object|array
+     */
+    public static function maybeConvertToJson( $string ) {
+        $json = json_decode( $string );
+        if ( json_last_error() == JSON_ERROR_NONE ) {
+            return $json;
+        };
+
+        return $string;
+    }
+
 
 
     /**
