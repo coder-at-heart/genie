@@ -248,7 +248,7 @@ class ApiCall implements JsonSerializable {
      */
     public function wasSuccessful() {
 
-        return ! is_wp_error( $this->response );
+        return ! static::failed();
     }
 
 
@@ -418,7 +418,7 @@ class ApiCall implements JsonSerializable {
      */
     public function failed() {
 
-        $code = $this->response['code'];
+        $code = $this->response['response']['code'];
         return is_wp_error( $this->response )  or $code < 200 or $code > 299 ;
     }
 
@@ -453,7 +453,6 @@ class ApiCall implements JsonSerializable {
             'success' => $this->wasSuccessful(),
             'code'    => $this->getResponseCode(),
             'body'    => $this->getResponseBody(),
-            'message' => $this->getResponseMessage()
         ];
     }
 
