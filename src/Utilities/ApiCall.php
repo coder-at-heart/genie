@@ -4,6 +4,7 @@ namespace Lnk7\Genie\Utilities;
 
 use JsonSerializable;
 use Lnk7\Genie\Cache;
+use Lnk7\Genie\Tools;
 
 /**
  * Simple wrapper for Wordpress wp_remote_post
@@ -259,7 +260,11 @@ class ApiCall implements JsonSerializable {
      */
     public function getResponseBody() {
 
-        return isset( $this->response['body'] ) ? $this->response['body'] : false;
+        if (!isset( $this->response['body'] ) ) {
+            return false;
+        }
+        return Tools::maybeConvertToJson($this->response['body']);
+
     }
 
 
