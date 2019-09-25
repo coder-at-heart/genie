@@ -331,7 +331,7 @@ class ApiCall implements JsonSerializable {
      */
     public function withJson( $json ) {
 
-        $this->withBody( $json );
+        $this->withBody(json_encode($json) );
         $this->setDataFormat( 'body' );
         $this->addHeader( 'Content-Type', 'application/json; charset=utf-8' );
 
