@@ -4,7 +4,6 @@ namespace Lnk7\Genie;
 
 use lnk7\Genie\Library\Request;
 use lnk7\Genie\Library\Response;
-
 use ReflectionMethod;
 
 class Ajax {
@@ -21,10 +20,11 @@ class Ajax {
         add_action( 'init', static::class . '::init' );
 
         // Action from the outside world
-        add_action( 'wp_ajax_api_call_v2', static::class . '::api_call' );
-        add_action( 'wp_ajax_nopriv_api_call_v2', static::class . '::api_call' );
+        add_action( 'wp_ajax_ajax', static::class . '::ajax' );
+        add_action( 'wp_ajax_nopriv_ajax', static::class . '::ajax' );
 
     }
+
 
 
     /**
@@ -33,8 +33,10 @@ class Ajax {
      * register our permalink (This will be written to .htaccess when rules are flushed
      */
     public static function init() {
-        add_rewrite_rule( 'api/(.*)$', 'wp-admin/admin-ajax.php?action=api_call_v2&request=$1', 'top' );
+        $path = apply_filters( 'genie_ajax_path', 'ajax' );
+        add_rewrite_rule( $path . '/(.*)$', 'wp-admin/admin-ajax.php?action=ajax&request=$1', 'top' );
     }
+
 
 
     /**
@@ -50,10 +52,10 @@ class Ajax {
 
 
     /**
-     * Perform the api call.
+     * Perform the ajax call.
      *
      */
-    public static function api_call() {
+    public static function ajax() {
 
         $requestPath = $_REQUEST['request'];
 
@@ -70,8 +72,8 @@ class Ajax {
         foreach ( $params as $param ) {
             $name  = $param->getName();
             $value = Request::get( $name );
-            if ( ! $param->isOptional() and !isset($value) ) {
-                Response::Failure( "required parameter {$name} is missing"  );
+            if ( ! $param->isOptional() and ! isset( $value ) ) {
+                Response::Failure( "required parameter {$name} is missing" );
             }
             $callbackParams[ $name ] = $value;
         }
