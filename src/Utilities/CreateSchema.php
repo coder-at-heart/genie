@@ -285,7 +285,11 @@ class CreateSchema {
 
 
 	/**
-	 * Go through the field definitions and convert a name to a acf key
+	 * Go through the field definitions and convert a name
+     * to a acf key where needed.
+     *
+     * We come at the 1st level.  We need to be careful of sub_fields
+     * having the same name
 	 *
 	 * @param $field
 	 * @param $fields
@@ -300,7 +304,10 @@ class CreateSchema {
 				foreach ( $condition as &$statement ) {
 					if ( isset( $statement['field'] ) ) {
 						$name               = $statement['field'];
-						$statement['field'] = $this->findNameInFieldsAndReturnKey( $name, $fields );
+						// only do this if it's not a key
+						if(substr($name,0,6) != 'field_') {
+                            $statement['field'] = $this->findNameInFieldsAndReturnKey( $name, $fields );
+                        }
 					}
 				}
 
@@ -308,7 +315,7 @@ class CreateSchema {
 		}
 		if ( isset( $field['sub_fields'] ) ) {
 			foreach($field['sub_fields'] as &$subfield) {
-				$subfield = $this->convertNameToKey($subfield, $fields);
+			    $subfield = $this->convertNameToKey($subfield, $fields);
 			}
 		}
 
