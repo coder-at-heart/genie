@@ -263,7 +263,7 @@ class ApiCall implements JsonSerializable {
         if (!isset( $this->response['body'] ) ) {
             return false;
         }
-        return Tools::maybeConvertToJson($this->response['body']);
+        return Tools::maybeConvertFromJson( $this->response['body']);
 
     }
 

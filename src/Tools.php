@@ -41,13 +41,32 @@ class Tools {
      *
      * @return bool|object|array
      */
-    public static function maybeConvertToJson( $string ) {
+    public static function maybeConvertFromJson( $string ) {
+
         $json = json_decode( $string );
         if ( json_last_error() == JSON_ERROR_NONE ) {
             return $json;
         };
 
         return $string;
+    }
+
+
+
+    /**
+     * Check if a String is JSON and return it, or convert it to Json
+     *
+     * @param $string
+     *
+     * @return bool|object|array
+     */
+    public static function maybeConvertToJson( $string ) {
+        $json = json_decode( $string );
+        if ( json_last_error() == JSON_ERROR_NONE ) {
+            return $string;
+        };
+
+        return json_encode($string);
     }
 
 
