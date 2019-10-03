@@ -61,10 +61,13 @@ class Tools {
      * @return bool|object|array
      */
     public static function maybeConvertToJson( $string ) {
-        $json = json_decode( $string );
-        if ( json_last_error() == JSON_ERROR_NONE ) {
-            return $string;
-        };
+        if (is_string($string)) {
+            $json = json_decode( $string );
+            if ( json_last_error() == JSON_ERROR_NONE ) {
+                return $string;
+            };
+
+        }
 
         return json_encode($string);
     }
