@@ -18,6 +18,22 @@ class Session {
      */
     public static function Setup() {
 
+        // Run once everything has been setup
+        add_action( 'plugins_loaded', static::class . '::plugins_loaded' );
+
+        // Capture Query string Variables
+        add_action( 'parse_request', static::class . '::parse_request' );
+
+        // The var shortcode
+        add_shortcode( 'var', static::class . '::varShortcode' );
+
+        // Plug the session into all views
+        add_filter( 'genie_view_before_render', static::class . '::genie_view_before_render', 10, 1 );
+    }
+
+
+
+    public static function plugins_loaded() {
         $sessionName = apply_filters( 'genie_session_name', 'genie_session' );
 
         session_name( $sessionName );
@@ -51,14 +67,6 @@ class Session {
             $_SESSION['sessionCreated'] = time();
         }
 
-        // Capture Query string Variables
-        add_action( 'parse_request', static::class . '::parse_request' );
-
-        // The var shortcode
-        add_shortcode( 'var', static::class . '::varShortcode' );
-
-        // Plug the session into all views
-        add_filter( 'genie_view_before_render', static::class . '::genie_view_before_render', 10, 1 );
     }
 
 
