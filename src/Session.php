@@ -19,7 +19,7 @@ class Session {
     public static function Setup() {
 
         // Run once everything has been setup
-        add_action( 'plugins_loaded', static::class . '::plugins_loaded' );
+        add_action( 'after_setup_theme', static::class . '::after_setup_theme' );
 
         // Capture Query string Variables
         add_action( 'parse_request', static::class . '::parse_request' );
@@ -33,7 +33,7 @@ class Session {
 
 
 
-    public static function plugins_loaded() {
+    public static function after_setup_theme() {
         $sessionName = apply_filters( 'genie_session_name', 'genie_session' );
 
         session_name( $sessionName );
