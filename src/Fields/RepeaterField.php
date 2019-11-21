@@ -64,6 +64,13 @@ class RepeaterField extends GroupField {
 	}
 
 
+	public function hideCollapse($hideCollapse) {
+        $this->set( 'hide_collapse', $hideCollapse );
+
+        return $this;
+    }
+
+
 
 	protected function setDefaults() {
 
