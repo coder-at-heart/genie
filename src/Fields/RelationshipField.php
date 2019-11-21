@@ -71,11 +71,11 @@ class RelationshipField extends Field {
 	/**
 	 * Specify the minimum posts required to be selected. Defaults to 0
 	 *
-	 * @param array $number
+	 * @param int $number
 	 *
 	 * @return $this
 	 */
-	public function min( array $number ) {
+	public function min( int $number ) {
 		$this->set( 'min', $number);
 
 		return $this;
@@ -84,11 +84,11 @@ class RelationshipField extends Field {
 	/**
 	 * Specify the maximum posts allowed to be selected. Defaults to 0
 	 *
-	 * @param array $number
+	 * @param int $number
 	 *
 	 * @return $this
 	 */
-	public function max( array $number ) {
+	public function max( int $number ) {
 		$this->set( 'max', $number);
 
 		return $this;
