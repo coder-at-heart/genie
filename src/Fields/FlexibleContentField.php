@@ -68,6 +68,7 @@ class FlexibleContentField extends Field {
     public function collapseAll( $collapse ) {
 
         $this->set( 'collapse_all_flexible', $collapse );
+        $this->set('btn-icon-only', 0);
 
         return $this;
     }
