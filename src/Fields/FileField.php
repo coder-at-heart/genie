@@ -58,7 +58,7 @@ class FileField extends TextField {
     protected function setDefaults() {
         parent::setDefaults();
         $this->searchable( false );
-        $this->returnValue( 'array' );
+        $this->returnFormat( 'array' );
         $this->previewSize( 'thumbnail' );
         $this->library( 'all' );
     }
@@ -73,8 +73,8 @@ class FileField extends TextField {
      *
      * @return $this
      */
-    public function returnValue( string $returnValue ) {
-        return $this->set( 'return_value', $returnValue );
+    public function returnFormat( string $returnValue ) {
+        return $this->set( 'return_format', $returnValue );
 
     }
 
