@@ -4,78 +4,67 @@ namespace Lnk7\Genie\Fields;
 
 class RepeaterField extends GroupField {
 
-	protected $type = 'repeater';
+    protected $type = 'repeater';
 
 
 
-	/**
-	 * Sets a label for the add Button
-	 *
-	 * @param $label
-	 *
-	 * @return $this
-	 */
-	public function buttonLabel( $label ) {
+    /**
+     * Sets a label for the add Button
+     *
+     * @param $label
+     *
+     * @return $this
+     */
+    public function buttonLabel( $label ) {
 
-		$this->set( 'button_label', $label );
+        return $this->set( 'button_label', $label );
 
-		return $this;
-	}
-
-
-
-	public function collapsed( $collapsed ) {
-
-		$this->set( 'collapsed', $collapsed );
-
-		return $this;
-	}
-
-
-
-	/**
-	 * Specify the maximum posts allowed to be selected. Defaults to 0
-	 *
-	 * @param int $number
-	 *
-	 * @return $this
-	 */
-	public function max( int $number ) {
-
-		$this->set( 'max', $number );
-
-		return $this;
-	}
-
-
-
-	/**
-	 * Specify the minimum posts required to be selected. Defaults to 0
-	 *
-	 * @param int $number
-	 *
-	 * @return $this
-	 */
-	public function min( int $number ) {
-
-		$this->set( 'min', $number );
-
-		return $this;
-	}
-
-
-	public function hideCollapse($hideCollapse) {
-        $this->set( 'hide_collapse', $hideCollapse );
-
-        return $this;
     }
 
 
 
-	protected function setDefaults() {
+    public function collapsed( $collapsed ) {
 
-		parent::setDefaults();
-		$this->layout( 'table' );
-	}
+        return $this->set( 'collapsed', $collapsed );
+
+    }
+
+
+
+    /**
+     * Specify the maximum posts allowed to be selected. Defaults to 0
+     *
+     * @param int $number
+     *
+     * @return $this
+     */
+    public function max( int $number ) {
+
+        return $this->set( 'max', $number );
+
+    }
+
+
+
+    /**
+     * Specify the minimum posts required to be selected. Defaults to 0
+     *
+     * @param int $number
+     *
+     * @return $this
+     */
+    public function min( int $number ) {
+
+        return $this->set( 'min', $number );
+
+    }
+
+
+
+    protected function setDefaults() {
+
+        parent::setDefaults();
+        $this->layout( 'table' );
+    }
 
 }
