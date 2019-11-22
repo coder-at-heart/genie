@@ -19,9 +19,8 @@ class FlexibleContentField extends Field {
      */
     public function buttonLabel( $label ) {
 
-        $this->set( 'button_label', $label );
+        return $this->set( 'button_label', $label );
 
-        return $this;
     }
 
 
@@ -35,9 +34,8 @@ class FlexibleContentField extends Field {
      */
     public function max( int $number ) {
 
-        $this->set( 'max', $number );
+        return $this->set( 'max', $number );
 
-        return $this;
     }
 
 
@@ -51,26 +49,8 @@ class FlexibleContentField extends Field {
      */
     public function min( int $number ) {
 
-        $this->set( 'min', $number );
+        return $this->set( 'min', $number );
 
-        return $this;
-    }
-
-
-
-    /**
-     * Collapse all Sections
-     *
-     * @param bool $collapse
-     *
-     * @return $this
-     */
-    public function collapseAll( $collapse ) {
-
-        $this->set( 'collapse_all_flexible', $collapse );
-        $this->set('btn-icon-only', 0);
-
-        return $this;
     }
 
 
@@ -84,9 +64,7 @@ class FlexibleContentField extends Field {
      */
     public function withLayouts( array $fields ) {
 
-        $this->set( 'layouts', $fields );
-
-        return $this;
+        return $this->set( 'layouts', $fields );
 
     }
 

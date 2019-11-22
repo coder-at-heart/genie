@@ -123,10 +123,14 @@ Abstract class Field {
      *
      * @param $var
      * @param $value
+     *
+     * @return $this
      */
     public function set( $var, $value ) {
 
         $this->settings[ $var ] = $value;
+
+        return $this;
     }
 
 
@@ -170,9 +174,8 @@ Abstract class Field {
      */
     public function label( $label ) {
 
-        $this->set( 'label', $label );
+        return  $this->set( 'label', $label );
 
-        return $this;
     }
 
 
@@ -186,9 +189,8 @@ Abstract class Field {
      */
     public function searchable( bool $value ) {
 
-        $this->set( 'searchable', $value );
+        return  $this->set( 'searchable', $value );
 
-        return $this;
     }
 
 
@@ -202,9 +204,9 @@ Abstract class Field {
      */
     public function required( bool $value ) {
 
-        $this->set( 'required', $value );
+        return         $this->set( 'required', $value );
 
-        return $this;
+
     }
 
 
@@ -234,9 +236,9 @@ Abstract class Field {
      */
     public function override( $field ) {
 
-        $this->set( 'override', $field );
+        return   $this->set( 'override', $field );
 
-        return $this;
+
     }
 
 
@@ -300,9 +302,7 @@ Abstract class Field {
 
     public function callback( callable $function ) {
 
-        $this->set( 'callback', $function );
-
-        return $this;
+        return $this->set( 'callback', $function );
 
     }
 
@@ -317,9 +317,8 @@ Abstract class Field {
      */
     public function conditionalLogic( $conditionalLogic ) {
 
-        $this->set( 'conditional_logic', $conditionalLogic );
+        return $this->set( 'conditional_logic', $conditionalLogic );
 
-        return $this;
     }
 
 
@@ -333,18 +332,16 @@ Abstract class Field {
      */
     public function default( $default ) {
 
-        $this->set( 'default_value', $default );
+        return $this->set( 'default_value', $default );
 
-        return $this;
     }
 
 
 
     public function displayOnly( $displayOnly ) {
 
-        $this->set( 'displayOnly', $displayOnly );
+        return $this->set( 'displayOnly', $displayOnly );
 
-        return $this;
     }
 
 
@@ -434,9 +431,8 @@ Abstract class Field {
      */
     public function hidden( bool $value ) {
 
-        $this->set( 'hidden', $value );
+        return $this->set( 'hidden', $value );
 
-        return $this;
     }
 
 
@@ -466,9 +462,8 @@ Abstract class Field {
      */
     public function instructions( string $instructions ) {
 
-        $this->set( 'instructions', $instructions );
+        return $this->set( 'instructions', $instructions );
 
-        return $this;
     }
 
 
@@ -482,9 +477,8 @@ Abstract class Field {
      */
     public function key( $key ) {
 
-        $this->set( 'key', $key );
+        return $this->set( 'key', $key );
 
-        return $this;
     }
 
 
@@ -514,18 +508,15 @@ Abstract class Field {
      */
     public function readOnly( bool $value ) {
 
-        $this->set( 'read_only', $value );
+        return $this->set( 'read_only', $value );
 
-        return $this;
     }
 
 
 
     public function shown( Condition $condition ) {
 
-        $this->set( 'conditions', $condition->generate() );
-
-        return $this;
+        return $this->set( 'conditions', $condition->generate() );
 
     }
 

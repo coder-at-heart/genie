@@ -6,47 +6,50 @@ use Lnk7\Genie\Abstracts\Field;
 
 class UserField extends Field {
 
-	protected $type = 'user';
+    protected $type = 'user';
 
-	protected $metaQuery = 'NUMERIC';
+    protected $metaQuery = 'NUMERIC';
 
-	/**
-	 * Limit to Wordpress Role
-	 *
-	 * @param string $role
-	 *
-	 * @return $this
-	 */
-	public function role( string $role ) {
-		$this->set( 'role', $role );
 
-		return $this;
-	}
 
-	/**
-	 * Allow no value to be selected
-	 *
-	 * @param $allowNull
-	 *
-	 * @return $this
-	 */
-	public function allowNull( bool $allowNull ) {
-		$this->set( 'allow_null', $allowNull );
+    /**
+     * Limit to Wordpress Role
+     *
+     * @param string $role
+     *
+     * @return $this
+     */
+    public function role( string $role ) {
+        return $this->set( 'role', $role );
 
-		return $this;
-	}
+    }
 
-	/**
-	 * Allow multiple values to be selected
-	 *
-	 * @param bool $multiple
-	 *
-	 * @return $this
-	 */
-	public function multiple( bool $multiple ) {
-		$this->set( 'multiple', $multiple );
 
-		return $this;
-	}
+
+    /**
+     * Allow no value to be selected
+     *
+     * @param $allowNull
+     *
+     * @return $this
+     */
+    public function allowNull( bool $allowNull ) {
+        return $this->set( 'allow_null', $allowNull );
+
+    }
+
+
+
+    /**
+     * Allow multiple values to be selected
+     *
+     * @param bool $multiple
+     *
+     * @return $this
+     */
+    public function multiple( bool $multiple ) {
+        return $this->set( 'multiple', $multiple );
+
+    }
 
 }
