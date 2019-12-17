@@ -6,6 +6,7 @@ use JsonSerializable;
 use Lnk7\Genie\Cache;
 use Lnk7\Genie\Data\WordPress;
 use Lnk7\Genie\Registry;
+use Lnk7\Genie\Tools;
 use Lnk7\Genie\Utilities\ConvertString;
 use ReflectionClass;
 use WP_Error;
