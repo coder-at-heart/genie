@@ -165,7 +165,7 @@ class View {
 
 
 
-    protected function addVars( $fields ) {
+    public function addVars( $fields ) {
 
         $this->vars = array_merge( $this->vars, $fields );
 
