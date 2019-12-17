@@ -27,7 +27,7 @@ class View {
     /**
      * Vars used ina  template
      */
-    var $vars;
+    var $vars = [];
 
     /**
      * The twig template. This could be a filename or a string.
