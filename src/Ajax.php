@@ -22,10 +22,6 @@ class Ajax {
     public static function Setup() {
         add_action( 'init', static::class . '::init' );
 
-        // Action from the outside world
-        add_action( 'wp_ajax_ajax', static::class . '::ajax' );
-        add_action( 'wp_ajax_nopriv_ajax', static::class . '::ajax' );
-
     }
 
 
@@ -37,7 +33,13 @@ class Ajax {
      */
     public static function init() {
         $path = apply_filters( 'genie_ajax_path', 'ajax' );
-        add_rewrite_rule( $path . '/(.*)$', 'wp-admin/admin-ajax.php?action=ajax&request=$1', 'top' );
+        $action = apply_filters( 'genie_ajax_action', 'ajax' );
+        add_rewrite_rule( $path . '/(.*)$', 'wp-admin/admin-ajax.php?action='.$action.'&request=$1', 'top' );
+
+        // Action from the outside world
+        add_action( 'wp_ajax_'.$action, static::class . '::ajax' );
+        add_action( 'wp_ajax_nopriv_'.$action, static::class . '::ajax' );
+
     }
 
 
