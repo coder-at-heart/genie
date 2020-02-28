@@ -418,8 +418,11 @@ class ApiCall implements JsonSerializable {
      */
     public function failed() {
 
+        if (is_wp_error( $this->response )) {
+            return true;
+        }
         $code = $this->response['response']['code'];
-        return is_wp_error( $this->response )  or $code < 200 or $code > 299 ;
+        return $code < 200 or $code > 299 ;
     }
 
 
