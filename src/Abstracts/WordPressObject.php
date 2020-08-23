@@ -749,6 +749,50 @@ abstract class WordPressObject implements JsonSerializable {
 
 
     /**
+     * clear the cache for this post
+     */
+    function reGenerate() {
+        if ( $this->ID ) {
+            $this->clearCache();
+            static::generate( $this->ID );
+            return true;
+        }
+        return false;
+    }
+
+
+
+    /**
+     * clear the cache for this post
+     */
+    function clearCache() {
+        if ( $this->ID ) {
+            Cache::clearCache( $this->ID );
+            return true;
+        }
+        return false;
+    }
+
+
+
+    /**
+     * Delete this post
+     *
+     * @param bool $force
+     *
+     * @return bool
+     */
+    function delete( $force = true ) {
+        if ( $this->ID ) {
+            return wp_delete_post( $this->ID, $force );
+        }
+
+        return false;
+    }
+
+
+
+    /**
      * What should we serialize when json_encode is called on the object
      *
      * @return mixed|void
