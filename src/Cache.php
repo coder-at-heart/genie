@@ -11,16 +11,26 @@ class Cache {
 
     /**
      * Clear Cache
+     *
+     * @param int|array|null $id
      */
-    public static function clearCache() {
+    public static function clearCache( $id = null ) {
 
         global $wpdb;
 
+        $where = '';
+        if ( is_array( $id ) ) {
+            $where = 'where post_id in (' . implode( ',', $id ) . ')';
+        } else if ( is_int( $id ) ) {
+            $where = 'where post_id = $id';
+        }
+
         $prefix = static::getCachePrefix();
 
-        $wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE '{$prefix}%'" );
+        $wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE '{$prefix}%'  $where " );
         $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name like '%{$prefix}_api%'  " );
     }
+
 
 
     /**
