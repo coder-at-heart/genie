@@ -698,7 +698,7 @@ abstract class WordPressObject implements JsonSerializable {
      */
     function __get( $var ) {
 
-        if ( ! is_object( $this->data ) ) {
+        if ( ! is_object( $this->data ) || ! isset( $this->data->$var ) ) {
 
             return false;
         }
