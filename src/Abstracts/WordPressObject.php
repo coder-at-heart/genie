@@ -87,9 +87,9 @@ abstract class WordPressObject implements JsonSerializable {
     /**
      * Used to store the object data
      *
-     * @var mixed|void
+     * @var object
      */
-    var $data = (object)[];
+    var $data;
 
     /**
      * id for the currently loaded instance.
@@ -104,6 +104,8 @@ abstract class WordPressObject implements JsonSerializable {
      * Return a new instance of the Object
      */
     function __construct( $id = null ) {
+
+        $this->data = (object) [];
 
         if ( ! $id ) {
             return;
@@ -700,9 +702,6 @@ abstract class WordPressObject implements JsonSerializable {
 
             return false;
         }
-
-
-
 
         return $this->data->$var;
     }
