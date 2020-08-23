@@ -6,7 +6,6 @@ use JsonSerializable;
 use Lnk7\Genie\Cache;
 use Lnk7\Genie\Data\WordPress;
 use Lnk7\Genie\Registry;
-use Lnk7\Genie\Tools;
 use Lnk7\Genie\Utilities\ConvertString;
 use ReflectionClass;
 use WP_Error;
@@ -18,6 +17,31 @@ use WP_Post;
  * Abstract class for all Custom post types. This is the engine of the Vitol Intranet
  *
  * @package Lnk7\Genie\Abstracts
+ *
+ * @property int ID
+ * @property string post_author
+ * @property string post_date
+ * @property string post_date_gmt
+ * @property string post_content
+ * @property string post_title
+ * @property string post_excerpt
+ * @property string post_status
+ * @property string comment_status
+ * @property string ping_status
+ * @property string post_password
+ * @property string post_name
+ * @property string to_ping
+ * @property string pinged
+ * @property string post_modified
+ * @property string post_modified_gmt
+ * @property string post_content_filtered
+ * @property int post_parent
+ * @property string guid
+ * @property int menu_order
+ * @property string post_type
+ * @property string post_mime_type
+ * @property string comment_count
+ *
  */
 abstract class WordPressObject implements JsonSerializable {
 
@@ -518,11 +542,12 @@ abstract class WordPressObject implements JsonSerializable {
             }
             if ( isset( $field['sub_fields'] ) ) {
                 $found = static::findKey( $name, $field['sub_fields'] );
-                if($found) {
+                if ( $found ) {
                     return $found;
                 }
             }
         }
+
         return false;
     }
 
