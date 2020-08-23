@@ -20,9 +20,9 @@ class Cache {
 
         $where = '';
         if ( is_array( $id ) ) {
-            $where = 'where post_id in (' . implode( ',', $id ) . ')';
+            $where = 'and post_id in (' . implode( ',', $id ) . ')';
         } else if ( is_int( $id ) ) {
-            $where = 'where post_id = ' . $id;
+            $where = 'and post_id = ' . $id;
         }
 
         $prefix = static::getCachePrefix();
