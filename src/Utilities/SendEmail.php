@@ -13,7 +13,7 @@ use InlineStyle\InlineStyle;
  *
  * SendEmail::to('someone@somewhere.com')
  *   ->from('from@someone.com')
- *   -<body($body)
+ *   ->body($body)
  *   ->subject('test email')
  *   ->send();
  *
@@ -21,7 +21,9 @@ use InlineStyle\InlineStyle;
  */
 class SendEmail {
 
-    var $to;
+    var $email;
+
+    var $name;
 
     var $subject;
 
@@ -36,16 +38,68 @@ class SendEmail {
 
 
     /**
+     * SendEmail constructor.
+     *
+     * @param $email
+     * @param string $name
+     */
+    public function __construct( $email, $name = '' ) {
+
+        $this->email( $email );
+        $this->name( $name );
+
+    }
+
+
+
+    /**
+     * Sets the email of the recipient
+     *
+     * @param $email
+     *
+     * @return $this
+     */
+    function email( $email ) {
+
+        $this->email = $email;
+
+        return $this;
+    }
+
+
+
+    /**
+     * Sets the name of the email recipient
+     *
+     * @param $name
+     *
+     * @return $this
+     */
+    function name( $name ) {
+
+        $this->name = $name;
+
+        return $this;
+    }
+
+
+
+    /**
      * Static constructor
+     *
+     * SendEmail::to('someonbe@somedomains.com')
+     * ->body('...')
+     * ->subject('....')
+     * ->send()
+     *
+     * @param string $email
+     * @param string $name
      *
      * @return static
      */
-    public static function to( $to ) {
+    public static function to( $email, $name = '' ) {
 
-        $email = new static();
-        $email->to( $to );
-
-        return $email;
+        return new static( $email, $name = '' );
     }
 
 
@@ -53,7 +107,7 @@ class SendEmail {
     /**
      * Sets the sender of the email
      *
-     * @param        $email
+     * @param string $email
      * @param string $name
      *
      * @return $this
@@ -70,7 +124,7 @@ class SendEmail {
     /**
      * Adds a header to the email
      *
-     * @param $header
+     * @param string $header
      */
     function addHeader( $header ) {
 
@@ -137,6 +191,7 @@ class SendEmail {
         return $htmlDoc->getHTML();
 
     }
+
 
 
     /**

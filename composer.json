@@ -1,7 +1,7 @@
 {
   "name": "lnk7/genie",
   "description": "Advanced WordPress Programmer's Toolkit",
-  "version": "0.2.37",
+  "version": "0.2.38",
   "type": "library",
   "license": "GPL-2.0-or-later",
   "require": {
