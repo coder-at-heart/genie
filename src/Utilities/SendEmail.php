@@ -1,6 +1,6 @@
 <?php
 
-namespace Lnk7\Genie;
+namespace Lnk7\Genie\Utilities;
 
 use InlineStyle\InlineStyle;
 
