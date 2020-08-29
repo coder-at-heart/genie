@@ -21,19 +21,55 @@ use InlineStyle\InlineStyle;
  */
 class SendEmail {
 
+    /**
+     * To email address
+     *
+     * @var
+     */
     var $email;
 
+    /**
+     * The name of the person reciving the email
+     *
+     * @var
+     */
     var $name;
 
+    /**
+     * The subject
+     * @var
+     */
     var $subject;
 
+    /**
+     * Additional headers to send with th eemail
+     *
+     * @var string[]
+     */
     var $headers = [
         'Content-Type: text/html; charset=UTF-8',
     ];
 
+    /**
+     * The email body (HTML)
+     *
+     * @var string
+     */
     var $body = '';
 
+    /**
+     * A list of attachments
+     *
+     * @var array
+     */
     var $attachments = [];
+
+    /**
+     * Should CSS Styles be inlined?
+     *
+     * @var bool
+     */
+    var $inlineStyles = true;
 
 
 
@@ -172,7 +208,7 @@ class SendEmail {
      */
     function send() {
 
-        return wp_mail( $this->to, $this->subject, $this->format(), $this->headers, $this->attachments );
+        return wp_mail( $this->email, $this->subject, $this->format(), $this->headers, $this->attachments );
 
     }
 
@@ -185,11 +221,31 @@ class SendEmail {
      */
     function format() {
 
+        if ( ! $this->inlineStyles ) {
+            return $this->body;
+        }
+
         $htmlDoc = new InlineStyle( $this->body );
         $htmlDoc->applyStylesheet( $htmlDoc->extractStylesheets() );
 
         return $htmlDoc->getHTML();
 
+    }
+
+
+
+    /**
+     * Run the inline styler?
+     *
+     * @param $bool
+     *
+     * @return $this
+     */
+    function inlineStyles( $bool ) {
+
+        $this->inlineStyles = $bool;
+
+        return $this;
     }
 
 
