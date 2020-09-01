@@ -15,6 +15,7 @@ class CacheBust {
 
     /**
      * Main Wordpress Hook for the Theme
+     * @throws Exception
      */
     public static function Setup() {
 

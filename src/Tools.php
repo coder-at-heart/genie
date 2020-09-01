@@ -61,7 +61,7 @@ class Tools {
      * @return bool|object|array
      */
     public static function maybeConvertToJson( $string ) {
-        if (is_string($string)) {
+        if ( is_string( $string ) ) {
             $json = json_decode( $string );
             if ( json_last_error() == JSON_ERROR_NONE ) {
                 return $string;
@@ -69,7 +69,7 @@ class Tools {
 
         }
 
-        return json_encode($string);
+        return json_encode( $string );
     }
 
 
@@ -163,22 +163,6 @@ class Tools {
         }
 
         return $headers;
-    }
-
-
-
-    /**
-     * Check if the current user is a Site administrator
-     *
-     * @return boolean
-     */
-    public static function isSiteAdmin() {
-
-        if ( ! is_user_logged_in() ) {
-            return false;
-        }
-
-        return in_array( 'administrator', wp_get_current_user()->roles );
     }
 
 

@@ -4,9 +4,9 @@ namespace Lnk7\Genie\Abstracts;
 
 use JsonSerializable;
 use Lnk7\Genie\Cache;
-use Lnk7\Genie\Data\WordPress;
 use Lnk7\Genie\Registry;
 use Lnk7\Genie\Utilities\ConvertString;
+use Lnk7\Genie\WordPress;
 
 /**
  * Class CustomPost
