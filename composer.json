@@ -1,6 +1,14 @@
 {
   "name": "lnk7/genie",
   "description": "Advanced WordPress Programmer's Toolkit",
+  "authors": [
+    {
+      "name": "Sunil Jaiswal",
+      "email": "sunil@lnk7.com",
+      "homepage": "https://lnk7.com",
+      "role": "Developer"
+    }
+  ],
   "type": "library",
   "license": "GPL-2.0-or-later",
   "require": {
