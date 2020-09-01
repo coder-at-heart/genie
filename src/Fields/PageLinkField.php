@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
-class PageLinkField extends Field {
+class PageLinkField extends Field
+{
 
     protected $type = 'page_link';
 
@@ -19,8 +20,9 @@ class PageLinkField extends Field {
      *
      * @return $this
      */
-    public function taxonomy( string $taxonomy ) {
-        return $this->set( 'taxonomy', $taxonomy );
+    public function taxonomy(string $taxonomy)
+    {
+        return $this->set('taxonomy', $taxonomy);
 
     }
 
@@ -33,8 +35,9 @@ class PageLinkField extends Field {
      *
      * @return $this
      */
-    public function allowNull( bool $allowNull ) {
-        return $this->set( 'allow_null', $allowNull );
+    public function allowNull(bool $allowNull)
+    {
+        return $this->set('allow_null', $allowNull);
 
     }
 
@@ -47,8 +50,9 @@ class PageLinkField extends Field {
      *
      * @return $this
      */
-    public function multiple( bool $multiple ) {
-        return $this->set( 'multiple', $multiple );
+    public function multiple(bool $multiple)
+    {
+        return $this->set('multiple', $multiple);
 
     }
 
@@ -61,16 +65,18 @@ class PageLinkField extends Field {
      *
      * @return $this
      */
-    public function allowArchives( bool $allowArchives ) {
-        return $this->set( 'allow_archives', $allowArchives );
+    public function allowArchives(bool $allowArchives)
+    {
+        return $this->set('allow_archives', $allowArchives);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->postObject( 'page' );
+        $this->postObject('page');
     }
 
 
@@ -82,8 +88,9 @@ class PageLinkField extends Field {
      *
      * @return $this
      */
-    public function postObject( array $postObject ) {
-        return $this->set( 'post_type', $postObject );
+    public function postObject(array $postObject)
+    {
+        return $this->set('post_type', $postObject);
 
     }
 

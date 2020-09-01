@@ -2,7 +2,8 @@
 
 namespace Lnk7\Genie\Fields;
 
-class RepeaterField extends GroupField {
+class RepeaterField extends GroupField
+{
 
     protected $type = 'repeater';
 
@@ -15,17 +16,19 @@ class RepeaterField extends GroupField {
      *
      * @return $this
      */
-    public function buttonLabel( $label ) {
+    public function buttonLabel($label)
+    {
 
-        return $this->set( 'button_label', $label );
+        return $this->set('button_label', $label);
 
     }
 
 
 
-    public function collapsed( $collapsed ) {
+    public function collapsed($collapsed)
+    {
 
-        return $this->set( 'collapsed', $collapsed );
+        return $this->set('collapsed', $collapsed);
 
     }
 
@@ -38,9 +41,10 @@ class RepeaterField extends GroupField {
      *
      * @return $this
      */
-    public function max( int $number ) {
+    public function max(int $number)
+    {
 
-        return $this->set( 'max', $number );
+        return $this->set('max', $number);
 
     }
 
@@ -53,18 +57,20 @@ class RepeaterField extends GroupField {
      *
      * @return $this
      */
-    public function min( int $number ) {
+    public function min(int $number)
+    {
 
-        return $this->set( 'min', $number );
+        return $this->set('min', $number);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
 
         parent::setDefaults();
-        $this->layout( 'table' );
+        $this->layout('table');
     }
 
 }

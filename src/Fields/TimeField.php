@@ -2,7 +2,8 @@
 
 namespace Lnk7\Genie\Fields;
 
-class TimeField extends DateField {
+class TimeField extends DateField
+{
 
     protected $type = 'time_picker';
 
@@ -10,10 +11,11 @@ class TimeField extends DateField {
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->displayFormat( 'g:i a' );
-        $this->returnFormat( 'H:i:s' );
+        $this->displayFormat('g:i a');
+        $this->returnFormat('H:i:s');
     }
 
 }

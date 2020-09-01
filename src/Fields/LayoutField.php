@@ -2,7 +2,8 @@
 
 namespace Lnk7\Genie\Fields;
 
-class LayoutField extends GroupField {
+class LayoutField extends GroupField
+{
 
     protected $type = 'layout';
 
@@ -15,9 +16,10 @@ class LayoutField extends GroupField {
      *
      * @return $this
      */
-    public function max( int $number ) {
+    public function max(int $number)
+    {
 
-        return $this->set( 'max', $number );
+        return $this->set('max', $number);
 
     }
 
@@ -30,18 +32,20 @@ class LayoutField extends GroupField {
      *
      * @return $this
      */
-    public function min( int $number ) {
+    public function min(int $number)
+    {
 
-        return $this->set( 'min', $number );
+        return $this->set('min', $number);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
 
         parent::setDefaults();
-        $this->layout( 'block' );
+        $this->layout('block');
     }
 
 }

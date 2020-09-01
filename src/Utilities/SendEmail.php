@@ -6,11 +6,8 @@ use InlineStyle\InlineStyle;
 
 /**
  * Class SendEmail
- *
  * A Handy wrapper around wp_mail (https://developer.wordpress.org/reference/functions/wp_mail/)
- *
  * $body = View::make('Emails/example.twig',['name' => 'Sunil]);
- *
  * SendEmail::to('someone@somewhere.com')
  *   ->from('from@someone.com')
  *   ->body($body)
@@ -19,7 +16,8 @@ use InlineStyle\InlineStyle;
  *
  * @package Lnk7\Genie
  */
-class SendEmail {
+class SendEmail
+{
 
     /**
      * To email address
@@ -37,6 +35,7 @@ class SendEmail {
 
     /**
      * The subject
+     *
      * @var
      */
     var $subject;
@@ -79,10 +78,11 @@ class SendEmail {
      * @param $email
      * @param string $name
      */
-    public function __construct( $email, $name = '' ) {
+    public function __construct($email, $name = '')
+    {
 
-        $this->email( $email );
-        $this->name( $name );
+        $this->email($email);
+        $this->name($name);
 
     }
 
@@ -95,7 +95,8 @@ class SendEmail {
      *
      * @return $this
      */
-    function email( $email ) {
+    function email($email)
+    {
 
         $this->email = $email;
 
@@ -111,7 +112,8 @@ class SendEmail {
      *
      * @return $this
      */
-    function name( $name ) {
+    function name($name)
+    {
 
         $this->name = $name;
 
@@ -122,7 +124,6 @@ class SendEmail {
 
     /**
      * Static constructor
-     *
      * SendEmail::to('someonbe@somedomains.com')
      * ->body('...')
      * ->subject('....')
@@ -133,9 +134,10 @@ class SendEmail {
      *
      * @return static
      */
-    public static function to( $email, $name = '' ) {
+    public static function to($email, $name = '')
+    {
 
-        return new static( $email, $name = '' );
+        return new static($email, $name = '');
     }
 
 
@@ -148,9 +150,10 @@ class SendEmail {
      *
      * @return $this
      */
-    function from( $email, $name = '' ) {
+    function from($email, $name = '')
+    {
 
-        $this->addHeader( "From: $name <{$email}>" );
+        $this->addHeader("From: $name <{$email}>");
 
         return $this;
     }
@@ -162,7 +165,8 @@ class SendEmail {
      *
      * @param string $header
      */
-    function addHeader( $header ) {
+    function addHeader($header)
+    {
 
         $this->headers[] = $header;
     }
@@ -176,7 +180,8 @@ class SendEmail {
      *
      * @return $this
      */
-    public function addAttachment( $file ) {
+    public function addAttachment($file)
+    {
 
         $this->attachments[] = $file;
 
@@ -192,7 +197,8 @@ class SendEmail {
      *
      * @return $this
      */
-    function body( $body ) {
+    function body($body)
+    {
 
         $this->body = $body;
 
@@ -206,9 +212,10 @@ class SendEmail {
      *
      * @return bool
      */
-    function send() {
+    function send()
+    {
 
-        return wp_mail( $this->email, $this->subject, $this->format(), $this->headers, $this->attachments );
+        return wp_mail($this->email, $this->subject, $this->format(), $this->headers, $this->attachments);
 
     }
 
@@ -219,14 +226,15 @@ class SendEmail {
      *
      * @return string
      */
-    function format() {
+    function format()
+    {
 
-        if ( ! $this->inlineStyles ) {
+        if (!$this->inlineStyles) {
             return $this->body;
         }
 
-        $htmlDoc = new InlineStyle( $this->body );
-        $htmlDoc->applyStylesheet( $htmlDoc->extractStylesheets() );
+        $htmlDoc = new InlineStyle($this->body);
+        $htmlDoc->applyStylesheet($htmlDoc->extractStylesheets());
 
         return $htmlDoc->getHTML();
 
@@ -241,7 +249,8 @@ class SendEmail {
      *
      * @return $this
      */
-    function inlineStyles( $bool ) {
+    function inlineStyles($bool)
+    {
 
         $this->inlineStyles = $bool;
 
@@ -257,7 +266,8 @@ class SendEmail {
      *
      * @return $this
      */
-    function subject( $subject ) {
+    function subject($subject)
+    {
 
         $this->subject = $subject;
 

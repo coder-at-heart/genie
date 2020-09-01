@@ -10,12 +10,12 @@ use Twig\TwigFilter;
 
 /**
  * Class View
- *
  * Wrapper around twig
  *
  * @package Lnk7\Genie
  */
-class View {
+class View
+{
 
     /**
      * Twig Object
@@ -47,58 +47,66 @@ class View {
      *
      * @param $template
      */
-    function __construct( $template ) {
+    function __construct($template)
+    {
         $this->template = $template;
     }
 
 
 
-    public static function Setup() {
+    public static function Setup()
+    {
 
-        add_action( 'init', static::class . '::init', 1 );
-        add_shortcode( 'genie_view', static::class . '::genie_view' );
-    }
+        add_action('init', function () {
 
+            $debug = WP_DEBUG;
+            $cache = !WP_DEBUG;
 
+            $pathArray = apply_filters('genie_view_folders', []);
 
-    /**
-     * Wordpress Init Hook
-     *
-     */
-    public static function init() {
+            $fileLoader = new FilesystemLoader($pathArray);
+            $loader = new ChainLoader([$fileLoader]);
 
-        $debug = WP_DEBUG;
-        $cache = ! WP_DEBUG;
+            $configArray = [
+                'autoescape'  => false,
+                'auto_reload' => true,
+            ];
 
-        $pathArray = apply_filters( 'genie_view_folders', [] );
+            if ($debug) {
+                $configArray['debug'] = true;
+            }
+            if ($cache) {
+                $configArray['cache'] = static::getCacheFolder();
+            }
 
-        $fileLoader = new FilesystemLoader( $pathArray );
-        $loader     = new ChainLoader( [ $fileLoader ] );
+            $twig = new Environment($loader, $configArray);
 
-        $configArray = [
-            'autoescape'  => false,
-            'auto_reload' => true,
-        ];
+            if ($debug) {
+                $twig->addExtension(new DebugExtension());
+            }
+            $filter = new TwigFilter('json', Tools::class . '::jsonSafe');
+            $twig->addFilter($filter);
 
-        if ( $debug ) {
-            $configArray['debug'] = true;
-        }
-        if ( $cache ) {
-            $configArray['cache'] = static::getCacheFolder();
-        }
+            $filter = new TwigFilter('wpautop', 'wpautop');
+            $twig->addFilter($filter);
 
-        $twig = new Environment( $loader, $configArray );
+            self::$twig = apply_filters('genie_twig_init', $twig);
+        }, 1);
 
-        if ( $debug ) {
-            $twig->addExtension( new DebugExtension() );
-        }
-        $filter = new TwigFilter( 'json', Tools::class . '::jsonSafe' );
-        $twig->addFilter( $filter );
+        add_shortcode('genie_view', function ($attributes, $content) {
+            $a = (object)shortcode_atts([
+                'view' => '',
+            ], $attributes);
 
-        $filter = new TwigFilter( 'wpautop', 'wpautop' );
-        $twig->addFilter( $filter );
+            if (!$a->view) {
+                $a->view = $attributes[0] ?? $content;
+            }
 
-        self::$twig = apply_filters( 'genie_twig_init', $twig );;
+            return static::with($a->view)
+                ->addVars($attributes)
+                ->render();
+
+        });
     }
 
 
@@ -108,9 +116,10 @@ class View {
      *
      * @return string
      */
-    private static function getCacheFolder() {
+    private static function getCacheFolder()
+    {
 
-        $upload     = wp_upload_dir();
+        $upload = wp_upload_dir();
         $upload_dir = $upload['basedir'];
 
         return $upload_dir . '/twig_cache';
@@ -118,45 +127,20 @@ class View {
 
 
 
-    /**
-     * View shortcode
-     *
-     * @param $attributes
-     * @param $content
-     *
-     * @return string
-     */
-    public static function genie_view( $attributes, $content ) {
+    public function render()
+    {
 
-        $a = (object) shortcode_atts( [
-            'view' => '',
-        ], $attributes );
+        $vars = apply_filters('genie_view_before_render', $this->vars);
 
-        if ( ! $a->view ) {
-            $a->view = $attributes[0] ?? $content;
-        }
-
-        return static::with( $a->view )
-                     ->addVars( $attributes )
-                     ->render();
-
-    }
-
-
-
-    public function render() {
-
-        $vars = apply_filters( 'genie_view_before_render', $this->vars );
-
-        if ( $this->templateType === 'string' ) {
-            $template = View::$twig->createTemplate( $this->template );
-            $html     = $template->render( $vars );
+        if ($this->templateType === 'string') {
+            $template = View::$twig->createTemplate($this->template);
+            $html = $template->render($vars);
         } else {
-            $html = View::$twig->render( $this->template, $vars );
+            $html = View::$twig->render($this->template, $vars);
         }
 
-        if ( $this->processShortcodes ) {
-            $html = do_shortcode( $html );
+        if ($this->processShortcodes) {
+            $html = do_shortcode($html);
         }
 
         return $html;
@@ -165,9 +149,17 @@ class View {
 
 
 
-    public function addVars( $fields ) {
+    /**
+     * Add variables to the twig template
+     *
+     * @param $fields
+     *
+     * @return $this
+     */
+    public function addVars($fields)
+    {
 
-        $this->vars = array_merge( $this->vars, $fields );
+        $this->vars = array_merge($this->vars, $fields);
 
         return $this;
 
@@ -175,10 +167,19 @@ class View {
 
 
 
-    public static function with( $template ) {
+    /**
+     * which template to use?
+     * This could be a file or a string
+     *
+     * @param $template
+     *
+     * @return static
+     */
+    public static function with($template)
+    {
 
-        $type               = substr( strtolower( $template ), - 5 ) === '.twig' ? 'file' : 'string';
-        $view               = new static( $template );
+        $type = substr(strtolower($template), -5) === '.twig' ? 'file' : 'string';
+        $view = new static($template);
         $view->templateType = $type;
 
         return $view;
@@ -187,32 +188,12 @@ class View {
 
 
     /**
-     * Make a view, and parse shortcodes.
+     * Enabled shortcode on this template
      *
-     * @param $view
-     * @param array $vars
-     *
-     * @return string
+     * @return $this
      */
-    public static function make( $view, $vars = [] ) {
-
-        if ( is_object( $vars ) ) {
-            $vars = (array) $vars;
-        }
-
-        if ( ! isset( $vars['_objects'] ) ) {
-            $vars['_objects'] = [];
-        }
-
-        $vars = apply_filters( 'genie_view_before_render', $vars );
-        $html = self::$twig->render( $view, $vars );
-
-        return do_shortcode( $html );
-    }
-
-
-
-    function enableShortcodes() {
+    function enableShortcodes()
+    {
         $this->processShortcodes = true;
 
         return $this;
@@ -220,7 +201,14 @@ class View {
 
 
 
-    function disableShortcodes() {
+    /**
+     * do not process shortcodes
+     *
+     * @return $this
+     */
+
+    function disableShortcodes()
+    {
         $this->processShortcodes = false;
 
         return $this;
@@ -236,9 +224,10 @@ class View {
      *
      * @return $this
      */
-    public function addVar( $var, $value ) {
+    public function addVar($var, $value)
+    {
 
-        $this->vars[ $var ] = $value;
+        $this->vars[$var] = $value;
 
         return $this;
 
@@ -246,7 +235,11 @@ class View {
 
 
 
-    public function display() {
+    /**
+     * Output the view rather than return it.
+     */
+    public function display()
+    {
         echo $this->render();
     }
 

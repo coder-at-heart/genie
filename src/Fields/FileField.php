@@ -2,7 +2,8 @@
 
 namespace Lnk7\Genie\Fields;
 
-class FileField extends TextField {
+class FileField extends TextField
+{
 
     protected $type = 'file';
 
@@ -18,8 +19,9 @@ class FileField extends TextField {
      *
      * @return $this
      */
-    public function minSize( string $minSize ) {
-        return $this->set( 'min_size', $minSize );
+    public function minSize(string $minSize)
+    {
+        return $this->set('min_size', $minSize);
 
     }
 
@@ -33,8 +35,9 @@ class FileField extends TextField {
      *
      * @return $this
      */
-    public function maxSize( string $maxSize ) {
-        return $this->set( 'max_size', $maxSize );
+    public function maxSize(string $maxSize)
+    {
+        return $this->set('max_size', $maxSize);
 
     }
 
@@ -48,19 +51,21 @@ class FileField extends TextField {
      *
      * @return $this
      */
-    public function mimeTypes( string $mimeTypes ) {
-        return $this->set( 'mime_types', $mimeTypes );
+    public function mimeTypes(string $mimeTypes)
+    {
+        return $this->set('mime_types', $mimeTypes);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->searchable( false );
-        $this->returnFormat( 'array' );
-        $this->previewSize( 'thumbnail' );
-        $this->library( 'all' );
+        $this->searchable(false);
+        $this->returnFormat('array');
+        $this->previewSize('thumbnail');
+        $this->library('all');
     }
 
 
@@ -73,23 +78,24 @@ class FileField extends TextField {
      *
      * @return $this
      */
-    public function returnFormat( string $returnValue ) {
-        return $this->set( 'return_format', $returnValue );
+    public function returnFormat(string $returnValue)
+    {
+        return $this->set('return_format', $returnValue);
 
     }
 
 
 
     /**
-     *
      * Specify the image size shown when editing. Defaults to 'thumbnail'.
      *
      * @param $previewSize
      *
      * @return $this
      */
-    public function previewSize( $previewSize ) {
-        return $this->set( 'preview_size', $previewSize );
+    public function previewSize($previewSize)
+    {
+        return $this->set('preview_size', $previewSize);
 
     }
 
@@ -102,8 +108,9 @@ class FileField extends TextField {
      *
      * @return $this
      */
-    public function library( string $library ) {
-        return $this->set( 'library', $library );
+    public function library(string $library)
+    {
+        return $this->set('library', $library);
 
     }
 

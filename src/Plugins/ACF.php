@@ -2,16 +2,18 @@
 
 namespace Lnk7\Genie\Plugins;
 
-class ACF {
+class ACF
+{
 
     /**
      * Check if ACF is disabled
      *
      * @return bool
      */
-    public static function isDisabled() {
+    public static function isDisabled()
+    {
 
-        return ! static::isEnabled();
+        return !static::isEnabled();
     }
 
 
@@ -21,9 +23,10 @@ class ACF {
      *
      * @return bool
      */
-    public static function isEnabled() {
+    public static function isEnabled()
+    {
 
-        return function_exists( 'get_field' );
+        return function_exists('get_field');
     }
 
 }

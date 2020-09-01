@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Utilities\ConvertString;
 
-class ColorSelectorField extends SelectField {
+class ColorSelectorField extends SelectField
+{
 
     protected $colors = [
         'Vitol Blue'   => '#002B54',
@@ -27,26 +28,28 @@ class ColorSelectorField extends SelectField {
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
 
         parent::setDefaults();
-        $this->returnFormat( 'value' );
+        $this->returnFormat('value');
         $this->setChoices();
     }
 
 
 
-    public function setChoices() {
+    public function setChoices()
+    {
 
         $choices = [];
-        foreach ( $this->colors as $name => $hex ) {
+        foreach ($this->colors as $name => $hex) {
 
-            $colorCode = ConvertString::From( $name )->toCamelCase();
+            $colorCode = ConvertString::From($name)->toCamelCase();
 
-            $choices[ $colorCode ] = '<i class="fa fa-circle" style="font-size:20px; color:' . $hex . '"></i> ' . $name . ' </div>';
+            $choices[$colorCode] = '<i class="fa fa-circle" style="font-size:20px; color:' . $hex . '"></i> ' . $name . ' </div>';
         }
 
-        $this->choices( $choices );
+        $this->choices($choices);
     }
 
 }

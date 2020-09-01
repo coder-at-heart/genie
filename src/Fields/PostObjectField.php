@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
-class PostObjectField extends Field {
+class PostObjectField extends Field
+{
 
     protected $type = 'post_object';
 
@@ -19,12 +20,13 @@ class PostObjectField extends Field {
      *
      * @return $this
      */
-    public function postObject( $postObject ) {
-        if ( ! is_array( $postObject ) ) {
-            $postObject = [ $postObject ];
+    public function postObject($postObject)
+    {
+        if (!is_array($postObject)) {
+            $postObject = [$postObject];
         }
 
-        return $this->set( 'post_type', $postObject );
+        return $this->set('post_type', $postObject);
 
     }
 
@@ -37,18 +39,20 @@ class PostObjectField extends Field {
      *
      * @return $this
      */
-    public function taxonomy( string $taxonomy ) {
-        return $this->set( 'taxonomy', $taxonomy );
+    public function taxonomy(string $taxonomy)
+    {
+        return $this->set('taxonomy', $taxonomy);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->returnFormat( 'id' );
-        $this->allowNull( false );
-        $this->multiple( false );
+        $this->returnFormat('id');
+        $this->allowNull(false);
+        $this->multiple(false);
     }
 
 
@@ -60,8 +64,9 @@ class PostObjectField extends Field {
      *
      * @return $this
      */
-    public function returnFormat( string $returnFormat ) {
-        return $this->set( 'return_format', $returnFormat );
+    public function returnFormat(string $returnFormat)
+    {
+        return $this->set('return_format', $returnFormat);
 
     }
 
@@ -74,8 +79,9 @@ class PostObjectField extends Field {
      *
      * @return $this
      */
-    public function allowNull( bool $allowNull ) {
-        return $this->set( 'allow_null', $allowNull );
+    public function allowNull(bool $allowNull)
+    {
+        return $this->set('allow_null', $allowNull);
 
     }
 
@@ -88,8 +94,9 @@ class PostObjectField extends Field {
      *
      * @return $this
      */
-    public function multiple( bool $multiple ) {
-        return $this->set( 'multiple', $multiple );
+    public function multiple(bool $multiple)
+    {
+        return $this->set('multiple', $multiple);
 
     }
 

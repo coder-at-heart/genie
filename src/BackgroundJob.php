@@ -4,19 +4,16 @@ namespace Lnk7\Genie;
 
 /**
  * Class BackgroundJob
- *
  * Examples.
- *
  * $calls = BackgroundJob::start();
  * $calls->add( some::class . '::method', $param );
  * $calls->send();
- *
  * BackgroundJob::start()
  *  ->add( Object::class . '::method', [ 'param1' => $x, 'param2' => $y ] )
  *  ->send();
- *
  */
-class BackgroundJob {
+class BackgroundJob
+{
 
     /**
      * The variable used to pass the post ID
@@ -45,24 +42,25 @@ class BackgroundJob {
     /**
      * Wordpress Hooks !
      */
-    public static function Setup() {
+    public static function Setup()
+    {
 
         //  Check if we're processing a background Job
-        if ( isset( $_GET[ static::$getVariable ] ) and $_GET[ static::$getVariable ] ) {
-            $id = absint( $_GET[ static::$getVariable ] );
+        if (isset($_GET[static::$getVariable]) and $_GET[static::$getVariable]) {
+            $id = absint($_GET[static::$getVariable]);
 
             // This clever bit of code ends the connection so we don't hold up the user.
             ob_end_clean();
-            ignore_user_abort( true );
+            ignore_user_abort(true);
             ob_start();
-            header( "Connection: close" );
-            header( "Content-Length: " . ob_get_length() );
+            header("Connection: close");
+            header("Content-Length: " . ob_get_length());
             ob_end_flush();
             flush();
 
             // Stash the id we need to process in the init hook
             static::$processingId = $id;
-            add_action( 'init', static::class . '::init', 10000 );
+            add_action('init', static::class . '::init', 10000);
 
         }
 
@@ -72,14 +70,14 @@ class BackgroundJob {
 
     /**
      * Hook into Wordpress Init to Run any jobs.
-     *
      * This will usually only happen from a call from curl.
      */
-    public static function init() {
+    public static function init()
+    {
 
         // Do we have a job to process
-        if ( static::$processingId ) {
-            static::ProcessBackGroundJob( static::$processingId );
+        if (static::$processingId) {
+            static::ProcessBackGroundJob(static::$processingId);
             wp_die();
         }
     }
@@ -91,18 +89,19 @@ class BackgroundJob {
      *
      * @param $id
      */
-    public static function ProcessBackGroundJob( $id ) {
+    public static function ProcessBackGroundJob($id)
+    {
 
-        set_time_limit( 0 );
+        set_time_limit(0);
 
-        $job = get_post( $id );
+        $job = get_post($id);
 
-        $calls = unserialize( base64_decode( $job->post_content ) );
-        foreach ( $calls as $args ) {
-            $callback = array_shift( $args );
-            call_user_func_array( $callback, $args );
+        $calls = unserialize(base64_decode($job->post_content));
+        foreach ($calls as $args) {
+            $callback = array_shift($args);
+            call_user_func_array($callback, $args);
         }
-        wp_delete_post( $id, true );
+        wp_delete_post($id, true);
 
     }
 
@@ -113,7 +112,8 @@ class BackgroundJob {
      *
      * @return BackgroundJob
      */
-    public static function start() {
+    public static function start()
+    {
         $call = new static();
 
         return $call;
@@ -126,7 +126,8 @@ class BackgroundJob {
      *
      * @return bool
      */
-    public static function doingBackgroundJob() {
+    public static function doingBackgroundJob()
+    {
         return static::$processingId ? true : false;
     }
 
@@ -137,7 +138,8 @@ class BackgroundJob {
      *
      * @return $this
      */
-    function add() {
+    function add()
+    {
         $this->calls[] = func_get_args();
 
         return $this;
@@ -148,15 +150,16 @@ class BackgroundJob {
     /**
      * Save the job and send it for processing.
      */
-    function send() {
+    function send()
+    {
 
-        $id = wp_insert_post( [
+        $id = wp_insert_post([
             'post_type'    => 'genie_background_job',
-            'post_content' => base64_encode( serialize( $this->calls ) ),
-        ] );
+            'post_content' => base64_encode(serialize($this->calls)),
+        ]);
 
         $url = home_url() . '/?' . static::$getVariable . '=' . $id;
-        get_headers( $url );
+        get_headers($url);
     }
 
 }

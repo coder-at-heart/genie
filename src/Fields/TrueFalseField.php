@@ -5,7 +5,8 @@ namespace Lnk7\Genie\Fields;
 use Lnk7\Genie\Abstracts\Field;
 use Lnk7\Genie\Fields\Traits\message;
 
-class TrueFalseField extends Field {
+class TrueFalseField extends Field
+{
 
     protected $type = 'true_false';
 
@@ -20,18 +21,20 @@ class TrueFalseField extends Field {
      *
      * @return $this
      */
-    public function message( string $message ) {
-        return $this->set( 'message', $message );
+    public function message(string $message)
+    {
+        return $this->set('message', $message);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->ui( true );
-        $this->onText( 'Yes' );
-        $this->offText( 'No' );
+        $this->ui(true);
+        $this->onText('Yes');
+        $this->offText('No');
     }
 
 
@@ -43,8 +46,9 @@ class TrueFalseField extends Field {
      *
      * @return $this
      */
-    public function ui( bool $ui ) {
-        return $this->set( 'ui', $ui );
+    public function ui(bool $ui)
+    {
+        return $this->set('ui', $ui);
 
     }
 
@@ -57,8 +61,9 @@ class TrueFalseField extends Field {
      *
      * @return $this
      */
-    public function onText( string $text ) {
-        return $this->set( 'ui_on_text', $text );
+    public function onText(string $text)
+    {
+        return $this->set('ui_on_text', $text);
 
     }
 
@@ -71,8 +76,9 @@ class TrueFalseField extends Field {
      *
      * @return $this
      */
-    public function offText( string $text ) {
-        return $this->set( 'ui_off_text', $text );
+    public function offText(string $text)
+    {
+        return $this->set('ui_off_text', $text);
 
     }
 

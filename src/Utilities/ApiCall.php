@@ -8,11 +8,12 @@ use Lnk7\Genie\Tools;
 
 /**
  * Simple wrapper for Wordpress wp_remote_post
- *
  * Class API
+ *
  * @package Lnk7\Genie
  */
-class ApiCall implements JsonSerializable {
+class ApiCall implements JsonSerializable
+{
 
     /**
      * url for the API call
@@ -44,12 +45,14 @@ class ApiCall implements JsonSerializable {
 
     /**
      * Which http version to use?
+     *
      * @var string
      */
     var $httpVersion = '1.0';
 
     /**
      * Should this API call block script execution?
+     *
      * @var bool
      */
     var $blocking = true;
@@ -110,7 +113,8 @@ class ApiCall implements JsonSerializable {
      *
      * @param $url
      */
-    public function __construct( $url ) {
+    public function __construct($url)
+    {
 
         $this->url = $url;
 
@@ -126,13 +130,14 @@ class ApiCall implements JsonSerializable {
      *
      * @return bool|mixed
      */
-    public static function get( $url, $vars = [] ) {
+    public static function get($url, $vars = [])
+    {
 
-        $call = static::to( $url )
-                      ->usingMethod( 'GET' )
-                      ->withBody( $vars )
-                      ->send();
-        if ( $call->wasSuccessful() ) {
+        $call = static::to($url)
+            ->usingMethod('GET')
+            ->withBody($vars)
+            ->send();
+        if ($call->wasSuccessful()) {
             return $call->getResponseBody();
         } else {
             return false;
@@ -146,10 +151,11 @@ class ApiCall implements JsonSerializable {
      *
      * @return $this
      */
-    public function send() {
+    public function send()
+    {
 
         // Build a Transient Key
-        $key = Cache::getCachePrefix() . '_api_' . md5( serialize( [
+        $key = Cache::getCachePrefix() . '_api_' . md5(serialize([
                 'url'         => $this->url,
                 'method'      => $this->method,
                 'timeout'     => $this->timeout,
@@ -160,12 +166,12 @@ class ApiCall implements JsonSerializable {
                 'body'        => $this->body,
                 'cookies'     => $this->cookies,
                 'data_format' => $this->data_format,
-            ] ) );
+            ]));
 
-        if ( false === ( $this->response = get_transient( $key ) ) or ! $this->cache ) {
+        if (false === ($this->response = get_transient($key)) or !$this->cache) {
 
             // It wasn't there, so regenerate the data and save the transient
-            $this->response = wp_remote_post( $this->url, [
+            $this->response = wp_remote_post($this->url, [
                     'method'      => $this->method,
                     'timeout'     => $this->timeout,
                     'redirection' => $this->redirection,
@@ -177,8 +183,8 @@ class ApiCall implements JsonSerializable {
                     'data_format' => $this->data_format,
                 ]
             );
-            if ( $this->cache ) {
-                set_transient( $key, $this->response, $this->cacheFor );
+            if ($this->cache) {
+                set_transient($key, $this->response, $this->cacheFor);
             }
         }
 
@@ -195,7 +201,8 @@ class ApiCall implements JsonSerializable {
      *
      * @return $this
      */
-    public function withBody( $body ) {
+    public function withBody($body)
+    {
 
         $this->body = $body;
 
@@ -211,7 +218,8 @@ class ApiCall implements JsonSerializable {
      *
      * @return $this
      */
-    public function usingMethod( $method ) {
+    public function usingMethod($method)
+    {
 
         $this->method = $method;
 
@@ -222,11 +230,9 @@ class ApiCall implements JsonSerializable {
 
     /**
      * Nice way to initialise
-     *
      * $call = API::to('https://www.somedomain.com')
      *   ->body(['a'=>1,'b'=>2 ])
      *   ->send();
-     *
      * if ($call->wasSuccessful() {
      * }
      *
@@ -234,9 +240,10 @@ class ApiCall implements JsonSerializable {
      *
      * @return ApiCall
      */
-    public static function to( $url ) {
+    public static function to($url)
+    {
 
-        return new static( $url );
+        return new static($url);
     }
 
 
@@ -246,9 +253,27 @@ class ApiCall implements JsonSerializable {
      *
      * @return bool
      */
-    public function wasSuccessful() {
+    public function wasSuccessful()
+    {
 
-        return ! static::failed();
+        return !static::failed();
+    }
+
+
+
+    /**
+     * Returns true if the APi called failed
+     *
+     * @return bool
+     */
+    public function failed()
+    {
+
+        if (is_wp_error($this->response)) {
+            return true;
+        }
+        $code = $this->response['response']['code'];
+        return $code < 200 or $code > 299;
     }
 
 
@@ -258,12 +283,13 @@ class ApiCall implements JsonSerializable {
      *
      * @return bool|mixed
      */
-    public function getResponseBody() {
+    public function getResponseBody()
+    {
 
-        if (!isset( $this->response['body'] ) ) {
+        if (!isset($this->response['body'])) {
             return false;
         }
-        return Tools::maybeConvertFromJson( $this->response['body']);
+        return Tools::maybeConvertFromJson($this->response['body']);
 
     }
 
@@ -278,12 +304,13 @@ class ApiCall implements JsonSerializable {
      * @return bool|mixed
      */
 
-    public static function post( $url, $vars ) {
+    public static function post($url, $vars)
+    {
 
-        $call = static::to( $url )
-                      ->withBody( $vars )
-                      ->send();
-        if ( $call->wasSuccessful() ) {
+        $call = static::to($url)
+            ->withBody($vars)
+            ->send();
+        if ($call->wasSuccessful()) {
             return $call->getResponseBody();
         } else {
             return false;
@@ -299,10 +326,11 @@ class ApiCall implements JsonSerializable {
      *
      * @return $this
      */
-    public function addHeaders( $headers ) {
+    public function addHeaders($headers)
+    {
 
-        foreach ( $headers as $header => $data ) {
-            $this->addHeader( $header, $data );
+        foreach ($headers as $header => $data) {
+            $this->addHeader($header, $data);
         }
 
         return $this;
@@ -318,9 +346,10 @@ class ApiCall implements JsonSerializable {
      *
      * @return $this
      */
-    public function addHeader( $header, $data ) {
+    public function addHeader($header, $data)
+    {
 
-        $this->headers[ $header ] = $data;
+        $this->headers[$header] = $data;
 
         return $this;
     }
@@ -334,11 +363,12 @@ class ApiCall implements JsonSerializable {
      *
      * @return $this
      */
-    public function withJson( $json ) {
+    public function withJson($json)
+    {
 
-        $this->withBody(Tools::maybeConvertToJson($json) );
-        $this->setDataFormat( 'body' );
-        $this->addHeader( 'Content-Type', 'application/json; charset=utf-8' );
+        $this->withBody(Tools::maybeConvertToJson($json));
+        $this->setDataFormat('body');
+        $this->addHeader('Content-Type', 'application/json; charset=utf-8');
 
         return $this;
     }
@@ -352,7 +382,8 @@ class ApiCall implements JsonSerializable {
      *
      * @return $this
      */
-    public function setDataFormat( $format ) {
+    public function setDataFormat($format)
+    {
 
         $this->data_format = $format;
 
@@ -368,9 +399,10 @@ class ApiCall implements JsonSerializable {
      *
      * @return $this
      */
-    public function cacheFor( int $seconds ) {
+    public function cacheFor(int $seconds)
+    {
 
-        $this->enableCache( $seconds );
+        $this->enableCache($seconds);
 
         return $this;
 
@@ -385,9 +417,10 @@ class ApiCall implements JsonSerializable {
      *
      * @return $this
      */
-    public function enableCache( int $seconds = 3600 * 12 ) {
+    public function enableCache(int $seconds = 3600 * 12)
+    {
 
-        $this->cache    = true;
+        $this->cache = true;
         $this->cacheFor = $seconds;
 
         return $this;
@@ -401,7 +434,8 @@ class ApiCall implements JsonSerializable {
      *
      * @return $this
      */
-    public function disableCache() {
+    public function disableCache()
+    {
 
         $this->cache = false;
 
@@ -412,27 +446,12 @@ class ApiCall implements JsonSerializable {
 
 
     /**
-     * Returns true if the APi called failed
-     *
-     * @return bool
-     */
-    public function failed() {
-
-        if (is_wp_error( $this->response )) {
-            return true;
-        }
-        $code = $this->response['response']['code'];
-        return $code < 200 or $code > 299 ;
-    }
-
-
-
-    /**
      * Returns the full response
      *
      * @return array
      */
-    public function getResponse() {
+    public function getResponse()
+    {
 
         return $this->response;
     }
@@ -444,14 +463,16 @@ class ApiCall implements JsonSerializable {
      *
      * @return bool|mixed
      */
-    public function getResponseHeaders() {
+    public function getResponseHeaders()
+    {
 
-        return isset( $this->response['headers'] ) ? $this->response['headers'] : false;
+        return isset($this->response['headers']) ? $this->response['headers'] : false;
     }
 
 
 
-    public function jsonSerialize() {
+    public function jsonSerialize()
+    {
         return [
             'success' => $this->wasSuccessful(),
             'code'    => $this->getResponseCode(),
@@ -460,14 +481,16 @@ class ApiCall implements JsonSerializable {
     }
 
 
+
     /**
      * Get Response Code
      *
      * @return bool
      */
-    public function getResponseCode() {
+    public function getResponseCode()
+    {
 
-        return isset( $this->response['response'] ) ? $this->response['response']['code'] : false;
+        return isset($this->response['response']) ? $this->response['response']['code'] : false;
     }
 
 
@@ -477,9 +500,10 @@ class ApiCall implements JsonSerializable {
      *
      * @return bool
      */
-    public function getResponseMessage() {
+    public function getResponseMessage()
+    {
 
-        return isset( $this->response['response'] ) ? $this->response['response']['message'] : false;
+        return isset($this->response['response']) ? $this->response['response']['message'] : false;
     }
 
 }

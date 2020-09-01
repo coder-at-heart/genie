@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
-class RelationshipField extends Field {
+class RelationshipField extends Field
+{
 
     protected $type = 'relationship';
 
@@ -17,9 +18,10 @@ class RelationshipField extends Field {
      *
      * @return $this
      */
-    public function postObject( array $postObject ) {
-        $this->set( 'post_type', $postObject );
-        $this->returnFormat( 'id' );
+    public function postObject(array $postObject)
+    {
+        $this->set('post_type', $postObject);
+        $this->returnFormat('id');
 
         return $this;
     }
@@ -35,8 +37,9 @@ class RelationshipField extends Field {
      * @return $this
      */
 
-    public function returnFormat( string $returnFormat ) {
-        return $this->set( 'return_format', $returnFormat );
+    public function returnFormat(string $returnFormat)
+    {
+        return $this->set('return_format', $returnFormat);
 
     }
 
@@ -49,8 +52,9 @@ class RelationshipField extends Field {
      *
      * @return $this
      */
-    public function taxonomy( string $taxonomy ) {
-        return $this->set( 'taxonomy', $taxonomy );
+    public function taxonomy(string $taxonomy)
+    {
+        return $this->set('taxonomy', $taxonomy);
 
     }
 
@@ -63,8 +67,9 @@ class RelationshipField extends Field {
      *
      * @return $this
      */
-    public function min( int $number ) {
-        return $this->set( 'min', $number );
+    public function min(int $number)
+    {
+        return $this->set('min', $number);
 
     }
 
@@ -77,17 +82,19 @@ class RelationshipField extends Field {
      *
      * @return $this
      */
-    public function max( int $number ) {
-        return $this->set( 'max', $number );
+    public function max(int $number)
+    {
+        return $this->set('max', $number);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->filters( [ 'search' ] );
-        $this->elements( [ 'featured_image' ] );
+        $this->filters(['search']);
+        $this->elements(['featured_image']);
     }
 
 
@@ -99,8 +106,9 @@ class RelationshipField extends Field {
      *
      * @return $this
      */
-    public function filters( array $filters ) {
-        return $this->set( 'filters', $filters );
+    public function filters(array $filters)
+    {
+        return $this->set('filters', $filters);
 
     }
 
@@ -113,8 +121,9 @@ class RelationshipField extends Field {
      *
      * @return $this
      */
-    public function elements( array $elements ) {
-        return $this->set( 'elements', $elements );
+    public function elements(array $elements)
+    {
+        return $this->set('elements', $elements);
 
     }
 

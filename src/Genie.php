@@ -3,20 +3,20 @@
 namespace Lnk7\Genie;
 
 use Lnk7\Genie\Plugins\ACF;
-use Lnk7\Genie\WordPressObjects\Page;
-use Lnk7\Genie\WordPressObjects\Post;
-use Lnk7\Genie\WordPressObjects\User;
 
 /**
  * Class Genie
+ *
  * @package Lnk7\Genie
  */
-class Genie {
+class Genie
+{
 
-    public static function Setup() {
+    public static function Setup()
+    {
 
         // We can't do anything without ACF
-        if ( ACF::isDisabled() ) {
+        if (ACF::isDisabled()) {
             return;
         }
 
@@ -26,34 +26,28 @@ class Genie {
         BackgroundJob::Setup();
         View::Setup();
         CacheBust::Setup();
-        Theme::Setup();
 
-        // Wordpress Objects
-        Post::Setup();
-        Page::Setup();
-        User::Setup();
+        /**
+         * Main Wordpress Hook for the Theme
+         */
 
+        add_filter('genie_view_before_render', function ($vars) {
 
-    }
+            $siteVar = [
+                'urls' => [
+                    'theme' => get_stylesheet_directory_uri(),
+                    'ajax'  => admin_url('admin-ajax.php'),
+                    'home'  => home_url(),
+                ],
+            ];
 
+            $vars['_site'] = apply_filters('genie_get_site_var', $siteVar);
 
+            return $vars;
+        }, 10, 1);
 
-    /**
-     * Build the site variable. This is used in Javascript and twig.
-     *
-     * @return array
-     */
-    public static function getSiteVar() {
+        do_action('genie_setup');
 
-        $siteVar = [
-            'urls' => [
-                'theme' => get_stylesheet_directory_uri(),
-                'ajax'  => admin_url( 'admin-ajax.php' ),
-                'home'  => home_url(),
-            ],
-        ];
-
-        return apply_filters( 'genie_get_site_var', $siteVar );
     }
 
 }

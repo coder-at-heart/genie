@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
-class SelectField extends Field {
+class SelectField extends Field
+{
 
     protected $type = 'select';
 
@@ -17,8 +18,9 @@ class SelectField extends Field {
      *
      * @return $this
      */
-    public function choices( array $choices ) {
-        return $this->set( 'choices', $choices );
+    public function choices(array $choices)
+    {
+        return $this->set('choices', $choices);
 
     }
 
@@ -31,8 +33,9 @@ class SelectField extends Field {
      *
      * @return $this
      */
-    public function ajax( bool $ajax ) {
-        return $this->set( 'ajax', $ajax );
+    public function ajax(bool $ajax)
+    {
+        return $this->set('ajax', $ajax);
 
     }
 
@@ -45,18 +48,20 @@ class SelectField extends Field {
      *
      * @return $this
      */
-    public function multiple( bool $multiple ) {
-        return $this->set( 'multiple', $multiple );
+    public function multiple(bool $multiple)
+    {
+        return $this->set('multiple', $multiple);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->allowNull( true );
-        $this->ui( true );
-        $this->returnFormat( 'array' );
+        $this->allowNull(true);
+        $this->ui(true);
+        $this->returnFormat('array');
     }
 
 
@@ -68,8 +73,9 @@ class SelectField extends Field {
      *
      * @return $this
      */
-    public function allowNull( $allowNull ) {
-        return $this->set( 'allow_null', $allowNull );
+    public function allowNull($allowNull)
+    {
+        return $this->set('allow_null', $allowNull);
 
     }
 
@@ -82,8 +88,9 @@ class SelectField extends Field {
      *
      * @return $this
      */
-    public function ui( bool $ui ) {
-        return $this->set( 'ui', $ui );
+    public function ui(bool $ui)
+    {
+        return $this->set('ui', $ui);
 
     }
 
@@ -96,8 +103,9 @@ class SelectField extends Field {
      *
      * @return $this
      */
-    public function returnFormat( string $returnValue ) {
-        return $this->set( 'return_format', $returnValue );
+    public function returnFormat(string $returnValue)
+    {
+        return $this->set('return_format', $returnValue);
     }
 
 }

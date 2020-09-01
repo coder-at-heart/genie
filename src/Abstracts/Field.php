@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Abstracts;
 
 use Lnk7\Genie\Utilities\ConvertString;
 
-Abstract class Field {
+abstract class Field
+{
 
     /**
      * ACF field type - Must be overridden
@@ -15,9 +16,7 @@ Abstract class Field {
 
     /**#
      * Meta Query data type.
-     *
      * Not being used now, Will be handy later on
-     *
      * Possible values are 'NUMERIC', 'BINARY', 'CHAR', 'DATE', 'DATETIME', 'DECIMAL', 'SIGNED', 'TIME', 'UNSIGNED'.
      *
      * @var string
@@ -109,9 +108,10 @@ Abstract class Field {
      *
      * @param string $name
      */
-    public function __construct( string $name ) {
+    public function __construct(string $name)
+    {
 
-        $this->set( 'name', $name );
+        $this->set('name', $name);
         $this->setDefaults();
 
     }
@@ -126,9 +126,10 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function set( $var, $value ) {
+    public function set($var, $value)
+    {
 
-        $this->settings[ $var ] = $value;
+        $this->settings[$var] = $value;
 
         return $this;
     }
@@ -138,14 +139,15 @@ Abstract class Field {
     /**
      * Set defaults for this field.
      */
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
 
-        $name = $this->get( 'name' );
+        $name = $this->get('name');
 
-        $this->label( (string) ConvertString::From( $name )->toTitleCase() );
-        $this->searchable( false );
-        $this->required( false );
-        $this->set( '_name', $name );
+        $this->label((string)ConvertString::From($name)->toTitleCase());
+        $this->searchable(false);
+        $this->required(false);
+        $this->set('_name', $name);
     }
 
 
@@ -158,9 +160,10 @@ Abstract class Field {
      * @return mixed
      */
 
-    public function get( $var ) {
+    public function get($var)
+    {
 
-        return $this->settings[ $var ];
+        return $this->settings[$var];
     }
 
 
@@ -172,9 +175,10 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function label( $label ) {
+    public function label($label)
+    {
 
-        return  $this->set( 'label', $label );
+        return $this->set('label', $label);
 
     }
 
@@ -187,9 +191,10 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function searchable( bool $value ) {
+    public function searchable(bool $value)
+    {
 
-        return  $this->set( 'searchable', $value );
+        return $this->set('searchable', $value);
 
     }
 
@@ -202,9 +207,10 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function required( bool $value ) {
+    public function required(bool $value)
+    {
 
-        return         $this->set( 'required', $value );
+        return $this->set('required', $value);
 
 
     }
@@ -213,16 +219,16 @@ Abstract class Field {
 
     /**
      * Static createor
-     *
      * TextField::Called('name')
      *
      * @param $name
      *
      * @return static
      */
-    public static function Called( $name ) {
+    public static function Called($name)
+    {
 
-        return new static( $name );
+        return new static($name);
     }
 
 
@@ -234,9 +240,10 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function override( $field ) {
+    public function override($field)
+    {
 
-        return   $this->set( 'override', $field );
+        return $this->set('override', $field);
 
 
     }
@@ -250,9 +257,10 @@ Abstract class Field {
      *
      * @return bool|mixed
      */
-    public function __get( $var ) {
+    public function __get($var)
+    {
 
-        return isset( $this->settings[ $var ] ) ? $this->settings[ $var ] : false;
+        return isset($this->settings[$var]) ? $this->settings[$var] : false;
     }
 
 
@@ -263,9 +271,10 @@ Abstract class Field {
      * @param $var
      * @param $value
      */
-    public function __set( $var, $value ) {
+    public function __set($var, $value)
+    {
 
-        $this->settings[ $var ] = $value;
+        $this->settings[$var] = $value;
     }
 
 
@@ -277,9 +286,10 @@ Abstract class Field {
      *
      * @return bool
      */
-    public function __isset( $var ) {
+    public function __isset($var)
+    {
 
-        return isset( $this->settings[ $var ] );
+        return isset($this->settings[$var]);
     }
 
 
@@ -291,7 +301,8 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function append( string $string ) {
+    public function append(string $string)
+    {
 
         $this->settings['append'] = $string;
 
@@ -300,9 +311,10 @@ Abstract class Field {
 
 
 
-    public function callback( callable $function ) {
+    public function callback(callable $function)
+    {
 
-        return $this->set( 'callback', $function );
+        return $this->set('callback', $function);
 
     }
 
@@ -315,9 +327,10 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function conditionalLogic( $conditionalLogic ) {
+    public function conditionalLogic($conditionalLogic)
+    {
 
-        return $this->set( 'conditional_logic', $conditionalLogic );
+        return $this->set('conditional_logic', $conditionalLogic);
 
     }
 
@@ -330,76 +343,79 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function default( $default ) {
+    public function default($default)
+    {
 
-        return $this->set( 'default_value', $default );
-
-    }
-
-
-
-    public function displayOnly( $displayOnly ) {
-
-        return $this->set( 'displayOnly', $displayOnly );
+        return $this->set('default_value', $default);
 
     }
 
 
 
-    public function generate( $parent_key ) {
+    public function displayOnly($displayOnly)
+    {
 
-        $this->set( 'type', $this->type );
+        return $this->set('displayOnly', $displayOnly);
+
+    }
+
+
+
+    public function generate($parent_key)
+    {
+
+        $this->set('type', $this->type);
         $key = $this->key;
-        if ( ! $key ) {
-            $key = $parent_key . '_' . strtolower( $this->get( 'name' ) );
-            $this->set( 'key', 'field_' . $key );
+        if (!$key) {
+            $key = $parent_key . '_' . strtolower($this->get('name'));
+            $this->set('key', 'field_' . $key);
         }
-        $this->set( 'meta_query', $this->metaQuery );
+        $this->set('meta_query', $this->metaQuery);
 
-        if ( $this->isset( 'sub_fields' ) ) {
+        if ($this->isset('sub_fields')) {
             $subFields = [];
-            $fields    = $this->get( 'sub_fields' );
-            foreach ( $fields as $field ) {
-                $subFields[] = $field->generate( $key );
+            $fields = $this->get('sub_fields');
+            foreach ($fields as $field) {
+                $subFields[] = $field->generate($key);
             }
-            $this->set( 'sub_fields', $subFields );
+            $this->set('sub_fields', $subFields);
         }
 
         // Flexible Content
-        if ( $this->isset( 'layouts' ) ) {
+        if ($this->isset('layouts')) {
             $subFields = [];
-            $fields    = $this->get( 'layouts' );
-            foreach ( $fields as $field ) {
-                $subFields[] = $field->generate( $key );
+            $fields = $this->get('layouts');
+            foreach ($fields as $field) {
+                $subFields[] = $field->generate($key);
             }
-            $this->set( 'layouts', $subFields );
+            $this->set('layouts', $subFields);
         }
 
         // filters
-        foreach ( $this->filters as $filter ) {
+        foreach ($this->filters as $filter) {
 
-            $name     = str_replace( [ '{$key}', '{$name}', '{$type}' ], [
+            $name = str_replace(['{$key}', '{$name}', '{$type}'], [
                 $this->key,
                 $this->name,
-                $this->type
-            ], $filter['name'] );
-            $priority = isset( $filter['priority'] ) ?? 10;
-            $params   = isset( $filter['params'] ) ?? 1;
-            add_filter( $name, $filter['callback'], $priority, $params );
+                $this->type,
+            ], $filter['name']);
+            $priority = isset($filter['priority']) ?? 10;
+            $params = isset($filter['params']) ?? 1;
+            add_filter($name, $filter['callback'], $priority, $params);
 
         }
 
         // actions
-        foreach ( $this->actions as $action ) {
+        foreach ($this->actions as $action) {
 
-            $name     = str_replace( [ '{$key}', '{$name}', '{$type}' ], [
+            $name = str_replace(['{$key}', '{$name}', '{$type}'], [
                 $this->key,
                 $this->name,
-                $this->type
-            ], $action['name'] );
-            $priority = isset( $action['priority'] ) ?? 10;
-            $params   = isset( $action['params'] ) ?? 1;
-            add_filter( $name, $action['callback'], $priority, $params );
+                $this->type,
+            ], $action['name']);
+            $priority = isset($action['priority']) ?? 10;
+            $params = isset($action['params']) ?? 1;
+            add_filter($name, $action['callback'], $priority, $params);
 
         }
 
@@ -415,9 +431,10 @@ Abstract class Field {
      *
      * @return bool
      */
-    public function isset( $var ) {
+    public function isset($var)
+    {
 
-        return isset( $this->settings[ $var ] );
+        return isset($this->settings[$var]);
     }
 
 
@@ -429,9 +446,10 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function hidden( bool $value ) {
+    public function hidden(bool $value)
+    {
 
-        return $this->set( 'hidden', $value );
+        return $this->set('hidden', $value);
 
     }
 
@@ -444,7 +462,8 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function id( $id ) {
+    public function id($id)
+    {
 
         $this->settings['wrapper']['id'] = $id;
 
@@ -460,9 +479,10 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function instructions( string $instructions ) {
+    public function instructions(string $instructions)
+    {
 
-        return $this->set( 'instructions', $instructions );
+        return $this->set('instructions', $instructions);
 
     }
 
@@ -475,9 +495,10 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function key( $key ) {
+    public function key($key)
+    {
 
-        return $this->set( 'key', $key );
+        return $this->set('key', $key);
 
     }
 
@@ -490,7 +511,8 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function prepend( string $string ) {
+    public function prepend(string $string)
+    {
 
         $this->settings['prepend'] = $string;
 
@@ -506,17 +528,19 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function readOnly( bool $value ) {
+    public function readOnly(bool $value)
+    {
 
-        return $this->set( 'read_only', $value );
+        return $this->set('read_only', $value);
 
     }
 
 
 
-    public function shown( Condition $condition ) {
+    public function shown(Condition $condition)
+    {
 
-        return $this->set( 'conditions', $condition->generate() );
+        return $this->set('conditions', $condition->generate());
 
     }
 
@@ -529,7 +553,8 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function wrapperClass( $class ) {
+    public function wrapperClass($class)
+    {
 
         $this->settings['wrapper']['class'] = $class;
 
@@ -545,7 +570,8 @@ Abstract class Field {
      *
      * @return $this
      */
-    public function wrapperWidth( int $width ) {
+    public function wrapperWidth(int $width)
+    {
 
         $this->settings['wrapper']['width'] = $width;
 

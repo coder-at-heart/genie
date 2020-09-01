@@ -2,7 +2,8 @@
 
 namespace Lnk7\Genie\Fields;
 
-class NumberField extends TextField {
+class NumberField extends TextField
+{
 
     protected $type = 'number';
 
@@ -17,8 +18,9 @@ class NumberField extends TextField {
      *
      * @return $this
      */
-    public function min( int $min ) {
-        return $this->set( 'min', $min );
+    public function min(int $min)
+    {
+        return $this->set('min', $min);
 
     }
 
@@ -31,8 +33,9 @@ class NumberField extends TextField {
      *
      * @return $this
      */
-    public function max( int $max ) {
-        return $this->set( 'max', $max );
+    public function max(int $max)
+    {
+        return $this->set('max', $max);
 
     }
 
@@ -45,8 +48,9 @@ class NumberField extends TextField {
      *
      * @return $this
      */
-    public function step( int $step ) {
-        return $this->set( 'step', $step );
+    public function step(int $step)
+    {
+        return $this->set('step', $step);
 
     }
 

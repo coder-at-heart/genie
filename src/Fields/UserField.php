@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
-class UserField extends Field {
+class UserField extends Field
+{
 
     protected $type = 'user';
 
@@ -19,8 +20,9 @@ class UserField extends Field {
      *
      * @return $this
      */
-    public function role( string $role ) {
-        return $this->set( 'role', $role );
+    public function role(string $role)
+    {
+        return $this->set('role', $role);
 
     }
 
@@ -33,8 +35,9 @@ class UserField extends Field {
      *
      * @return $this
      */
-    public function allowNull( bool $allowNull ) {
-        return $this->set( 'allow_null', $allowNull );
+    public function allowNull(bool $allowNull)
+    {
+        return $this->set('allow_null', $allowNull);
 
     }
 
@@ -47,8 +50,9 @@ class UserField extends Field {
      *
      * @return $this
      */
-    public function multiple( bool $multiple ) {
-        return $this->set( 'multiple', $multiple );
+    public function multiple(bool $multiple)
+    {
+        return $this->set('multiple', $multiple);
 
     }
 
