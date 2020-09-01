@@ -5,7 +5,7 @@ namespace Lnk7\Genie;
 /**
  * Class Theme
  *
- * If you extend this. Remember that any method here is callable from twig {{ theme.method() }}
+ * If you extend this.
  *
  * @package Lnk7\Genie
  */
@@ -19,6 +19,7 @@ class Theme {
         add_filter( 'genie_view_before_render', static::class . '::genie_view_before_render', 10, 1 );
 
     }
+
 
 
     /**
@@ -46,12 +47,31 @@ class Theme {
 
         global $wp_scripts;
 
-        $vars['theme'] = new static();
-        $vars['_site'] = Genie::getSiteVar();
+        $vars['_theme'] = new static();
+        $vars['_site']  = static::getSiteVar();
 
         return $vars;
     }
 
+
+
+    /**
+     * Build the site variable. This is used in Javascript and twig.
+     *
+     * @return array
+     */
+    public static function getSiteVar() {
+
+        $siteVar = [
+            'urls' => [
+                'theme' => get_stylesheet_directory_uri(),
+                'ajax'  => admin_url( 'admin-ajax.php' ),
+                'home'  => home_url(),
+            ],
+        ];
+
+        return apply_filters( 'genie_get_site_var', $siteVar );
+    }
 
 
 

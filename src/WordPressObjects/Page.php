@@ -2,13 +2,13 @@
 
 namespace Lnk7\Genie\WordPressObjects;
 
-use Lnk7\Genie\Abstracts\WordPressObject;
+use Lnk7\Genie\Abstracts\CustomPost;
 
 /**
  * Class Page
  * @package Lnk7\Genie\WordPressObjects
  */
-class Page extends WordPressObject {
+class Page extends CustomPost {
 
     /**
      * Post Type Slug

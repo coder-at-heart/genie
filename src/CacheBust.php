@@ -3,12 +3,11 @@
 namespace Lnk7\Genie;
 
 use DateTime;
+use Exception;
 use WP_Scripts;
 
 /**
  * Class CacheBust
- *
- * If you extend this. Remember that any method here is callable from two {{ theme.method() }}
  *
  * @package Lnk7\Genie
  */
@@ -19,10 +18,16 @@ class CacheBust {
      */
     public static function Setup() {
 
-        add_filter( 'script_loader_src', static::class . '::loader_src' );
-        add_filter( 'style_loader_src', static::class . '::loader_src' );
+        add_filter( 'script_loader_src', function ( $src ) {
+            return static::cacheSrc( $src );
+        } );
+        add_filter( 'style_loader_src', function ( $src ) {
+            return static::cacheSrc( $src );
+        } );
 
     }
+
+
 
     /**
      * Append the date and time at the end of enqueued scripts / styles so we can cache bust !
@@ -30,9 +35,9 @@ class CacheBust {
      * @param string $src
      *
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
-    public static function loader_src( $src = '' ) {
+    public static function cacheSrc( $src = '' ) {
 
         global $wp_scripts;
 
@@ -68,6 +73,5 @@ class CacheBust {
 
         return $src;
     }
-
 
 }

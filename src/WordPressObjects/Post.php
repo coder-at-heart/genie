@@ -2,8 +2,8 @@
 
 namespace Lnk7\Genie\WordPressObjects;
 
-use Lnk7\Genie\Abstracts\WordPressObject;
+use Lnk7\Genie\Abstracts\CustomPost;
 
-class Post extends WordPressObject {
+class Post extends CustomPost {
 
 }

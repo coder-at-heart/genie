@@ -19,54 +19,75 @@ class Session {
     public static function Setup() {
 
         // Run once everything has been setup
-        add_action( 'after_setup_theme', static::class . '::after_setup_theme' );
+        add_action( 'after_setup_theme', function () {
+            $sessionName = apply_filters( 'genie_session_name', 'genie_session' );
 
-        // Capture Query string Variables
-        add_action( 'parse_request', static::class . '::parse_request' );
+            session_name( $sessionName );
 
-        // The var shortcode
-        add_shortcode( 'var', static::class . '::varShortcode' );
+            if ( ! session_id() ) {
+                session_start();
+            }
+            $maxTime = ini_get( "session.gc_maxlifetime" );
+
+            // Force our cookie expiry date
+            setcookie( session_name(), session_id(), time() + $maxTime, '/' );
+
+            // Last request was more than $maxTime seconds ago?
+            if ( isset( $_SESSION['sessionLastActivity'] ) && ( time() - $_SESSION['sessionLastActivity'] > $maxTime ) ) {
+                static::destroy();
+            }
+
+            // Update last activity time stamp
+            $_SESSION['sessionLastActivity'] = time();
+
+            if ( ! isset( $_SESSION['sessionCreated'] ) ) {
+                $_SESSION['sessionCreated'] = time();
+
+            } else if ( time() - $_SESSION['sessionCreated'] > $maxTime ) {
+
+                // The Session started more than $maxTime seconds ago,
+                // change session ID for the current session and invalidate old session ID
+                session_regenerate_id( true );
+
+                // update creation time
+                $_SESSION['sessionCreated'] = time();
+            }
+
+        } );
+
+        /**
+         * Wordpress Hook
+         *
+         * We process all variables here and also capture and query variables.
+         *
+         */
+        add_action( 'parse_request', function ( $wp ) {
+            self::processVariables();
+            self::set( 'query_vars', $wp->query_vars );
+        } );
+
+        /**
+         *
+         * Var shortcode
+         *
+         * [var] shortcode
+         * [var email default='']
+         *
+         */
+        add_shortcode( 'var', function ( $atts ) {
+
+            $a = (object) shortcode_atts( [
+                'var'     => $atts[0],
+                'default' => '',
+            ], $atts );
+
+            return self::find( $a->var, $a->default );
+        } );
 
         // Plug the session into all views
-        add_filter( 'genie_view_before_render', static::class . '::genie_view_before_render', 10, 1 );
-    }
-
-
-
-    public static function after_setup_theme() {
-        $sessionName = apply_filters( 'genie_session_name', 'genie_session' );
-
-        session_name( $sessionName );
-
-        if ( ! session_id() ) {
-            session_start();
-        }
-        $maxTime = ini_get( "session.gc_maxlifetime" );
-
-        // Force our cookie expiry date
-        setcookie( session_name(), session_id(), time() + $maxTime, '/' );
-
-        // Last request was more than $maxTime seconds ago?
-        if ( isset( $_SESSION['sessionLastActivity'] ) && ( time() - $_SESSION['sessionLastActivity'] > $maxTime ) ) {
-            static::destroy();
-        }
-
-        // Update last activity time stamp
-        $_SESSION['sessionLastActivity'] = time();
-
-        if ( ! isset( $_SESSION['sessionCreated'] ) ) {
-            $_SESSION['sessionCreated'] = time();
-
-        } else if ( time() - $_SESSION['sessionCreated'] > $maxTime ) {
-
-            // The Session started more than $maxTime seconds ago,
-            // change session ID for the current session and invalidate old session ID
-            session_regenerate_id( true );
-
-            // update creation time
-            $_SESSION['sessionCreated'] = time();
-        }
-
+        add_filter( 'genie_view_before_render', function ( $vars ) {
+            return array_merge( $vars, [ '_session' => $_SESSION ] );
+        }, 10, 1 );
     }
 
 
@@ -79,65 +100,6 @@ class Session {
         session_unset();
         // destroy session data in storage
         session_destroy();
-    }
-
-
-
-    /**
-     * Check if the session has a value
-     *
-     * @param $field
-     *
-     * @return bool
-     */
-    public static function has( $field ) {
-        return self::find( $field ) ? true : false;
-    }
-
-
-
-    /**
-     * look for a value in the session. can be accessed by dot notation (like twig)
-     *
-     * $object->property['index']
-     *
-     * Session::get(object.property.index);
-     *
-     * @param $var
-     * @param bool $default
-     *
-     * @return mixed
-     */
-    private static function find( $var, $default = false ) {
-        $lookAt = $_SESSION;
-        $keys   = explode( '.', $var );
-        foreach ( $keys as $key ) {
-            if ( is_object( $lookAt ) and property_exists( $lookAt, $key ) ) {
-                $lookAt = $lookAt->$key;
-                continue;
-            }
-            if ( is_array( $lookAt ) and isset( $lookAt[ $key ] ) ) {
-                $lookAt = $lookAt[ $key ];
-                continue;
-            }
-            $lookAt = $default;
-        }
-
-        return $lookAt;
-    }
-
-
-
-    /**
-     * Wordpress Hook
-     *
-     * We process all variables here and also capture and query variables.
-     *
-     * @param $wp
-     */
-    public static function parse_request( $wp ) {
-        self::processVariables();
-        self::set( 'query_vars', $wp->query_vars );
     }
 
 
@@ -177,19 +139,55 @@ class Session {
 
 
     /**
-     * Get a value from the session
+     * look for a value in the session. can be accessed by dot notation (like twig)
+     *
+     * $object->property['index']
+     *
+     * Session::get(object.property.index);
+     *
+     * @param $var
+     * @param bool $default
+     *
+     * @return mixed
      */
-    public static function get( $var, $default = false ) {
-        return self::find( $var, $default );
+    private static function find( $var, $default = false ) {
+        $lookAt = $_SESSION;
+        $keys   = explode( '.', $var );
+        foreach ( $keys as $key ) {
+            if ( is_object( $lookAt ) and property_exists( $lookAt, $key ) ) {
+                $lookAt = $lookAt->$key;
+                continue;
+            }
+            if ( is_array( $lookAt ) and isset( $lookAt[ $key ] ) ) {
+                $lookAt = $lookAt[ $key ];
+                continue;
+            }
+            $lookAt = $default;
+        }
+
+        return $lookAt;
     }
 
 
 
     /**
-     * Hook into the views render function and make the session variables available to twig
+     * Check if the session has a value
+     *
+     * @param $field
+     *
+     * @return bool
      */
-    public static function genie_view_before_render( $vars ) {
-        return array_merge( $vars, [ '_session' => $_SESSION ] );
+    public static function has( $field ) {
+        return self::find( $field ) ? true : false;
+    }
+
+
+
+    /**
+     * Get a value from the session
+     */
+    public static function get( $var, $default = false ) {
+        return self::find( $var, $default );
     }
 
 
@@ -201,30 +199,6 @@ class Session {
      */
     public static function remove( $var ) {
         unset( $_SESSION[ $var ] );
-    }
-
-
-
-    /**
-     *
-     * Var shortcode
-     *
-     * [var] shortcode
-     * [var email default='']
-     *
-     * @param $atts
-     *
-     * @return mixed
-     *
-     */
-    public static function varShortcode( $atts ) {
-
-        $a = (object) shortcode_atts( [
-            'var'     => $atts[0],
-            'default' => '',
-        ], $atts );
-
-        return self::find( $a->var, $a->default );
     }
 
 

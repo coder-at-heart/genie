@@ -36,24 +36,4 @@ class Genie {
 
     }
 
-
-
-    /**
-     * Build the site variable. This is used in Javascript and twig.
-     *
-     * @return array
-     */
-    public static function getSiteVar() {
-
-        $siteVar = [
-            'urls' => [
-                'theme' => get_stylesheet_directory_uri(),
-                'ajax'  => admin_url( 'admin-ajax.php' ),
-                'home'  => home_url(),
-            ],
-        ];
-
-        return apply_filters( 'genie_get_site_var', $siteVar );
-    }
-
 }
