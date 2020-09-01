@@ -2,7 +2,8 @@
 
 namespace Lnk7\Genie\Library;
 
-class Response {
+class Response
+{
 
     /**
      * The default http response code
@@ -25,8 +26,9 @@ class Response {
      *
      * @param int|null $responseCode
      */
-    function __construct( int $responseCode = null ) {
-        if ( ! is_null( $responseCode ) ) {
+    function __construct(int $responseCode = null)
+    {
+        if (!is_null($responseCode)) {
             $this->responseCode = $responseCode;
         }
     }
@@ -35,13 +37,13 @@ class Response {
 
     /**
      * @param $data
-     *
      * Send a Success response
      */
-    public static function Success( $data ) {
-        $response = new static( 200 );
-        $response->withData( $data )
-                 ->send();
+    public static function Success($data)
+    {
+        $response = new static(200);
+        $response->withData($data)
+            ->send();
     }
 
 
@@ -49,11 +51,12 @@ class Response {
     /**
      * Send the response back to the browser.
      */
-    function send() {
+    function send()
+    {
 
-        header( 'Content-Type: application/json', true, $this->responseCode );
+        header('Content-Type: application/json', true, $this->responseCode);
 
-        echo json_encode( $this->data );
+        echo json_encode($this->data);
         exit;
     }
 
@@ -66,7 +69,8 @@ class Response {
      *
      * @return $this
      */
-    function withData( array $data ) {
+    function withData(array $data)
+    {
         $this->data = $data;
 
         return $this;
@@ -79,10 +83,11 @@ class Response {
      *
      * @param $data
      */
-    public static function Failure( $data ) {
-        $response = new static( 400 );
-        $response->withData( $data )
-                 ->send();
+    public static function Failure($data)
+    {
+        $response = new static(400);
+        $response->withData($data)
+            ->send();
     }
 
 
@@ -92,10 +97,11 @@ class Response {
      *
      * @param $data
      */
-    public static function NotFound( $data ) {
-        $response = new static( 404 );
-        $response->withData( $data )
-                 ->send();
+    public static function NotFound($data)
+    {
+        $response = new static(404);
+        $response->withData($data)
+            ->send();
     }
 
 }

@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
-class DateField extends Field {
+class DateField extends Field
+{
 
     protected $type = 'date_picker';
 
@@ -19,17 +20,19 @@ class DateField extends Field {
      *
      * @return $this
      */
-    public function firstDay( int $day ) {
-        return $this->set( 'first_day', $day );
+    public function firstDay(int $day)
+    {
+        return $this->set('first_day', $day);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->displayFormat( 'd/m/Y' );
-        $this->returnFormat( 'Y-m-d' );
+        $this->displayFormat('d/m/Y');
+        $this->returnFormat('Y-m-d');
     }
 
 
@@ -41,8 +44,9 @@ class DateField extends Field {
      *
      * @return $this
      */
-    public function displayFormat( string $format ) {
-        return $this->set( 'display_format', $format );
+    public function displayFormat(string $format)
+    {
+        return $this->set('display_format', $format);
 
     }
 
@@ -56,8 +60,9 @@ class DateField extends Field {
      * @return $this
      */
 
-    public function returnFormat( string $format ) {
-        return $this->set( 'return_format', $format );
+    public function returnFormat(string $format)
+    {
+        return $this->set('return_format', $format);
 
     }
 

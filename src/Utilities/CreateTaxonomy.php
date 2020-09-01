@@ -4,12 +4,12 @@ namespace Lnk7\Genie\Utilities;
 
 /**
  * Class CreateTaxonomy
- *
  * Wrapper around the register_taxonomy function
  *
  * @package Lnk7\Genie\Utilities
  */
-class CreateTaxonomy {
+class CreateTaxonomy
+{
 
     /**
      * Objects to attach this taxonomy to
@@ -77,16 +77,17 @@ class CreateTaxonomy {
      *
      * @param string $name Name
      */
-    public function __construct( $name ) {
+    public function __construct($name)
+    {
 
-        $string = ConvertString::From( $name );
+        $string = ConvertString::From($name);
 
         $this->taxonomy = $string->toSingular()->toSnakeCase();
 
-        $singular = (string) $string->toTitleCase()->toSingular();
-        $plural   = (string) $string->toPlural();
+        $singular = (string)$string->toTitleCase()->toSingular();
+        $plural = (string)$string->toPlural();
 
-        $this->setLabels( [
+        $this->setLabels([
 
             'name'                       => $plural,
             'singular_name'              => $singular,
@@ -106,18 +107,19 @@ class CreateTaxonomy {
             'choose_from_most_used'      => 'Choose from the most used ' . $plural,
             'not_found'                  => 'No ' . $plural . ' found',
             'back_to_items'              => '← Back to ' . $plural,
-        ] );
+        ]);
 
-        $this->set( 'label', $plural );
-        $this->set( 'description', $name );
+        $this->set('label', $plural);
+        $this->set('description', $name);
     }
 
 
 
-    function setLabels( array $labels ) {
+    function setLabels(array $labels)
+    {
 
-        foreach ( $labels as $label => $value ) {
-            $this->setLabel( $label, $value );
+        foreach ($labels as $label => $value) {
+            $this->setLabel($label, $value);
         }
 
         return $this;
@@ -125,18 +127,20 @@ class CreateTaxonomy {
 
 
 
-    function setLabel( $label, $name ) {
+    function setLabel($label, $name)
+    {
 
-        $this->definition['labels'][ $label ] = $name;
+        $this->definition['labels'][$label] = $name;
 
         return $this;
     }
 
 
 
-    function set( $attribute, $value ) {
+    function set($attribute, $value)
+    {
 
-        $this->definition[ $attribute ] = $value;
+        $this->definition[$attribute] = $value;
 
         return $this;
     }
@@ -150,14 +154,16 @@ class CreateTaxonomy {
      *
      * @return CreateTaxonomy
      */
-    public static function Called( $name ) {
+    public static function Called($name)
+    {
 
-        return new static( $name );
+        return new static($name);
     }
 
 
 
-    public function attachTo( $object ) {
+    public function attachTo($object)
+    {
         $this->attachTo[] = $object;
 
         return $this;
@@ -170,10 +176,11 @@ class CreateTaxonomy {
      *
      * @return $this
      */
-    function hidden() {
+    function hidden()
+    {
 
-        $this->set( 'show_ui', false );
-        $this->set( 'show_in_nav_menus', false );
+        $this->set('show_ui', false);
+        $this->set('show_in_nav_menus', false);
 
         return $this;
     }
@@ -183,11 +190,12 @@ class CreateTaxonomy {
     /**
      * Register the Taxonomy
      */
-    function register() {
+    function register()
+    {
 
-        $attachTo = empty( $this->attachTo ) ? null : $this->attachTo;
+        $attachTo = empty($this->attachTo) ? null : $this->attachTo;
 
-        register_taxonomy( $this->taxonomy, $attachTo, $this->definition );
+        register_taxonomy($this->taxonomy, $attachTo, $this->definition);
 
     }
 

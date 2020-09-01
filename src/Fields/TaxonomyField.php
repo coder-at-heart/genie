@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
-class TaxonomyField extends Field {
+class TaxonomyField extends Field
+{
 
     protected $type = 'taxonomy';
 
@@ -17,8 +18,9 @@ class TaxonomyField extends Field {
      *
      * @return $this
      */
-    public function taxonomy( string $taxonomy ) {
-        return $this->set( 'taxonomy', $taxonomy );
+    public function taxonomy(string $taxonomy)
+    {
+        return $this->set('taxonomy', $taxonomy);
 
     }
 
@@ -31,8 +33,9 @@ class TaxonomyField extends Field {
      *
      * @return $this
      */
-    public function allowNull( bool $allowNull ) {
-        return $this->set( 'allow_null', $allowNull );
+    public function allowNull(bool $allowNull)
+    {
+        return $this->set('allow_null', $allowNull);
 
     }
 
@@ -47,8 +50,9 @@ class TaxonomyField extends Field {
      * @return $this
      */
 
-    public function returnFormat( string $returnFormat ) {
-        return $this->set( 'return_format', $returnFormat );
+    public function returnFormat(string $returnFormat)
+    {
+        return $this->set('return_format', $returnFormat);
 
     }
 
@@ -61,8 +65,9 @@ class TaxonomyField extends Field {
      *
      * @return $this
      */
-    public function loadTerms( bool $loadTerms ) {
-        return $this->set( 'load_terms', $loadTerms );
+    public function loadTerms(bool $loadTerms)
+    {
+        return $this->set('load_terms', $loadTerms);
 
     }
 
@@ -75,8 +80,9 @@ class TaxonomyField extends Field {
      *
      * @return $this
      */
-    public function saveTerms( bool $saveTerms ) {
-        return $this->set( 'save_terms', $saveTerms );
+    public function saveTerms(bool $saveTerms)
+    {
+        return $this->set('save_terms', $saveTerms);
 
     }
 
@@ -89,16 +95,18 @@ class TaxonomyField extends Field {
      *
      * @return $this
      */
-    public function addTerms( bool $addTerms ) {
-        return $this->set( 'add_term', $addTerms );
+    public function addTerms(bool $addTerms)
+    {
+        return $this->set('add_term', $addTerms);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->fieldType( 'select' );
+        $this->fieldType('select');
     }
 
 
@@ -112,8 +120,9 @@ class TaxonomyField extends Field {
      *
      * @return $this
      */
-    public function fieldType( string $type ) {
-        return $this->set( 'field_type', $type );
+    public function fieldType(string $type)
+    {
+        return $this->set('field_type', $type);
 
     }
 

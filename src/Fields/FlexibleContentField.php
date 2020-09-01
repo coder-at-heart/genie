@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
-class FlexibleContentField extends Field {
+class FlexibleContentField extends Field
+{
 
     protected $type = 'flexible_content';
 
@@ -17,9 +18,10 @@ class FlexibleContentField extends Field {
      *
      * @return $this
      */
-    public function buttonLabel( $label ) {
+    public function buttonLabel($label)
+    {
 
-        return $this->set( 'button_label', $label );
+        return $this->set('button_label', $label);
 
     }
 
@@ -32,9 +34,10 @@ class FlexibleContentField extends Field {
      *
      * @return $this
      */
-    public function max( int $number ) {
+    public function max(int $number)
+    {
 
-        return $this->set( 'max', $number );
+        return $this->set('max', $number);
 
     }
 
@@ -47,9 +50,10 @@ class FlexibleContentField extends Field {
      *
      * @return $this
      */
-    public function min( int $number ) {
+    public function min(int $number)
+    {
 
-        return $this->set( 'min', $number );
+        return $this->set('min', $number);
 
     }
 
@@ -62,9 +66,10 @@ class FlexibleContentField extends Field {
      *
      * @return $this
      */
-    public function withLayouts( array $fields ) {
+    public function withLayouts(array $fields)
+    {
 
-        return $this->set( 'layouts', $fields );
+        return $this->set('layouts', $fields);
 
     }
 

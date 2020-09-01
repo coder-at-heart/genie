@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
-class CheckboxField extends Field {
+class CheckboxField extends Field
+{
 
     protected $type = 'checkbox';
 
@@ -17,8 +18,9 @@ class CheckboxField extends Field {
      *
      * @return $this
      */
-    public function choices( array $choices ) {
-        return $this->set( 'choices', $choices );
+    public function choices(array $choices)
+    {
+        return $this->set('choices', $choices);
 
     }
 
@@ -31,8 +33,9 @@ class CheckboxField extends Field {
      *
      * @return $this
      */
-    public function message( string $message ) {
-        return $this->set( 'message', $message );
+    public function message(string $message)
+    {
+        return $this->set('message', $message);
 
     }
 
@@ -45,17 +48,19 @@ class CheckboxField extends Field {
      *
      * @return $this
      */
-    public function toggle( bool $toggle ) {
-        return $this->set( 'toggle', $toggle );
+    public function toggle(bool $toggle)
+    {
+        return $this->set('toggle', $toggle);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->layout( 'vertical' );
-        $this->returnFormat( 'array' );
+        $this->layout('vertical');
+        $this->returnFormat('array');
     }
 
 
@@ -67,8 +72,9 @@ class CheckboxField extends Field {
      *
      * @return $this
      */
-    public function layout( string $layout ) {
-        return $this->set( 'layout', $layout );
+    public function layout(string $layout)
+    {
+        return $this->set('layout', $layout);
 
     }
 
@@ -82,8 +88,9 @@ class CheckboxField extends Field {
      * @return $this
      */
 
-    public function returnFormat( string $returnFormat ) {
-        return $this->set( 'return_format', $returnFormat );
+    public function returnFormat(string $returnFormat)
+    {
+        return $this->set('return_format', $returnFormat);
 
     }
 

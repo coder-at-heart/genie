@@ -2,7 +2,8 @@
 
 namespace Lnk7\Genie\Fields;
 
-class DateTimeField extends DateField {
+class DateTimeField extends DateField
+{
 
     protected $type = 'date_time_picker';
 
@@ -10,10 +11,11 @@ class DateTimeField extends DateField {
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->displayFormat( 'd/m/Y g:i a' );
-        $this->returnFormat( 'Y-m-d H:i:s' );
+        $this->displayFormat('d/m/Y g:i a');
+        $this->returnFormat('Y-m-d H:i:s');
     }
 
 }

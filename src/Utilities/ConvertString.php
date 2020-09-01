@@ -6,18 +6,15 @@ use Doctrine\Common\Inflector\Inflector;
 
 /**
  * Class ConvertString
- *
  * (string) ConvertString::From('Monkey Bar)->toPlural()->toTitleCase()
- *
  * Notice the string coercion.
- *
  * OR
- *
  * ConvertString::From('Monkey Bar)->toPlural()->toTitleCase()->return();
  *
  * @package Lnk7\Genie
  */
-class ConvertString {
+class ConvertString
+{
 
     /**
      * An array that hold the words in a string
@@ -29,33 +26,19 @@ class ConvertString {
 
 
     /**
-     * static constructor
-     *
-     * @param $string
-     * @param $case
-     *
-     * @return ConvertString
-     */
-    public static function From( $string, $case = null ): ConvertString {
-
-        return new static( $string, $case );
-    }
-
-
-
-    /**
      * ConvertString constructor.
      *
      * @param $string
      */
-    public function __construct( $string, $case = null ) {
+    public function __construct($string, $case = null)
+    {
 
-        if ( $case == 'pascalCase' ) {
-            $string = ltrim( strtolower( preg_replace( '/[A-Z]([A-Z](?![a-z]))*/', '_$0', $string ) ), '_' );
+        if ($case == 'pascalCase') {
+            $string = ltrim(strtolower(preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '_$0', $string)), '_');
 
         }
 
-        $this->convertToArray( $string );
+        $this->convertToArray($string);
     }
 
 
@@ -65,13 +48,30 @@ class ConvertString {
      *
      * @param $string
      */
-    private function convertToArray( $string ) {
+    private function convertToArray($string)
+    {
 
-        $string = preg_replace( '/[^A-Za-z0-9\-_ ]/', '', $string );
-        $string = preg_replace( '/[\-_]/', ' ', $string );
-        $string = preg_replace( '!\s+!', ' ', $string );
+        $string = preg_replace('/[^A-Za-z0-9\-_ ]/', '', $string);
+        $string = preg_replace('/[\-_]/', ' ', $string);
+        $string = preg_replace('!\s+!', ' ', $string);
 
-        $this->words = explode( ' ', trim( $string ) );
+        $this->words = explode(' ', trim($string));
+    }
+
+
+
+    /**
+     * static constructor
+     *
+     * @param $string
+     * @param $case
+     *
+     * @return ConvertString
+     */
+    public static function From($string, $case = null): ConvertString
+    {
+
+        return new static($string, $case);
     }
 
 
@@ -81,7 +81,8 @@ class ConvertString {
      *
      * @return string
      */
-    public function __toString(): string {
+    public function __toString(): string
+    {
 
         return $this->return();
     }
@@ -93,9 +94,10 @@ class ConvertString {
      *
      * @return string
      */
-    public function return( $with = ' ' ): string {
+    public function return($with = ' '): string
+    {
 
-        return implode( $with, $this->words );
+        return implode($with, $this->words);
     }
 
 
@@ -105,12 +107,13 @@ class ConvertString {
      *
      * @return ConvertString
      */
-    public function toUpperCase(): ConvertString {
+    public function toUpperCase(): ConvertString
+    {
 
-        array_walk( $this->words, function ( &$word ) {
+        array_walk($this->words, function (&$word) {
 
-            $word = strtoupper( $word );
-        } );
+            $word = strtoupper($word);
+        });
 
         return $this;
 
@@ -123,9 +126,10 @@ class ConvertString {
      *
      * @return string
      */
-    public function toSlug(): string {
+    public function toSlug(): string
+    {
 
-        return $this->toLowerCase()->return( '-' );
+        return $this->toLowerCase()->return('-');
 
     }
 
@@ -136,12 +140,13 @@ class ConvertString {
      *
      * @return ConvertString
      */
-    public function toLowerCase(): ConvertString {
+    public function toLowerCase(): ConvertString
+    {
 
-        array_walk( $this->words, function ( &$word ) {
+        array_walk($this->words, function (&$word) {
 
-            $word = strtolower( $word );
-        } );
+            $word = strtolower($word);
+        });
 
         return $this;
 
@@ -154,12 +159,13 @@ class ConvertString {
      *
      * @return string
      */
-    public function toCamelCase(): string {
+    public function toCamelCase(): string
+    {
 
         $this->toTitleCase();
-        $this->words[0] = strtolower( $this->words[0] );
+        $this->words[0] = strtolower($this->words[0]);
 
-        return $this->return( '' );
+        return $this->return('');
 
     }
 
@@ -170,7 +176,8 @@ class ConvertString {
      *
      * @return ConvertString
      */
-    public function toTitleCase(): ConvertString {
+    public function toTitleCase(): ConvertString
+    {
 
         $ignoreWords = [
             'of',
@@ -200,11 +207,11 @@ class ConvertString {
             'with',
             'like',
         ];
-        foreach ( $this->words as $key => $word ) {
+        foreach ($this->words as $key => $word) {
 
             // If this word is the first, or it's not one of our small words, capitalise it with ucwords().
-            if ( $key == 0 or ! in_array( strtolower( $word ), $ignoreWords ) ) {
-                $this->words[ $key ] = ucwords( $word );
+            if ($key == 0 or !in_array(strtolower($word), $ignoreWords)) {
+                $this->words[$key] = ucwords($word);
             }
         }
 
@@ -218,9 +225,10 @@ class ConvertString {
      *
      * @return string
      */
-    public function toSnakeCase(): string {
+    public function toSnakeCase(): string
+    {
 
-        return $this->toLowerCase()->return( '_' );
+        return $this->toLowerCase()->return('_');
 
     }
 
@@ -231,9 +239,10 @@ class ConvertString {
      *
      * @return string
      */
-    public function toPascalCase(): string {
+    public function toPascalCase(): string
+    {
 
-        return $this->toTitleCase()->return( '' );
+        return $this->toTitleCase()->return('');
 
     }
 
@@ -244,10 +253,11 @@ class ConvertString {
      *
      * @return ConvertString
      */
-    public function toSingular(): ConvertString {
+    public function toSingular(): ConvertString
+    {
 
-        $string = Inflector::singularize( (string) $this );
-        $this->convertToArray( $string );
+        $string = Inflector::singularize((string)$this);
+        $this->convertToArray($string);
 
         return $this;
     }
@@ -259,10 +269,11 @@ class ConvertString {
      *
      * @return ConvertString
      */
-    public function toPlural(): ConvertString {
+    public function toPlural(): ConvertString
+    {
 
-        $string = Inflector::pluralize( (string) $this );
-        $this->convertToArray( $string );
+        $string = Inflector::pluralize((string)$this);
+        $this->convertToArray($string);
 
         return $this;
     }

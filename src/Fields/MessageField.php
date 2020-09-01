@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
-class MessageField extends Field {
+class MessageField extends Field
+{
 
     protected $type = 'message';
 
@@ -17,18 +18,20 @@ class MessageField extends Field {
      *
      * @return $this
      */
-    public function message( string $message ) {
-        return $this->set( 'message', $message );
+    public function message(string $message)
+    {
+        return $this->set('message', $message);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->displayOnly( true );
-        $this->newLines( 'wpautop' );
-        $this->escapeHTML( false );
+        $this->displayOnly(true);
+        $this->newLines('wpautop');
+        $this->escapeHTML(false);
     }
 
 
@@ -40,8 +43,9 @@ class MessageField extends Field {
      *
      * @return $this
      */
-    public function newLines( string $newLines ) {
-        return $this->set( 'new_lines', $newLines );
+    public function newLines(string $newLines)
+    {
+        return $this->set('new_lines', $newLines);
 
     }
 
@@ -54,8 +58,9 @@ class MessageField extends Field {
      *
      * @return $this
      */
-    public function escapeHTML( bool $escape ) {
-        return $this->set( 'esc_html', $escape );
+    public function escapeHTML(bool $escape)
+    {
+        return $this->set('esc_html', $escape);
 
     }
 

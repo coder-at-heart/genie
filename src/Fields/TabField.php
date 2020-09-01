@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
-class TabField extends Field {
+class TabField extends Field
+{
 
     protected $type = 'tab';
 
@@ -17,17 +18,19 @@ class TabField extends Field {
      *
      * @return $this
      */
-    public function endpoint( bool $endpoint ) {
-        return $this->set( 'endpoint', $endpoint );
+    public function endpoint(bool $endpoint)
+    {
+        return $this->set('endpoint', $endpoint);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->displayOnly( true );
-        $this->placement( 'top' );
+        $this->displayOnly(true);
+        $this->placement('top');
     }
 
 
@@ -39,8 +42,9 @@ class TabField extends Field {
      *
      * @return $this
      */
-    public function placement( string $placement ) {
-        return $this->set( 'placement', $placement );
+    public function placement(string $placement)
+    {
+        return $this->set('placement', $placement);
 
     }
 

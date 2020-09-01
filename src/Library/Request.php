@@ -5,7 +5,8 @@ namespace Lnk7\Genie\Library;
 use Lnk7\Genie\Exception\GenieException;
 use Lnk7\Genie\Tools;
 
-class Request {
+class Request
+{
 
     /**
      * Input variables
@@ -24,10 +25,11 @@ class Request {
      * @return bool|mixed
      * @throws GenieException
      */
-    public static function get( $var ) {
+    public static function get($var)
+    {
         static::maybeParseInput();
-        if ( isset( static::$data[ $var ] ) ) {
-            return static::$data[ $var ];
+        if (isset(static::$data[$var])) {
+            return static::$data[$var];
         }
 
         return false;
@@ -41,29 +43,30 @@ class Request {
      *
      * @throws GenieException
      */
-    private static function maybeParseInput() {
+    private static function maybeParseInput()
+    {
 
-        if ( ! is_null( static::$data ) ) {
+        if (!is_null(static::$data)) {
             return;
         }
 
         static::$data = [];
 
-        $body = file_get_contents( 'php://input' );
+        $body = file_get_contents('php://input');
 
-        if ( $body ) {
-            static::$data = array_merge( static::$data, json_decode( $body, true ) );
-            if ( json_last_error() !== JSON_ERROR_NONE ) {
-                throw new GenieException( 'Invalid json received' );
+        if ($body) {
+            static::$data = array_merge(static::$data, json_decode($body, true));
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new GenieException('Invalid json received');
             }
         }
 
-        if ( ! empty( $_GET ) ) {
-            static::$data = array_merge( static::$data, Tools::stripSlashesArray( $_GET ) );
+        if (!empty($_GET)) {
+            static::$data = array_merge(static::$data, Tools::stripSlashesArray($_GET));
         }
 
-        if ( ! empty( $_POST ) ) {
-            static::$data = array_merge( static::$data, Tools::stripSlashesArray( $_POST ) );
+        if (!empty($_POST)) {
+            static::$data = array_merge(static::$data, Tools::stripSlashesArray($_POST));
         }
 
     }

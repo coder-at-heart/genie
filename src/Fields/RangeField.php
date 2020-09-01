@@ -2,7 +2,8 @@
 
 namespace Lnk7\Genie\Fields;
 
-class RangeField extends NumberField {
+class RangeField extends NumberField
+{
 
     protected $type = 'range';
 

@@ -2,7 +2,8 @@
 
 namespace Lnk7\Genie\Fields;
 
-class TextAreaField extends TextField {
+class TextAreaField extends TextField
+{
 
     protected $type = 'textarea';
 
@@ -15,17 +16,19 @@ class TextAreaField extends TextField {
      *
      * @return $this
      */
-    public function rows( int $rows ) {
-        return $this->set( 'rows', $rows );
+    public function rows(int $rows)
+    {
+        return $this->set('rows', $rows);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->newLines( '' );
-        $this->searchable( true );
+        $this->newLines('');
+        $this->searchable(true);
     }
 
 
@@ -37,8 +40,9 @@ class TextAreaField extends TextField {
      *
      * @return $this
      */
-    public function newLines( string $newLines ) {
-        return $this->set( 'new_lines', $newLines );
+    public function newLines(string $newLines)
+    {
+        return $this->set('new_lines', $newLines);
 
     }
 

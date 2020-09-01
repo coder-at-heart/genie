@@ -4,9 +4,11 @@ namespace Lnk7\Genie;
 
 /**
  * Class Tools
+ *
  * @package Lnk7\Genie
  */
-class Tools {
+class Tools
+{
 
     /**
      * Add slashes to a string
@@ -16,18 +18,20 @@ class Tools {
      *
      * @return string
      */
-    public static function addSlashes( $string, $chars = '"' ) {
+    public static function addSlashes($string, $chars = '"')
+    {
 
-        return addcslashes( $string, $chars );
+        return addcslashes($string, $chars);
 
     }
 
 
 
-    public static function stripSlashesArray( $value ) {
-        $value = is_array( $value ) ?
-            array_map( 'stripslashes_deep', $value ) :
-            stripslashes( $value );
+    public static function stripSlashesArray($value)
+    {
+        $value = is_array($value) ?
+            array_map('stripslashes_deep', $value) :
+            stripslashes($value);
 
         return $value;
     }
@@ -41,12 +45,13 @@ class Tools {
      *
      * @return bool|object|array
      */
-    public static function maybeConvertFromJson( $string ) {
+    public static function maybeConvertFromJson($string)
+    {
 
-        $json = json_decode( $string );
-        if ( json_last_error() == JSON_ERROR_NONE ) {
+        $json = json_decode($string);
+        if (json_last_error() == JSON_ERROR_NONE) {
             return $json;
-        };
+        }
 
         return $string;
     }
@@ -60,16 +65,17 @@ class Tools {
      *
      * @return bool|object|array
      */
-    public static function maybeConvertToJson( $string ) {
-        if ( is_string( $string ) ) {
-            $json = json_decode( $string );
-            if ( json_last_error() == JSON_ERROR_NONE ) {
+    public static function maybeConvertToJson($string)
+    {
+        if (is_string($string)) {
+            $json = json_decode($string);
+            if (json_last_error() == JSON_ERROR_NONE) {
                 return $string;
-            };
+            }
 
         }
 
-        return json_encode( $string );
+        return json_encode($string);
     }
 
 
@@ -79,12 +85,13 @@ class Tools {
      *
      * @param $var
      */
-    public static function console( $var ) {
+    public static function console($var)
+    {
 
-        if ( is_array( $var ) or is_object( $var ) ) {
-            $var = print_r( $var, true );
+        if (is_array($var) or is_object($var)) {
+            $var = print_r($var, true);
         }
-        print "<script>console.log(" . json_encode( $var ) . ")</script>";
+        print "<script>console.log(" . json_encode($var) . ")</script>";
     }
 
 
@@ -94,9 +101,10 @@ class Tools {
      *
      * @param $var
      */
-    public static function dd( $var ) {
+    public static function dd($var)
+    {
 
-        self::d( $var );
+        self::d($var);
         exit;
     }
 
@@ -107,10 +115,11 @@ class Tools {
      *
      * @param $var
      */
-    public static function d( $var ) {
+    public static function d($var)
+    {
 
-        if ( is_array( $var ) or is_object( $var ) ) {
-            $var = print_r( $var, true );
+        if (is_array($var) or is_object($var)) {
+            $var = print_r($var, true);
         }
         print "<pre>$var</pre>";
     }
@@ -124,11 +133,12 @@ class Tools {
      *
      * @return bool
      */
-    public static function getDomainName( $url ) {
+    public static function getDomainName($url)
+    {
 
-        $pieces = parse_url( $url );
-        $domain = isset( $pieces['host'] ) ? $pieces['host'] : $pieces['path'];
-        if ( preg_match( '/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $regs ) ) {
+        $pieces = parse_url($url);
+        $domain = isset($pieces['host']) ? $pieces['host'] : $pieces['path'];
+        if (preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $regs)) {
             return $regs['domain'];
         }
 
@@ -139,9 +149,11 @@ class Tools {
 
     /**
      * Get an IP Address
+     *
      * @return mixed
      */
-    public static function getIpAddress() {
+    public static function getIpAddress()
+    {
 
         return $_SERVER['REMOTE_ADDR'];
     }
@@ -151,15 +163,16 @@ class Tools {
     /**
      * Pick up headers
      */
-    public static function getRequestHeaders() {
+    public static function getRequestHeaders()
+    {
 
         $headers = [];
-        foreach ( $_SERVER as $key => $value ) {
-            if ( substr( $key, 0, 5 ) <> 'HTTP_' ) {
+        foreach ($_SERVER as $key => $value) {
+            if (substr($key, 0, 5) <> 'HTTP_') {
                 continue;
             }
-            $header             = str_replace( ' ', '-', ucwords( str_replace( '_', ' ', strtolower( substr( $key, 5 ) ) ) ) );
-            $headers[ $header ] = $value;
+            $header = str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
+            $headers[$header] = $value;
         }
 
         return $headers;
@@ -167,9 +180,10 @@ class Tools {
 
 
 
-    public static function jsonSafe( $data ) {
+    public static function jsonSafe($data)
+    {
 
-        return str_replace( "'", '&apos;', json_encode( $data ) );
+        return str_replace("'", '&apos;', json_encode($data));
 
     }
 

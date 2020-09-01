@@ -10,12 +10,12 @@ use Twig\TwigFilter;
 
 /**
  * Class View
- *
  * Wrapper around twig
  *
  * @package Lnk7\Genie
  */
-class View {
+class View
+{
 
     /**
      * Twig Object
@@ -47,64 +47,66 @@ class View {
      *
      * @param $template
      */
-    function __construct( $template ) {
+    function __construct($template)
+    {
         $this->template = $template;
     }
 
 
 
-    public static function Setup() {
+    public static function Setup()
+    {
 
-        add_action( 'init', function () {
+        add_action('init', function () {
 
             $debug = WP_DEBUG;
-            $cache = ! WP_DEBUG;
+            $cache = !WP_DEBUG;
 
-            $pathArray = apply_filters( 'genie_view_folders', [] );
+            $pathArray = apply_filters('genie_view_folders', []);
 
-            $fileLoader = new FilesystemLoader( $pathArray );
-            $loader     = new ChainLoader( [ $fileLoader ] );
+            $fileLoader = new FilesystemLoader($pathArray);
+            $loader = new ChainLoader([$fileLoader]);
 
             $configArray = [
                 'autoescape'  => false,
                 'auto_reload' => true,
             ];
 
-            if ( $debug ) {
+            if ($debug) {
                 $configArray['debug'] = true;
             }
-            if ( $cache ) {
+            if ($cache) {
                 $configArray['cache'] = static::getCacheFolder();
             }
 
-            $twig = new Environment( $loader, $configArray );
+            $twig = new Environment($loader, $configArray);
 
-            if ( $debug ) {
-                $twig->addExtension( new DebugExtension() );
+            if ($debug) {
+                $twig->addExtension(new DebugExtension());
             }
-            $filter = new TwigFilter( 'json', Tools::class . '::jsonSafe' );
-            $twig->addFilter( $filter );
+            $filter = new TwigFilter('json', Tools::class . '::jsonSafe');
+            $twig->addFilter($filter);
 
-            $filter = new TwigFilter( 'wpautop', 'wpautop' );
-            $twig->addFilter( $filter );
+            $filter = new TwigFilter('wpautop', 'wpautop');
+            $twig->addFilter($filter);
 
-            self::$twig = apply_filters( 'genie_twig_init', $twig );;
-        }, 1 );
+            self::$twig = apply_filters('genie_twig_init', $twig);
+        }, 1);
 
-        add_shortcode( 'genie_view', function ( $attributes, $content ) {
-            $a = (object) shortcode_atts( [
+        add_shortcode('genie_view', function ($attributes, $content) {
+            $a = (object)shortcode_atts([
                 'view' => '',
-            ], $attributes );
+            ], $attributes);
 
-            if ( ! $a->view ) {
+            if (!$a->view) {
                 $a->view = $attributes[0] ?? $content;
             }
 
-            return static::with( $a->view )
-                         ->addVars( $attributes )
-                         ->render();
+            return static::with($a->view)
+                ->addVars($attributes)
+                ->render();
 
-        } );
+        });
     }
 
 
@@ -114,9 +116,10 @@ class View {
      *
      * @return string
      */
-    private static function getCacheFolder() {
+    private static function getCacheFolder()
+    {
 
-        $upload     = wp_upload_dir();
+        $upload = wp_upload_dir();
         $upload_dir = $upload['basedir'];
 
         return $upload_dir . '/twig_cache';
@@ -124,19 +127,20 @@ class View {
 
 
 
-    public function render() {
+    public function render()
+    {
 
-        $vars = apply_filters( 'genie_view_before_render', $this->vars );
+        $vars = apply_filters('genie_view_before_render', $this->vars);
 
-        if ( $this->templateType === 'string' ) {
-            $template = View::$twig->createTemplate( $this->template );
-            $html     = $template->render( $vars );
+        if ($this->templateType === 'string') {
+            $template = View::$twig->createTemplate($this->template);
+            $html = $template->render($vars);
         } else {
-            $html = View::$twig->render( $this->template, $vars );
+            $html = View::$twig->render($this->template, $vars);
         }
 
-        if ( $this->processShortcodes ) {
-            $html = do_shortcode( $html );
+        if ($this->processShortcodes) {
+            $html = do_shortcode($html);
         }
 
         return $html;
@@ -146,16 +150,16 @@ class View {
 
 
     /**
-     *
      * Add variables to the twig template
      *
      * @param $fields
      *
      * @return $this
      */
-    public function addVars( $fields ) {
+    public function addVars($fields)
+    {
 
-        $this->vars = array_merge( $this->vars, $fields );
+        $this->vars = array_merge($this->vars, $fields);
 
         return $this;
 
@@ -165,17 +169,17 @@ class View {
 
     /**
      * which template to use?
-     *
      * This could be a file or a string
      *
      * @param $template
      *
      * @return static
      */
-    public static function with( $template ) {
+    public static function with($template)
+    {
 
-        $type               = substr( strtolower( $template ), - 5 ) === '.twig' ? 'file' : 'string';
-        $view               = new static( $template );
+        $type = substr(strtolower($template), -5) === '.twig' ? 'file' : 'string';
+        $view = new static($template);
         $view->templateType = $type;
 
         return $view;
@@ -188,7 +192,8 @@ class View {
      *
      * @return $this
      */
-    function enableShortcodes() {
+    function enableShortcodes()
+    {
         $this->processShortcodes = true;
 
         return $this;
@@ -202,7 +207,8 @@ class View {
      * @return $this
      */
 
-    function disableShortcodes() {
+    function disableShortcodes()
+    {
         $this->processShortcodes = false;
 
         return $this;
@@ -218,9 +224,10 @@ class View {
      *
      * @return $this
      */
-    public function addVar( $var, $value ) {
+    public function addVar($var, $value)
+    {
 
-        $this->vars[ $var ] = $value;
+        $this->vars[$var] = $value;
 
         return $this;
 
@@ -231,7 +238,8 @@ class View {
     /**
      * Output the view rather than return it.
      */
-    public function display() {
+    public function display()
+    {
         echo $this->render();
     }
 

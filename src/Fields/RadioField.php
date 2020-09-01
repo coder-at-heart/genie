@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
-class RadioField extends Field {
+class RadioField extends Field
+{
 
     protected $type = 'radio';
 
@@ -17,8 +18,9 @@ class RadioField extends Field {
      *
      * @return $this
      */
-    public function choices( array $choices ) {
-        return $this->set( 'choices', $choices );
+    public function choices(array $choices)
+    {
+        return $this->set('choices', $choices);
 
     }
 
@@ -31,8 +33,9 @@ class RadioField extends Field {
      *
      * @return $this
      */
-    public function otherChoices( bool $otherChoices ) {
-        return $this->set( 'other_choice', $otherChoices );
+    public function otherChoices(bool $otherChoices)
+    {
+        return $this->set('other_choice', $otherChoices);
 
     }
 
@@ -45,17 +48,19 @@ class RadioField extends Field {
      *
      * @return $this
      */
-    public function saveOtherChoice( bool $saveOtherChoice ) {
-        return $this->set( 'save_other_choice', $saveOtherChoice );
+    public function saveOtherChoice(bool $saveOtherChoice)
+    {
+        return $this->set('save_other_choice', $saveOtherChoice);
 
     }
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->layout( 'vertical' );
-        $this->returnFormat( 'array' );
+        $this->layout('vertical');
+        $this->returnFormat('array');
     }
 
 
@@ -67,8 +72,9 @@ class RadioField extends Field {
      *
      * @return $this
      */
-    public function layout( string $layout ) {
-        return $this->set( 'layout', $layout );
+    public function layout(string $layout)
+    {
+        return $this->set('layout', $layout);
 
     }
 
@@ -81,8 +87,9 @@ class RadioField extends Field {
      *
      * @return $this
      */
-    public function returnFormat( $returnFormat ) {
-        return $this->set( 'return_format', $returnFormat );
+    public function returnFormat($returnFormat)
+    {
+        return $this->set('return_format', $returnFormat);
 
     }
 

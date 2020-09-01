@@ -4,7 +4,8 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Utilities\ConvertString;
 
-class IconField extends SelectField {
+class IconField extends SelectField
+{
 
     protected $icons = [
         'ad',
@@ -968,22 +969,24 @@ class IconField extends SelectField {
 
 
 
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
 
         parent::setDefaults();
-        $this->returnFormat( 'value' );
+        $this->returnFormat('value');
         $this->setChoices();
     }
 
 
 
-    public function setChoices() {
+    public function setChoices()
+    {
 
         $choices = [];
-        foreach ( $this->icons as $icon ) {
-            $choices[ $icon ] = '<i class="fas fa-' . $icon . '"></i> ' . ConvertString::From( $icon )->toTitleCase();
+        foreach ($this->icons as $icon) {
+            $choices[$icon] = '<i class="fas fa-' . $icon . '"></i> ' . ConvertString::From($icon)->toTitleCase();
         }
-        $this->choices( $choices );
+        $this->choices($choices);
     }
 
 }

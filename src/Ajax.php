@@ -10,9 +10,11 @@ use Throwable;
 
 /**
  * Class Ajax
+ *
  * @package Lnk7\Genie
  */
-class Ajax {
+class Ajax
+{
 
     /**
      * An array of paths to use for ajax calls
@@ -26,21 +28,22 @@ class Ajax {
     /**
      * Setup Actions, Filters and Shortcodes
      */
-    public static function Setup() {
-        add_action( 'init', function () {
-            $path   = apply_filters( 'genie_ajax_path', 'ajax' );
-            $action = apply_filters( 'genie_ajax_action', 'ajax' );
-            add_rewrite_rule( $path . '/(.*)$', 'wp-admin/admin-ajax.php?action=' . $action . '&request=$1', 'top' );
+    public static function Setup()
+    {
+        add_action('init', function () {
+            $path = apply_filters('genie_ajax_path', 'ajax');
+            $action = apply_filters('genie_ajax_action', 'ajax');
+            add_rewrite_rule($path . '/(.*)$', 'wp-admin/admin-ajax.php?action=' . $action . '&request=$1', 'top');
 
             // Action from the outside world
-            add_action( 'wp_ajax_' . $action, function () {
+            add_action('wp_ajax_' . $action, function () {
                 static::ajax();
-            } );
-            add_action( 'wp_ajax_nopriv_' . $action, function () {
+            });
+            add_action('wp_ajax_nopriv_' . $action, function () {
                 static::ajax();
-            } );
+            });
 
-        } );
+        });
 
     }
 
@@ -51,37 +54,38 @@ class Ajax {
      *
      * @throws ReflectionException
      */
-    protected static function ajax() {
+    protected static function ajax()
+    {
 
         $requestPath = $_REQUEST['request'];
 
-        if ( ! isset( static::$paths[ $requestPath ] ) ) {
-            Response::NotFound( [ 'message' => "{$requestPath}, not found" ] );
+        if (!isset(static::$paths[$requestPath])) {
+            Response::NotFound(['message' => "{$requestPath}, not found"]);
         }
-        $callback = static::$paths[ $requestPath ];
+        $callback = static::$paths[$requestPath];
 
         $callbackParams = [];
 
-        $reflection = new ReflectionMethod( $callback );
-        $params     = $reflection->getParameters();
+        $reflection = new ReflectionMethod($callback);
+        $params = $reflection->getParameters();
 
-        foreach ( $params as $param ) {
-            $name  = $param->getName();
-            $value = Request::get( $name );
-            if ( ! $param->isOptional() and ! isset( $value ) ) {
-                Response::Failure( [ 'message' => "required parameter {$name} is missing" ] );
+        foreach ($params as $param) {
+            $name = $param->getName();
+            $value = Request::get($name);
+            if (!$param->isOptional() and !isset($value)) {
+                Response::Failure(['message' => "required parameter {$name} is missing"]);
             }
-            $callbackParams[ $name ] = $value;
+            $callbackParams[$name] = $value;
         }
         try {
-            $result = call_user_func_array( $callback, $callbackParams );
-            Response::Success( [
-                'response' => $result
-            ] );
-        } catch ( Throwable $e ) {
-            Response::Failure( [
-                'message' => $e->getMessage()
-            ] );
+            $result = call_user_func_array($callback, $callbackParams);
+            Response::Success([
+                'response' => $result,
+            ]);
+        } catch (Throwable $e) {
+            Response::Failure([
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 
@@ -93,8 +97,9 @@ class Ajax {
      * @param $path
      * @param $callback
      */
-    public static function Register( $path, $callback ) {
-        static::$paths[ $path ] = $callback;
+    public static function Register($path, $callback)
+    {
+        static::$paths[$path] = $callback;
     }
 
 }
