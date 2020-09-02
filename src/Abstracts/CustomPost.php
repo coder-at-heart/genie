@@ -359,6 +359,7 @@ abstract class CustomPost implements JsonSerializable
     {
 
         $object = new static();
+        $object->setDefaults();
         $object->fill($array);
         $object->save();
 
