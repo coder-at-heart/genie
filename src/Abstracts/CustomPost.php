@@ -785,7 +785,7 @@ abstract class CustomPost implements JsonSerializable
     function delete($force = true)
     {
         if ($this->ID) {
-            $this->pretDelete($this->ID);
+            $this->preDelete();
 
             return wp_delete_post($this->ID, $force);
 
