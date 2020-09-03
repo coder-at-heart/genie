@@ -4,8 +4,8 @@
  * Plugin Name:       Genie
  * Plugin URI:        https://lnk7.com/plugins/genie/
  * Description:       Lnk7's Genie: The Advanced Programmer Toolkit
- * Version:           0.3.2
- * Requires at least: 7.2
+ * Version:           0.4.0
+ * Requires at least: 5.5
  * Author:            Sunil Jaiswal
  * Author URI:        https://lnk7.com/
  * License:           GPL v2 or later
@@ -14,7 +14,7 @@
  * Domain Path:       /languages
  */
 
-namespace lnk7\Genie;
+namespace Lnk7\Genie;
 
 include_once( 'vendor/autoload.php' );
 
