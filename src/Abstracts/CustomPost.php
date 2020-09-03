@@ -110,17 +110,15 @@ abstract class CustomPost implements JsonSerializable
             return;
         }
 
-        $this->ID = $id;
-
         // try and load this object from cache
         if (static::$cache) {
-            $this->data = get_post_meta($this->ID, static::getCacheKey(), true);
+            $this->data = get_post_meta($id, static::getCacheKey(), true);
         }
 
         // No data?  let's build it.
         if (empty($this->data)) {
 
-            $postData = get_post($this->ID, ARRAY_A);
+            $postData = get_post($id, ARRAY_A);
 
             // No Data ?
             if (!$postData) {
