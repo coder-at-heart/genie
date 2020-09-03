@@ -5,10 +5,10 @@ namespace Lnk7\Genie\Abstracts;
 use Illuminate\Support\Collection;
 use JsonSerializable;
 use Lnk7\Genie\Cache;
-use Lnk7\Genie\Exception\GenieNotFoundException;
 use Lnk7\Genie\Registry;
 use Lnk7\Genie\Utilities\ConvertString;
 use Lnk7\Genie\WordPress;
+use WP_Error;
 
 /**
  * Class CustomPost
@@ -37,8 +37,6 @@ use Lnk7\Genie\WordPress;
  * @property string post_type
  * @property string post_mime_type
  * @property string comment_count
- * @property-read array featured_image
- * @property-read string permalink
  */
 abstract class CustomPost implements JsonSerializable
 {
@@ -100,7 +98,7 @@ abstract class CustomPost implements JsonSerializable
      *
      * @param int|null $id
      *
-     * @throws GenieNotFoundException
+     * @return static|void|WP_Error
      */
     function __construct($id = null)
     {
@@ -126,7 +124,7 @@ abstract class CustomPost implements JsonSerializable
 
             // No Data ?
             if (!$postData) {
-                throw new GenieNotFoundException("Could not find a " . static::$plural . " with an ID of " . $id);
+                return new WP_Error("Could not find a " . static::$plural . " with an ID of " . $id);
             }
 
             $this->fill($postData);
@@ -486,7 +484,6 @@ abstract class CustomPost implements JsonSerializable
      * @param $id
      *
      * @return static
-     * @throws GenieNotFoundException
      */
     public static function getById($id)
     {
@@ -501,7 +498,6 @@ abstract class CustomPost implements JsonSerializable
      * @param $slug
      *
      * @return bool|mixed
-     * @throws GenieNotFoundException
      */
     public static function getBySlug($slug)
     {
@@ -527,7 +523,6 @@ abstract class CustomPost implements JsonSerializable
      * @param array $params
      *
      * @return Collection
-     * @throws GenieNotFoundException
      */
     public static function get(array $params = [])
     {
@@ -560,7 +555,6 @@ abstract class CustomPost implements JsonSerializable
      * @param $taxonomy
      *
      * @return Collection
-     * @throws GenieNotFoundException
      */
     public static function getByTaxonomyName($name, $taxonomy)
     {
@@ -586,7 +580,6 @@ abstract class CustomPost implements JsonSerializable
      * @param $title
      *
      * @return bool|static
-     * @throws GenieNotFoundException
      */
     public static function getByTitle($title)
     {
@@ -609,7 +602,6 @@ abstract class CustomPost implements JsonSerializable
      * Useful for Templates
      *
      * @return static
-     * @throws GenieNotFoundException
      */
     public static function getCurrent()
     {
@@ -695,6 +687,11 @@ abstract class CustomPost implements JsonSerializable
 
 
 
+    /**
+     * Return an array of images sizes and urls.
+     *
+     * @return array|false
+     */
     public function featuredImage()
     {
         // Does this post have a featured image?
@@ -722,6 +719,11 @@ abstract class CustomPost implements JsonSerializable
 
 
 
+    /**
+     * get the permalink for this post
+     *
+     * @return false|string|WP_Error
+     */
     public function permalink()
     {
         return get_permalink($this->ID);
