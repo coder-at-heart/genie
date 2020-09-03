@@ -2,8 +2,10 @@
 
 namespace Lnk7\Genie\Abstracts;
 
+use Illuminate\Support\Collection;
 use JsonSerializable;
 use Lnk7\Genie\Cache;
+use Lnk7\Genie\Exception\GenieNotFoundException;
 use Lnk7\Genie\Registry;
 use Lnk7\Genie\Utilities\ConvertString;
 use Lnk7\Genie\WordPress;
@@ -81,7 +83,15 @@ abstract class CustomPost implements JsonSerializable
      *
      * @var array
      */
-    var $data = [];
+    protected $data = [];
+
+
+    /**
+     * used as a story of loaded data
+     *
+     * @var array
+     */
+    protected $originalData = [];
 
 
 
@@ -89,6 +99,8 @@ abstract class CustomPost implements JsonSerializable
      * Return a new instance of the Object
      *
      * @param int|null $id
+     *
+     * @throws GenieNotFoundException
      */
     function __construct($id = null)
     {
@@ -105,60 +117,65 @@ abstract class CustomPost implements JsonSerializable
         // try and load this object from cache
         if (static::$cache) {
             $this->data = get_post_meta($this->ID, static::getCacheKey(), true);
-            if (!empty($this->data)) {
-                return;
+        }
+
+        // No data ?  let's build it.
+        if (empty($this->data)) {
+
+            // No cache or data? Let's rebuild this object
+            $this->data = get_post($this->ID, ARRAY_A);
+
+            // No Data ?
+            if (!$this->data) {
+                throw new GenieNotFoundException("Could not find a " . static::$plural . " with an ID of " . $id);
+            }
+
+            $fields = get_fields($this->ID);
+            if ($fields) {
+                foreach ($fields as $field => $value) {
+                    $this->$field = $value;
+                }
+            }
+
+            // Does this post have a featured image?
+            $attachmentID = get_post_thumbnail_id($this->ID);
+            if ($attachmentID) {
+                $this->featured_image = [];
+                $sizes = get_intermediate_image_sizes();
+                foreach ($sizes as $size) {
+                    $src = wp_get_attachment_image_src($attachmentID, $size);
+                    $this->featured_image[$size] = (object)[
+                        'url'     => $src[0],
+                        'width'   => $src[1],
+                        'height'  => $src[2],
+                        'resized' => $src[3],
+                    ];
+                }
+            }
+
+            // What about a link to this post?
+            $this->permalink = get_permalink($this->ID);
+
+            if (static::$cache) {
+                $this->beforeCache();
+                update_post_meta($this->ID, static::getCacheKey(), $this->data);
             }
         }
 
-        // No cache or data? Let's rebuild this object
-        $this->data = get_post($this->ID, ARRAY_A);
+        $this->originalData = $this->data;
 
-        // no Post ?
-        if (!$this->data) {
-            return;
-        }
-
-        $fields = get_fields($this->ID);
-        if ($fields) {
-            foreach ($fields as $field => $value) {
-                $this->$field = $value;
-            }
-        }
-
-        // Does this post have a featured image?
-        $attachmentID = get_post_thumbnail_id($this->ID);
-        if ($attachmentID) {
-
-            $this->featured_image = [];
-            $sizes = get_intermediate_image_sizes();
-            foreach ($sizes as $size) {
-                $src = wp_get_attachment_image_src($attachmentID, $size);
-                $this->featured_image[$size] = (object)[
-                    'url'     => $src[0],
-                    'width'   => $src[1],
-                    'height'  => $src[2],
-                    'resized' => $src[3],
-                ];
-            }
-        }
-
-        // What about a link to this post?
-        $this->permalink = get_permalink($this->ID);
-
-        if (static::$cache) {
-            $this->beforeCache();
-            update_post_meta($this->ID, static::getCacheKey(), $this->data);
-        }
 
     }
 
 
 
     /**
+     * Set defaults for this object
      */
-    function setDefaults()
+    public function setDefaults()
     {
         $this->post_status = 'publish';
+        $this->post_type = static::$postType;
     }
 
 
@@ -179,7 +196,7 @@ abstract class CustomPost implements JsonSerializable
     /**
      *  Update properties on this object
      */
-    function beforeCache()
+    public function beforeCache()
     {
 
     }
@@ -197,7 +214,7 @@ abstract class CustomPost implements JsonSerializable
          */
         add_filter('wp_insert_post_data', function ($data, $postArray) {
 
-            // Bail early if no data sent.
+            // Make sure we have acf data
             if (empty($postArray['acf'])) {
                 return $data;
             }
@@ -255,21 +272,21 @@ abstract class CustomPost implements JsonSerializable
         /**
          * Should we use Gutenberg ?
          */
-        add_filter('use_block_editor_for_post_type', function ($current_status, $post_type) {
+        add_filter('use_block_editor_for_post_type', function ($currentStatus, $postType) {
 
             // Use your post type key instead of 'product'
-            if ($post_type === static::$postType) {
+            if ($postType === static::$postType) {
                 return static::$useGutenberg;
             }
 
-            return $current_status;
+            return $currentStatus;
         }, 10, 2);
     }
 
 
 
     /**
-     * get the field definitions
+     * Get the field definitions from the registry
      *
      * @return mixed|null
      */
@@ -282,7 +299,7 @@ abstract class CustomPost implements JsonSerializable
 
 
     /**
-     * ACF before the post is saved.
+     * Capture and use ACF before the post is saved.
      * We can override some of the wordpress fields here.
      *
      * @param array $data
@@ -301,6 +318,7 @@ abstract class CustomPost implements JsonSerializable
 
     /**
      * Code to instantiate the Custom Post Type.
+     * Create Posts and schemas here
      */
     public static function init()
     {
@@ -312,8 +330,9 @@ abstract class CustomPost implements JsonSerializable
     /**
      * Parse the schema and build a map of the field name / keys
      * We will use this later when saving data.
-     * Problem with setting static::$schema here
+     * Problem with setting static::$schema here so we use the registry instead.
      * https://stackoverflow.com/questions/4577187/php-5-3-late-static-binding-doesnt-work-for-properties-when-defined-in-parent
+     * This is called from CreateSchema
      *
      * @param $schema
      */
@@ -348,7 +367,7 @@ abstract class CustomPost implements JsonSerializable
 
 
     /**
-     * create an Object from an array.
+     * Create an Object from an array of key value pairs..
      *
      * @param array $array
      *
@@ -379,34 +398,34 @@ abstract class CustomPost implements JsonSerializable
         foreach ($array as $field => $value) {
             $this->$field = $value;
         }
-
     }
 
 
 
     /**
-     * @return bool
+     * Save the custom post type
+     *
+     * @return int
      */
-    function save()
+    public function save()
     {
 
         $this->beforeSave();
 
         $this->checkValidity();
 
-        $postFields = [
-            'post_title'   => $this->post_title,
-            'post_content' => $this->post_content,
-            'post_type'    => static::$postType,
-            'post_status'  => $this->post_status,
-            'post_name'    => $this->post_name,
-        ];
-
-        if (!$this->ID) {
-            $this->ID = wp_insert_post($postFields);
-        } else {
-            wp_update_post(['ID' => $this->ID] + $postFields);
+        if (!$this->isDirty()) {
+            return $this->ID;
         }
+
+        $postFields = [];
+        foreach (WordPress::$postFields as $field) {
+            if ($this->$field) {
+                $postFields[$field] = $this->$field;
+            }
+        }
+
+        wp_insert_post($postFields);
 
         $fields = static::getFields();
 
@@ -416,11 +435,17 @@ abstract class CustomPost implements JsonSerializable
                 continue;
             }
 
-            if (!isset($this->{$field['name']})) {
+            $name = $field['name'];
+            $key = $field['key'];
+
+            if (!array_key_exists($name, $this->data)) {
                 continue;
             }
 
-            update_field($field['key'], $this->{$field['name']}, $this->ID);
+            // Only update if we need to.
+            if (!array_key_exists($name, $this->originalData) || $this->originalData[$name] !== $this->data[$name]) {
+                update_field($key, $this->data[$name], $this->ID);
+            }
 
         }
 
@@ -445,8 +470,20 @@ abstract class CustomPost implements JsonSerializable
      * Check the validity of this object
      * Throw errors from here and catch from save
      */
-    function checkValidity()
+    public function checkValidity()
     {
+    }
+
+
+
+    /**
+     * Check if the post needs saving
+     *
+     * @return bool
+     */
+    public function isDirty()
+    {
+        return $this->data !== $this->originalData;
     }
 
 
@@ -454,7 +491,7 @@ abstract class CustomPost implements JsonSerializable
     /**
      * clear the cache for this post
      */
-    function clearCache()
+    public function clearCache()
     {
         if ($this->ID) {
             Cache::clearCache($this->ID);
@@ -462,36 +499,15 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
-    /**
-     * Get the first result
-     *
-     * @param array $params
-     *
-     * @return bool|mixed
-     */
-    public static function first($params = [])
-    {
-
-        $data = static::get($params);
-        if (count($data) > 0) {
-            return $data[0];
-        }
-
-        return false;
-
-    }
-
-
-
     /**
      * Wrapper around get_posts. Returns an array of Objects
      *
      * @param array $params
      *
-     * @return array WP_POST
+     * @return Collection
+     * @throws GenieNotFoundException
      */
-    public static function get($params = [])
+    public static function get(array $params = [])
     {
 
         $defaultArgs = [
@@ -503,19 +519,14 @@ abstract class CustomPost implements JsonSerializable
             'fields'      => 'ids',
         ];
 
-        $data = [];
         $defaultArgs = apply_filters('genie_' . static::$postType . '_get_args', $defaultArgs);
-        $args = array_merge($defaultArgs, $params);
-        $posts = get_posts($args);
-
+        $posts = get_posts(array_merge($defaultArgs, $params));
+        $collection = new Collection();
         foreach ($posts as $id) {
-            $object = new static($id);
-            $data[] = $object;
+            $collection->add(new static($id));
         }
 
-        $data = apply_filters('genie_' . static::$postType . '_get_data', $data);
-
-        return $data;
+        return $collection;
     }
 
 
@@ -526,6 +537,7 @@ abstract class CustomPost implements JsonSerializable
      * @param $id
      *
      * @return static
+     * @throws GenieNotFoundException
      */
     public static function getById($id)
     {
@@ -540,21 +552,22 @@ abstract class CustomPost implements JsonSerializable
      * @param $slug
      *
      * @return bool|mixed
+     * @throws GenieNotFoundException
      */
     public static function getBySlug($slug)
     {
 
-        $posts = static::get([
+        $objects = static::get([
             'name'        => $slug,
             'post_status' => 'any',
             'fields'      => 'ids',
         ]);
 
-        if (!$posts) {
+        if ($objects->isEmpty()) {
             return false;
         }
 
-        return new static($posts[0]);
+        return $objects->first();
     }
 
 
@@ -565,7 +578,8 @@ abstract class CustomPost implements JsonSerializable
      * @param $name
      * @param $taxonomy
      *
-     * @return array
+     * @return Collection
+     * @throws GenieNotFoundException
      */
     public static function getByTaxonomyName($name, $taxonomy)
     {
@@ -591,20 +605,21 @@ abstract class CustomPost implements JsonSerializable
      * @param $title
      *
      * @return bool|static
+     * @throws GenieNotFoundException
      */
     public static function getByTitle($title)
     {
 
-        $posts = static::get([
+        $objects = static::get([
             'title'  => $title,
             'fields' => 'ids',
         ]);
 
-        if (!$posts) {
+        if ($objects->isEmpty()) {
             return false;
         }
 
-        return new static($posts[0]);
+        return $objects->first();
     }
 
 
@@ -613,24 +628,11 @@ abstract class CustomPost implements JsonSerializable
      * Useful for Templates
      *
      * @return static
+     * @throws GenieNotFoundException
      */
     public static function getCurrent()
     {
-
         return new static(get_the_ID());
-    }
-
-
-
-    /**
-     * An alias for static::get()
-     *
-     * @return array
-     */
-    public static function getLatest()
-    {
-
-        return static::get();
     }
 
 
@@ -642,7 +644,6 @@ abstract class CustomPost implements JsonSerializable
      */
     public static function getPlural()
     {
-
         return static::$plural ?? ConvertString::From(static::$postType)->toPlural()->toTitleCase()->return();
     }
 
@@ -650,7 +651,6 @@ abstract class CustomPost implements JsonSerializable
 
     public static function getSingular()
     {
-
         return static::$singular ?? ConvertString::From(static::$postType)->toSingular()->toTitleCase()->return();
     }
 
@@ -664,7 +664,6 @@ abstract class CustomPost implements JsonSerializable
     public static function getSchema()
     {
         return Registry::get('schemas', static::class);
-
     }
 
 
@@ -722,15 +721,15 @@ abstract class CustomPost implements JsonSerializable
      *
      * @return mixed
      */
-    function __get($var)
+    public function __get($var)
     {
 
-        if (!is_array($this->data) || !isset($this->data[$var])) {
-
-            return false;
+        if (array_key_exists($var, $this->data)) {
+            return $this->data[$var];
         }
 
-        return $this->data[$var];
+        return false;
+
     }
 
 
@@ -741,22 +740,21 @@ abstract class CustomPost implements JsonSerializable
      * @param $var
      * @param $value
      */
-    function __set($var, $value)
+    public function __set($var, $value)
     {
-
         $this->data[$var] = $value;
     }
 
 
 
     /**
-     * Needed from TWIG
+     * Needed from twig templates
      *
      * @param $var
      *
      * @return bool
      */
-    function __isset($var)
+    public function __isset($var)
     {
         return isset($this->data[$var]);
     }
@@ -764,11 +762,11 @@ abstract class CustomPost implements JsonSerializable
 
 
     /**
-     * return all data for this post
+     * Return all data for this post
      *
      * @return mixed|void
      */
-    function getData()
+    public function getData()
     {
         return $this->data;
     }
@@ -782,15 +780,12 @@ abstract class CustomPost implements JsonSerializable
      *
      * @return bool
      */
-    function delete($force = true)
+    public function delete($force = true)
     {
         if ($this->ID) {
             $this->preDelete();
-
             return wp_delete_post($this->ID, $force);
-
         }
-
         return false;
     }
 
@@ -800,7 +795,7 @@ abstract class CustomPost implements JsonSerializable
      * Things to do before delete!
      * Delete other objects / images etc.
      */
-    function preDelete()
+    public function preDelete()
     {
 
     }

@@ -46,7 +46,8 @@ class Genie
             return $vars;
         }, 10, 1);
 
-        do_action('genie_setup');
+
+        do_action('genie_setup_complete');
 
     }
 

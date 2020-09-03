@@ -69,15 +69,16 @@ class Ajax
         $reflection = new ReflectionMethod($callback);
         $params = $reflection->getParameters();
 
-        foreach ($params as $param) {
-            $name = $param->getName();
-            $value = Request::get($name);
-            if (!$param->isOptional() and !isset($value)) {
-                Response::Failure(['message' => "required parameter {$name} is missing"]);
-            }
-            $callbackParams[$name] = $value;
-        }
         try {
+            foreach ($params as $param) {
+                $name = $param->getName();
+                $value = Request::get($name);
+                if (!$param->isOptional() and !isset($value)) {
+                    Response::Failure(['message' => "required parameter {$name} is missing"]);
+                }
+                $callbackParams[$name] = $value;
+            }
+
             $result = call_user_func_array($callback, $callbackParams);
             Response::Success([
                 'response' => $result,

@@ -2,7 +2,7 @@
 
 namespace Lnk7\Genie\Library;
 
-use Lnk7\Genie\Exception\GenieException;
+use Lnk7\Genie\Exception\GenieInvalidAjaxException;
 use Lnk7\Genie\Tools;
 
 class Request
@@ -23,7 +23,7 @@ class Request
      * @param $var
      *
      * @return bool|mixed
-     * @throws GenieException
+     * @throws GenieInvalidAjaxException
      */
     public static function get($var)
     {
@@ -41,7 +41,7 @@ class Request
     /**
      * Collect Data from various input mechanisms
      *
-     * @throws GenieException
+     * @throws GenieInvalidAjaxException
      */
     private static function maybeParseInput()
     {
@@ -57,7 +57,7 @@ class Request
         if ($body) {
             static::$data = array_merge(static::$data, json_decode($body, true));
             if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new GenieException('Invalid json received');
+                throw new GenieInvalidAjaxException('Invalid json received');
             }
         }
 
