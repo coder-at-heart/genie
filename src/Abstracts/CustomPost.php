@@ -5,10 +5,10 @@ namespace Lnk7\Genie\Abstracts;
 use Illuminate\Support\Collection;
 use JsonSerializable;
 use Lnk7\Genie\Cache;
-use Lnk7\Genie\Exception\GenieNotFoundException;
 use Lnk7\Genie\Registry;
 use Lnk7\Genie\Utilities\ConvertString;
 use Lnk7\Genie\WordPress;
+use WP_Error;
 
 /**
  * Class CustomPost
@@ -37,8 +37,6 @@ use Lnk7\Genie\WordPress;
  * @property string post_type
  * @property string post_mime_type
  * @property string comment_count
- * @property-read array featured_image
- * @property-read string permalink
  */
 abstract class CustomPost implements JsonSerializable
 {
@@ -100,7 +98,7 @@ abstract class CustomPost implements JsonSerializable
      *
      * @param int|null $id
      *
-     * @throws GenieNotFoundException
+     * @return static|void|WP_Error
      */
     function __construct($id = null)
     {
@@ -119,42 +117,24 @@ abstract class CustomPost implements JsonSerializable
             $this->data = get_post_meta($this->ID, static::getCacheKey(), true);
         }
 
-        // No data ?  let's build it.
+        // No data?  let's build it.
         if (empty($this->data)) {
 
-            // No cache or data? Let's rebuild this object
-            $this->data = get_post($this->ID, ARRAY_A);
+            $postData = get_post($this->ID, ARRAY_A);
 
             // No Data ?
-            if (!$this->data) {
-                throw new GenieNotFoundException("Could not find a " . static::$plural . " with an ID of " . $id);
+            if (!$postData) {
+                return new WP_Error("Could not find a " . static::$plural . " with an ID of " . $id);
             }
 
-            $fields = get_fields($this->ID);
-            if ($fields) {
-                foreach ($fields as $field => $value) {
-                    $this->$field = $value;
+            $this->fill($postData);
+
+            $acfFields = get_fields($this->ID);
+            if ($acfFields) {
+                foreach ($acfFields as $field => $value) {
+                    $this->data[$field] = $value;
                 }
             }
-
-            // Does this post have a featured image?
-            $attachmentID = get_post_thumbnail_id($this->ID);
-            if ($attachmentID) {
-                $this->featured_image = [];
-                $sizes = get_intermediate_image_sizes();
-                foreach ($sizes as $size) {
-                    $src = wp_get_attachment_image_src($attachmentID, $size);
-                    $this->featured_image[$size] = (object)[
-                        'url'     => $src[0],
-                        'width'   => $src[1],
-                        'height'  => $src[2],
-                        'resized' => $src[3],
-                    ];
-                }
-            }
-
-            // What about a link to this post?
-            $this->permalink = get_permalink($this->ID);
 
             if (static::$cache) {
                 $this->beforeCache();
@@ -163,7 +143,6 @@ abstract class CustomPost implements JsonSerializable
         }
 
         $this->originalData = $this->data;
-
 
     }
 
@@ -187,8 +166,21 @@ abstract class CustomPost implements JsonSerializable
      */
     protected static function getCacheKey()
     {
-
         return Cache::getCachePrefix() . '_object';
+    }
+
+
+
+    /**
+     * Fill data properties from an array
+     *
+     * @param $array
+     */
+    public function fill($array)
+    {
+        foreach ($array as $field => $value) {
+            $this->$field = $value;
+        }
     }
 
 
@@ -389,20 +381,6 @@ abstract class CustomPost implements JsonSerializable
 
 
     /**
-     * Fill data properties from an array
-     *
-     * @param $array
-     */
-    public function fill($array)
-    {
-        foreach ($array as $field => $value) {
-            $this->$field = $value;
-        }
-    }
-
-
-
-    /**
      * Save the custom post type
      *
      * @return int
@@ -499,13 +477,52 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
+
+    /**
+     * Return a new instance of this class
+     *
+     * @param $id
+     *
+     * @return static
+     */
+    public static function getById($id)
+    {
+        return new static($id);
+    }
+
+
+
+    /**
+     * Find a post by it's slug
+     *
+     * @param $slug
+     *
+     * @return bool|mixed
+     */
+    public static function getBySlug($slug)
+    {
+
+        $objects = static::get([
+            'name'        => $slug,
+            'post_status' => 'any',
+            'fields'      => 'ids',
+        ]);
+
+        if ($objects->isEmpty()) {
+            return false;
+        }
+
+        return $objects->first();
+    }
+
+
+
     /**
      * Wrapper around get_posts. Returns an array of Objects
      *
      * @param array $params
      *
      * @return Collection
-     * @throws GenieNotFoundException
      */
     public static function get(array $params = [])
     {
@@ -532,54 +549,12 @@ abstract class CustomPost implements JsonSerializable
 
 
     /**
-     * Return a new instance of this class
-     *
-     * @param $id
-     *
-     * @return static
-     * @throws GenieNotFoundException
-     */
-    public static function getById($id)
-    {
-        return new static($id);
-    }
-
-
-
-    /**
-     * Find a post by it's slug
-     *
-     * @param $slug
-     *
-     * @return bool|mixed
-     * @throws GenieNotFoundException
-     */
-    public static function getBySlug($slug)
-    {
-
-        $objects = static::get([
-            'name'        => $slug,
-            'post_status' => 'any',
-            'fields'      => 'ids',
-        ]);
-
-        if ($objects->isEmpty()) {
-            return false;
-        }
-
-        return $objects->first();
-    }
-
-
-
-    /**
      * Get All posts based on a Taxonomy Name
      *
      * @param $name
      * @param $taxonomy
      *
      * @return Collection
-     * @throws GenieNotFoundException
      */
     public static function getByTaxonomyName($name, $taxonomy)
     {
@@ -605,7 +580,6 @@ abstract class CustomPost implements JsonSerializable
      * @param $title
      *
      * @return bool|static
-     * @throws GenieNotFoundException
      */
     public static function getByTitle($title)
     {
@@ -628,7 +602,6 @@ abstract class CustomPost implements JsonSerializable
      * Useful for Templates
      *
      * @return static
-     * @throws GenieNotFoundException
      */
     public static function getCurrent()
     {
@@ -710,6 +683,50 @@ abstract class CustomPost implements JsonSerializable
         }
 
         return false;
+    }
+
+
+
+    /**
+     * Return an array of images sizes and urls.
+     *
+     * @return array|false
+     */
+    public function featuredImage()
+    {
+        // Does this post have a featured image?
+        $attachmentID = get_post_thumbnail_id($this->ID);
+
+        if (!$attachmentID) {
+            return false;
+        }
+        $images = [];
+
+        $sizes = get_intermediate_image_sizes();
+        foreach ($sizes as $size) {
+            $src = wp_get_attachment_image_src($attachmentID, $size);
+            $images[$size] = (object)[
+                'url'     => $src[0],
+                'width'   => $src[1],
+                'height'  => $src[2],
+                'resized' => $src[3],
+            ];
+        }
+
+        return $images;
+
+    }
+
+
+
+    /**
+     * get the permalink for this post
+     *
+     * @return false|string|WP_Error
+     */
+    public function permalink()
+    {
+        return get_permalink($this->ID);
     }
 
 
