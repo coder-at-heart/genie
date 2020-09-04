@@ -2,6 +2,8 @@
 
 namespace Lnk7\Genie;
 
+use Lnk7\Genie\Utilities\HookInto;
+
 /**
  * Class BackgroundJob
  * Examples.
@@ -60,8 +62,14 @@ class BackgroundJob
 
             // Stash the id we need to process in the init hook
             static::$processingId = $id;
-            add_action('init', static::class . '::init', 10000);
-
+            HookInto::action('init', 10000)
+                ->run(function () {
+                    // Do we have a job to process
+                    if (static::$processingId) {
+                        static::ProcessBackGroundJob(static::$processingId);
+                        wp_die();
+                    }
+                });
         }
 
     }
@@ -69,27 +77,11 @@ class BackgroundJob
 
 
     /**
-     * Hook into Wordpress Init to Run any jobs.
-     * This will usually only happen from a call from curl.
-     */
-    public static function init()
-    {
-
-        // Do we have a job to process
-        if (static::$processingId) {
-            static::ProcessBackGroundJob(static::$processingId);
-            wp_die();
-        }
-    }
-
-
-
-    /**
-     * process this Job !
+     * Process this Job !
      *
-     * @param $id
+     * @param int $id
      */
-    public static function ProcessBackGroundJob($id)
+    public static function ProcessBackGroundJob(int $id)
     {
 
         set_time_limit(0);
@@ -114,9 +106,8 @@ class BackgroundJob
      */
     public static function start()
     {
-        $call = new static();
+        return new static();
 
-        return $call;
     }
 
 
@@ -152,7 +143,7 @@ class BackgroundJob
      */
     function send()
     {
-
+        //Save the job for processing
         $id = wp_insert_post([
             'post_type'    => 'genie_background_job',
             'post_content' => base64_encode(serialize($this->calls)),

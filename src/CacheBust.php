@@ -4,6 +4,7 @@ namespace Lnk7\Genie;
 
 use DateTime;
 use Exception;
+use Lnk7\Genie\Utilities\HookInto;
 use WP_Scripts;
 
 /**
@@ -22,12 +23,9 @@ class CacheBust
     public static function Setup()
     {
 
-        add_filter('script_loader_src', function ($src) {
-            return static::cacheSrc($src);
-        });
-        add_filter('style_loader_src', function ($src) {
-            return static::cacheSrc($src);
-        });
+        HookInto::filter('script_loader_src')
+            ->orFilter('style_loader_src')
+            ->run([static::class, 'cacheSrc']);
 
     }
 
