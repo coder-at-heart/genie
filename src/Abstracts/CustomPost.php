@@ -7,6 +7,7 @@ use JsonSerializable;
 use Lnk7\Genie\Cache;
 use Lnk7\Genie\Registry;
 use Lnk7\Genie\Utilities\ConvertString;
+use Lnk7\Genie\Utilities\HookInto;
 use Lnk7\Genie\WordPress;
 use WP_Error;
 
@@ -77,15 +78,14 @@ abstract class CustomPost implements JsonSerializable
     static $useGutenberg = false;
 
     /**
-     * Used to store the object data
+     * Used to store the post data
      *
      * @var array
      */
     protected $data = [];
 
-
     /**
-     * used as a story of loaded data
+     * used as a store of loaded data
      *
      * @var array
      */
@@ -103,7 +103,7 @@ abstract class CustomPost implements JsonSerializable
     function __construct($id = null)
     {
 
-        // new object ?
+        // new custom post ?
         if (!$id) {
             $this->setDefaults();
 
@@ -115,25 +115,26 @@ abstract class CustomPost implements JsonSerializable
             $this->data = get_post_meta($id, static::getCacheKey(), true);
         }
 
-        // No data?  let's build it.
+        // nothing from cache ?
         if (empty($this->data)) {
 
             $postData = get_post($id, ARRAY_A);
 
-            // No Data ?
+            // No data ?
             if (!$postData) {
                 return new WP_Error("Could not find a " . static::$plural . " with an ID of " . $id);
             }
 
-            $this->fill($postData);
-
-            $acfFields = get_fields($this->ID);
-            if ($acfFields) {
+            $acfFields = get_fields($id);
+            if (is_array($acfFields)) {
                 foreach ($acfFields as $field => $value) {
-                    $this->data[$field] = $value;
+                    $postData[$field] = $value;
                 }
             }
 
+            $this->fill($postData);
+
+            //Cache?
             if (static::$cache) {
                 $this->beforeCache();
                 update_post_meta($this->ID, static::getCacheKey(), $this->data);
@@ -153,6 +154,7 @@ abstract class CustomPost implements JsonSerializable
     {
         $this->post_status = 'publish';
         $this->post_type = static::$postType;
+
     }
 
 
@@ -172,13 +174,14 @@ abstract class CustomPost implements JsonSerializable
     /**
      * Fill data properties from an array
      *
-     * @param $array
+     * @param array $array
      */
-    public function fill($array)
+    public function fill(array $array)
     {
         foreach ($array as $field => $value) {
-            $this->$field = $value;
+            $this->data[$field] = $value;
         }
+
     }
 
 
@@ -199,78 +202,74 @@ abstract class CustomPost implements JsonSerializable
     public static function Setup()
     {
 
-        /**
-         * After the post is saved... allow some of wordpress fields to be overWritten
-         */
-        add_filter('wp_insert_post_data', function ($data, $postArray) {
 
-            // Make sure we have acf data
-            if (empty($postArray['acf'])) {
-                return $data;
-            }
+        //Clear out cache on save
+        HookInto::action('acf/save_post', 20)
+            ->run(function ($post_id) {
+                global $post;
 
-            // Not this post type?
-            $postType = $data['post_type'];
-            if ($postType != static::$postType) {
-                return $data;
-            }
+                if (!$post or $post->post_type != static::$postType) {
+                    return;
+                }
 
-            $fields = static::getFields();
+                // Clear Cache so it's generated next time
+                if (static::$cache) {
+                    Cache::clearCache($post_id);
+                }
+            });
 
-            foreach ($fields as $field) {
-                if ($field['override']) {
-                    $value = $postArray['acf'][$field['key']];
-                    $field = $field['override'];
-                    if (is_callable($field)) {
-                        [$field, $value] = call_user_func($field, $value);
-                    }
-                    if (in_array($field, WordPress::$postFields)) {
-                        $data[$field] = $value;
+
+        //Hook for creating the custom Post Type and Schema
+        HookInto::action('init', 20)
+            ->run([static::class, 'init']);
+
+
+        // After the post is saved... allow some of wordpress fields to be overWritten
+        HookInto::filter('wp_insert_post_data')
+            ->run(function ($data, $postArray) {
+
+                // Make sure we have acf data
+                if (empty($postArray['acf'])) {
+                    return $data;
+                }
+
+                // Not this post type?
+                $postType = $data['post_type'];
+                if ($postType != static::$postType) {
+                    return $data;
+                }
+
+                $fields = static::getFields();
+
+                foreach ($fields as $field) {
+                    if ($field['override']) {
+                        $value = $postArray['acf'][$field['key']];
+                        $field = $field['override'];
+                        if (is_callable($field)) {
+                            [$field, $value] = call_user_func($field, $value);
+                        }
+                        if (in_array($field, WordPress::$postFields)) {
+                            $data[$field] = $value;
+                        }
                     }
                 }
-            }
 
-            $data = static::override($data, $postArray);
+                $data = static::override($data, $postArray);
 
-            return $data;
-        }, 10, 2);
+                return $data;
+            });
 
-        /**
-         * Clear out cache on save
-         */
-        add_action('acf/save_post', function ($post_id) {
-            global $post;
 
-            if (!$post or $post->post_type != static::$postType) {
-                return;
-            }
+        // Should we use Gutenberg ?
+        HookInto::filter('use_block_editor_for_post_type')
+            ->run(function ($currentStatus, $postType) {
+                // Use your post type key instead of 'product'
+                if ($postType === static::$postType) {
+                    return static::$useGutenberg;
+                }
 
-            // Clear Cache so it's generated next time
-            if (static::$cache) {
-                Cache::clearCache($post_id);
-            }
-
-        }, 20);
-
-        /**
-         * Hook for creating the custom Post Type and Schema
-         */
-        add_action('init', function () {
-            static::init();
-        }, 20);
-
-        /**
-         * Should we use Gutenberg ?
-         */
-        add_filter('use_block_editor_for_post_type', function ($currentStatus, $postType) {
-
-            // Use your post type key instead of 'product'
-            if ($postType === static::$postType) {
-                return static::$useGutenberg;
-            }
-
-            return $currentStatus;
-        }, 10, 2);
+                return $currentStatus;
+            });
     }
 
 

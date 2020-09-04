@@ -1,28 +1,76 @@
-# Genie: The Advanced Wordpress Programmer's Toolkit
+# Genie: The Wordpress Programmer's Toolkit
 
 Quick overview
 - ACF Pro abstraction with `CreateSchema` 
 - Twig 2.0 support with `View`
-- Custom Post Type Abstraction `WordPressObject`
-- Utility Classes `CreateDate`  
+- Custom Post Type Abstraction `CustomPost`
+- add_action class `OnAction`  
+- add_filter class `OnFilter` 
+- `CreateCustomPostType` Utility
+- `CreateTaxonomy` Utility 
 - Wordpress wp-mail Wrapper `SendEmail`
-- Wordpress API wrapper `API`
-- Wordpress Templates Abstraction `Template` 
+- Wordpress API wrapper `ApiCall`
 - Background Job Processing `BackgrounJob`
-- Handy Ajax Controller `AjaxController`
+- Handy Ajax Controller `Ajax`
  
 ## Installation
 
 `composer require "lnk7\genie"`
 
-## Usage in a Theme
+## Custom Posts
 
-Check the Genie Theme for usage examples
+```php
+<?php
 
-https://bitbucket.org/lnk7/genie-theme/
+namespace CoteAtHome\PostTypes;
 
-## Use as a Plugin
+use Lnk7\Genie\Abstracts\CustomPost;
+use Lnk7\Genie\Utilities\CreateCustomPostType;
+use Lnk7\Genie\Utilities\CreateTaxonomy;
 
-Create a plugin folder.
+class FAQ extends CustomPost
+{
 
-`composer create-project lnk7\genie`
+    static $postType = 'faq';
+
+    static $taxonomy = 'faq_category';
+
+    static public function init()
+    {
+
+        CreateTaxonomy::Called(static::$taxonomy)
+            ->register();
+
+        CreateCustomPostType::Called(static::$postType)
+            ->icon('dashicons-admin-comments')
+            ->addTaxonomy(static::$taxonomy)
+            ->backendOnly()
+            ->removeSupportFor(['thumbnail'])
+            ->register();
+
+    }
+
+}
+```
+You can now
+
+```php
+<?php
+
+$faqs = FAQ::get();
+
+foreach($faqs as $faq) { 
+
+  echo $faq->post_title;
+  echo $faq->post_content;
+
+}
+
+$first = FAQ::get()->first();
+
+$faq = FAQ::create([
+    'post_title' => 'A question',
+    'post_content' => 'The Answer'
+]);
+
+``` 

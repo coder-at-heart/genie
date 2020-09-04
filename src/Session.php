@@ -2,6 +2,9 @@
 
 namespace Lnk7\Genie;
 
+use Lnk7\Genie\Utilities\AddShortcode;
+use Lnk7\Genie\Utilities\HookInto;
+
 /**
  * Class Session
  * PHP Session Handler
@@ -18,70 +21,71 @@ class Session
     {
 
         // Run once everything has been setup
-        add_action('after_setup_theme', function () {
-            $sessionName = apply_filters('genie_session_name', 'genie_session');
+        HookInto::action('after_setup_theme')
+            ->run(function () {
+                $sessionName = apply_filters('genie_session_name', 'genie_session');
 
-            session_name($sessionName);
+                session_name($sessionName);
 
-            if (!session_id()) {
-                session_start();
-            }
-            $maxTime = ini_get("session.gc_maxlifetime");
+                if (!session_id()) {
+                    session_start();
+                }
+                $maxTime = ini_get("session.gc_maxlifetime");
 
-            // Force our cookie expiry date
-            setcookie(session_name(), session_id(), time() + $maxTime, '/');
+                // Force our cookie expiry date
+                setcookie(session_name(), session_id(), time() + $maxTime, '/');
 
-            // Last request was more than $maxTime seconds ago?
-            if (isset($_SESSION['sessionLastActivity']) && (time() - $_SESSION['sessionLastActivity'] > $maxTime)) {
-                static::destroy();
-            }
+                // Last request was more than $maxTime seconds ago?
+                if (isset($_SESSION['sessionLastActivity']) && (time() - $_SESSION['sessionLastActivity'] > $maxTime)) {
+                    static::destroy();
+                }
 
-            // Update last activity time stamp
-            $_SESSION['sessionLastActivity'] = time();
+                // Update last activity time stamp
+                $_SESSION['sessionLastActivity'] = time();
 
-            if (!isset($_SESSION['sessionCreated'])) {
-                $_SESSION['sessionCreated'] = time();
+                if (!isset($_SESSION['sessionCreated'])) {
+                    $_SESSION['sessionCreated'] = time();
 
-            } else if (time() - $_SESSION['sessionCreated'] > $maxTime) {
+                } else if (time() - $_SESSION['sessionCreated'] > $maxTime) {
 
-                // The Session started more than $maxTime seconds ago,
-                // change session ID for the current session and invalidate old session ID
-                session_regenerate_id(true);
+                    // The Session started more than $maxTime seconds ago,
+                    // change session ID for the current session and invalidate old session ID
+                    session_regenerate_id(true);
 
-                // update creation time
-                $_SESSION['sessionCreated'] = time();
-            }
+                    // update creation time
+                    $_SESSION['sessionCreated'] = time();
+                }
+            });
 
-        });
+        // We process all variables here and also capture and query variables.
+        HookInto::action('parse_request')
+            ->run(function ($wp) {
+                static::processVariables();
+                static::set('query_vars', $wp->query_vars);
+            });
 
-        /**
-         * Wordpress Hook
-         * We process all variables here and also capture and query variables.
-         */
-        add_action('parse_request', function ($wp) {
-            self::processVariables();
-            self::set('query_vars', $wp->query_vars);
-        });
+
+        // Plug the session into all views
+        HookInto::filter('genie_view_before_render')
+            ->run(function ($vars) {
+                return array_merge($vars, ['_session' => $_SESSION]);
+            });
 
         /**
          * Var shortcode
          * [var] shortcode
          * [var email default='']
          */
-        add_shortcode('var', function ($atts) {
+        AddShortcode::called('var')
+            ->run(function ($attributes) {
+                $a = (object)shortcode_atts([
+                    'var'     => !empty($attributes) ? $attributes[0] : '',
+                    'default' => '',
+                ], $attributes);
 
-            $a = (object)shortcode_atts([
-                'var'     => $atts[0],
-                'default' => '',
-            ], $atts);
+                return static::find($a->var, $a->default);
+            });
 
-            return self::find($a->var, $a->default);
-        });
-
-        // Plug the session into all views
-        add_filter('genie_view_before_render', function ($vars) {
-            return array_merge($vars, ['_session' => $_SESSION]);
-        }, 10, 1);
     }
 
 
@@ -93,6 +97,7 @@ class Session
     {
         // unset $_SESSION variable for the run-time
         session_unset();
+
         // destroy session data in storage
         session_destroy();
     }
@@ -181,6 +186,11 @@ class Session
 
     /**
      * Get a value from the session
+     *
+     * @param $var
+     * @param bool $default
+     *
+     * @return array|bool|mixed
      */
     public static function get($var, $default = false)
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Lnk7\Genie\Exception;
+namespace Lnk7\Genie\Exceptions;
 
 use Exception;
 

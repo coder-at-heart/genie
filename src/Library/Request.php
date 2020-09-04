@@ -2,7 +2,7 @@
 
 namespace Lnk7\Genie\Library;
 
-use Lnk7\Genie\Exception\GenieInvalidAjaxException;
+use Lnk7\Genie\Exceptions\GenieInvalidAjaxException;
 use Lnk7\Genie\Tools;
 
 class Request

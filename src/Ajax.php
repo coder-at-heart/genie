@@ -4,6 +4,7 @@ namespace Lnk7\Genie;
 
 use Lnk7\Genie\Library\Request;
 use Lnk7\Genie\Library\Response;
+use Lnk7\Genie\Utilities\HookInto;
 use ReflectionException;
 use ReflectionMethod;
 use Throwable;
@@ -21,7 +22,7 @@ class Ajax
      *
      * @var array
      */
-    static $paths = [];
+    protected static $paths = [];
 
 
 
@@ -30,21 +31,31 @@ class Ajax
      */
     public static function Setup()
     {
-        add_action('init', function () {
-            $path = apply_filters('genie_ajax_path', 'ajax');
-            $action = apply_filters('genie_ajax_action', 'ajax');
-            add_rewrite_rule($path . '/(.*)$', 'wp-admin/admin-ajax.php?action=' . $action . '&request=$1', 'top');
 
-            // Action from the outside world
-            add_action('wp_ajax_' . $action, function () {
-                static::ajax();
+        HookInto::action('init')
+            ->run(function () {
+                $path = apply_filters('genie_ajax_path', 'ajax');
+                $action = apply_filters('genie_ajax_action', 'ajax');
+                add_rewrite_rule($path . '/(.*)$', 'wp-admin/admin-ajax.php?action=' . $action . '&request=$1', 'top');
+
+                HookInto::action('wp_ajax_' . $action)
+                    ->orAction('wp_ajax_nopriv_' . $action)
+                    ->run([static::class, 'ajax']);
             });
-            add_action('wp_ajax_nopriv_' . $action, function () {
-                static::ajax();
-            });
 
-        });
+    }
 
+
+
+    /**
+     * Allow other modules to register their paths.
+     *
+     * @param $path
+     * @param $callback
+     */
+    public static function Register($path, $callback)
+    {
+        static::$paths[$path] = $callback;
     }
 
 
@@ -88,19 +99,6 @@ class Ajax
                 'message' => $e->getMessage(),
             ]);
         }
-    }
-
-
-
-    /**
-     * Allow other modules to register their paths.
-     *
-     * @param $path
-     * @param $callback
-     */
-    public static function Register($path, $callback)
-    {
-        static::$paths[$path] = $callback;
     }
 
 }

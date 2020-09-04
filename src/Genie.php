@@ -3,6 +3,7 @@
 namespace Lnk7\Genie;
 
 use Lnk7\Genie\Plugins\ACF;
+use Lnk7\Genie\Utilities\HookInto;
 
 /**
  * Class Genie
@@ -27,24 +28,22 @@ class Genie
         View::Setup();
         CacheBust::Setup();
 
-        /**
-         * Main Wordpress Hook for the Theme
-         */
+        // Add some useful variables for the twig templates
+        HookInto::filter('genie_view_before_render')
+            ->run(function ($vars) {
 
-        add_filter('genie_view_before_render', function ($vars) {
+                $siteVar = [
+                    'urls' => [
+                        'theme' => get_stylesheet_directory_uri(),
+                        'ajax'  => admin_url('admin-ajax.php'),
+                        'home'  => home_url(),
+                    ],
+                ];
 
-            $siteVar = [
-                'urls' => [
-                    'theme' => get_stylesheet_directory_uri(),
-                    'ajax'  => admin_url('admin-ajax.php'),
-                    'home'  => home_url(),
-                ],
-            ];
+                $vars['_site'] = apply_filters('genie_get_site_var', $siteVar);
 
-            $vars['_site'] = apply_filters('genie_get_site_var', $siteVar);
-
-            return $vars;
-        }, 10, 1);
+                return $vars;
+            });
 
 
         do_action('genie_setup_complete');

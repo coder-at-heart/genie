@@ -23,8 +23,8 @@ class Registry
     /**
      * get a value from the registry
      *
-     * @param      $group
-     * @param null $index
+     * @param  $group
+     * @param  $index
      *
      * @return mixed|null
      */
@@ -68,7 +68,7 @@ class Registry
 
 
     /**
-     * Set a value in teh registry
+     * Set a value in the registry
      *
      * @param $group
      * @param $value
