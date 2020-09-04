@@ -63,13 +63,13 @@ class Response
 
 
     /**
-     * Specify the data toi return
+     * Specify the data to return
      *
-     * @param array $data
+     * @param $data
      *
      * @return $this
      */
-    function withData(array $data)
+    function withData($data)
     {
         $this->data = $data;
 
@@ -86,6 +86,21 @@ class Response
     public static function Failure($data)
     {
         $response = new static(400);
+        $response->withData($data)
+            ->send();
+    }
+
+
+
+
+    /**
+     * Send an error response
+     *
+     * @param $data
+     */
+    public static function Error($data)
+    {
+        $response = new static(500);
         $response->withData($data)
             ->send();
     }

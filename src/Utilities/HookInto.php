@@ -3,8 +3,7 @@
 namespace Lnk7\Genie\Utilities;
 
 
-use ReflectionException;
-use ReflectionMethod;
+use Lnk7\Genie\Tools;
 
 class HookInto
 
@@ -30,25 +29,6 @@ class HookInto
     public function __construct(string $hook, int $sequence = 10, $type = 'action')
     {
         $this->add($hook, $sequence, $type);
-
-    }
-
-
-
-    /**
-     * add an hook onto our $hooks array
-     *
-     * @param $hook
-     * @param $sequence
-     * @param $type
-     */
-    protected function add($hook, $sequence, $type)
-    {
-        if ($type === 'action') {
-            $this->actions[$hook] = $sequence;
-        } else {
-            $this->filters[$hook] = $sequence;
-        }
 
     }
 
@@ -123,25 +103,37 @@ class HookInto
     /**
      * Set the callback and register the actions and filters
      *
-     * @param callable $callback
+     * @param  $callback
      */
-    public function run(callable $callback)
+    public function run($callback)
     {
-
-        try {
-            $reflection = new ReflectionMethod($callback);
-            $vars = count($reflection->getParameters());
-        } catch (ReflectionException $e) {
-            $vars = 1;
-        }
+        $vars = Tools::getCallableVariables($callback);
 
         foreach ($this->actions as $hook => $sequence) {
-            add_action($hook, $callback, $sequence, $vars);
+            add_action($hook, $callback, $sequence, count($vars));
         }
 
         foreach ($this->filters as $hook => $sequence) {
-            add_filter($hook, $callback, $sequence, $vars);
+            add_filter($hook, $callback, $sequence, count($vars));
+        }
 
+    }
+
+
+
+    /**
+     * add an hook onto our $hooks array
+     *
+     * @param $hook
+     * @param $sequence
+     * @param $type
+     */
+    protected function add($hook, $sequence, $type)
+    {
+        if ($type === 'action') {
+            $this->actions[$hook] = $sequence;
+        } else {
+            $this->filters[$hook] = $sequence;
         }
 
     }
