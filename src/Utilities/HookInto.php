@@ -3,8 +3,7 @@
 namespace Lnk7\Genie\Utilities;
 
 
-use ReflectionException;
-use ReflectionMethod;
+use Lnk7\Genie\Tools;
 
 class HookInto
 
@@ -127,21 +126,14 @@ class HookInto
      */
     public function run(callable $callback)
     {
-
-        try {
-            $reflection = new ReflectionMethod($callback);
-            $vars = count($reflection->getParameters());
-        } catch (ReflectionException $e) {
-            $vars = 1;
-        }
+        $vars = Tools::getCallableVariables($callback);
 
         foreach ($this->actions as $hook => $sequence) {
-            add_action($hook, $callback, $sequence, $vars);
+            add_action($hook, $callback, $sequence, count($vars));
         }
 
         foreach ($this->filters as $hook => $sequence) {
-            add_filter($hook, $callback, $sequence, $vars);
-
+            add_filter($hook, $callback, $sequence, count($vars));
         }
 
     }

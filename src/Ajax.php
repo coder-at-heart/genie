@@ -5,8 +5,6 @@ namespace Lnk7\Genie;
 use Lnk7\Genie\Library\Request;
 use Lnk7\Genie\Library\Response;
 use Lnk7\Genie\Utilities\HookInto;
-use ReflectionException;
-use ReflectionMethod;
 use Throwable;
 
 /**
@@ -62,8 +60,6 @@ class Ajax
 
     /**
      * Perform the ajax call.
-     *
-     * @throws ReflectionException
      */
     protected static function ajax()
     {
@@ -71,14 +67,23 @@ class Ajax
         $requestPath = $_REQUEST['request'];
 
         if (!isset(static::$paths[$requestPath])) {
-            Response::NotFound(['message' => "{$requestPath}, not found"]);
+            Response::NotFound([
+                'message' => "{$requestPath}, not found",
+            ]);
         }
+
+        // Callback exists
         $callback = static::$paths[$requestPath];
+        $params = Tools::getCallableVariables($callback);
 
+        if (is_wp_error($params)) {
+            Response::Error([
+                'message' => $params->get_error_message(),
+            ]);
+        }
+
+        // So we have a nice list of params
         $callbackParams = [];
-
-        $reflection = new ReflectionMethod($callback);
-        $params = $reflection->getParameters();
 
         try {
             foreach ($params as $param) {
@@ -90,10 +95,8 @@ class Ajax
                 $callbackParams[$name] = $value;
             }
 
-            $result = call_user_func_array($callback, $callbackParams);
-            Response::Success([
-                'response' => $result,
-            ]);
+            Response::Success(call_user_func_array($callback, $callbackParams));
+
         } catch (Throwable $e) {
             Response::Failure([
                 'message' => $e->getMessage(),

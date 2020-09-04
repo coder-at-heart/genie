@@ -2,6 +2,13 @@
 
 namespace Lnk7\Genie;
 
+use Closure;
+use ReflectionException;
+use ReflectionFunction;
+use ReflectionMethod;
+use ReflectionParameter;
+use WP_Error;
+
 /**
  * Class Tools
  *
@@ -22,6 +29,35 @@ class Tools
     {
 
         return addcslashes($string, $chars);
+
+    }
+
+
+
+    /**
+     * @param $callback
+     *
+     * @return ReflectionParameter[]|WP_Error
+     */
+    public static function getCallableVariables($callback)
+    {
+        try {
+
+            if ($callback instanceof Closure) {
+                $reflection = new ReflectionFunction($callback);
+            } else {
+                if (is_array($callback)) {
+                    $method = $callback[0] . '::' . $callback[1];
+                } else {
+                    $method = $callback;
+                }
+
+                $reflection = new ReflectionMethod($method);
+            }
+            return $reflection->getParameters();
+        } catch (ReflectionException $e) {
+            return new WP_Error($e->getMessage());
+        }
 
     }
 
