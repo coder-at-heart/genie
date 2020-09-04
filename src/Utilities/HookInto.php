@@ -35,25 +35,6 @@ class HookInto
 
 
     /**
-     * add an hook onto our $hooks array
-     *
-     * @param $hook
-     * @param $sequence
-     * @param $type
-     */
-    protected function add($hook, $sequence, $type)
-    {
-        if ($type === 'action') {
-            $this->actions[$hook] = $sequence;
-        } else {
-            $this->filters[$hook] = $sequence;
-        }
-
-    }
-
-
-
-    /**
      * Static constructor
      *
      * @param $action
@@ -122,9 +103,9 @@ class HookInto
     /**
      * Set the callback and register the actions and filters
      *
-     * @param callable $callback
+     * @param  $callback
      */
-    public function run(callable $callback)
+    public function run($callback)
     {
         $vars = Tools::getCallableVariables($callback);
 
@@ -134,6 +115,25 @@ class HookInto
 
         foreach ($this->filters as $hook => $sequence) {
             add_filter($hook, $callback, $sequence, count($vars));
+        }
+
+    }
+
+
+
+    /**
+     * add an hook onto our $hooks array
+     *
+     * @param $hook
+     * @param $sequence
+     * @param $type
+     */
+    protected function add($hook, $sequence, $type)
+    {
+        if ($type === 'action') {
+            $this->actions[$hook] = $sequence;
+        } else {
+            $this->filters[$hook] = $sequence;
         }
 
     }
