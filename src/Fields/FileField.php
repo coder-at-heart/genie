@@ -5,11 +5,6 @@ namespace Lnk7\Genie\Fields;
 class FileField extends TextField
 {
 
-    protected $type = 'file';
-
-    protected $metaQuery = 'NUMERIC';
-
-
 
     /**
      * Specify the minimum filesize in MB required when uploading. Defaults to 0.
@@ -22,9 +17,7 @@ class FileField extends TextField
     public function minSize(string $minSize)
     {
         return $this->set('min_size', $minSize);
-
     }
-
 
 
     /**
@@ -38,9 +31,7 @@ class FileField extends TextField
     public function maxSize(string $maxSize)
     {
         return $this->set('max_size', $maxSize);
-
     }
-
 
 
     /**
@@ -54,20 +45,19 @@ class FileField extends TextField
     public function mimeTypes(string $mimeTypes)
     {
         return $this->set('mime_types', $mimeTypes);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
-        $this->searchable(false);
+        $this->type('file');
+        $this->metaQuery('NUMERIC');
+
         $this->returnFormat('array');
         $this->previewSize('thumbnail');
         $this->library('all');
     }
-
 
 
     /**
@@ -81,9 +71,7 @@ class FileField extends TextField
     public function returnFormat(string $returnValue)
     {
         return $this->set('return_format', $returnValue);
-
     }
-
 
 
     /**
@@ -96,9 +84,7 @@ class FileField extends TextField
     public function previewSize($previewSize)
     {
         return $this->set('preview_size', $previewSize);
-
     }
-
 
 
     /**
@@ -111,7 +97,6 @@ class FileField extends TextField
     public function library(string $library)
     {
         return $this->set('library', $library);
-
     }
 
 }

@@ -4,11 +4,15 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
+
+/**
+ * Class GroupField
+ *
+ * @package Lnk7\Genie\Fields
+ * @property array $sub_fields
+ */
 class GroupField extends Field
 {
-
-    protected $type = 'group';
-
 
 
     /**
@@ -20,22 +24,19 @@ class GroupField extends Field
      */
     public function withFields(array $fields)
     {
-
-        $newFields = array_merge($this->get('sub_fields'), $fields);
+        $newFields = array_merge($this->sub_fields, $fields);
 
         return $this->set('sub_fields', $newFields);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
+        $this->type('group');
         $this->layout('row');
         $this->set('sub_fields', []);
     }
-
 
 
     /**
@@ -48,7 +49,6 @@ class GroupField extends Field
     public function layout(string $layout)
     {
         return $this->set('layout', $layout);
-
     }
 
 }

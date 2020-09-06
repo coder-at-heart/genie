@@ -5,11 +5,6 @@ namespace Lnk7\Genie\Fields;
 class NumberField extends TextField
 {
 
-    protected $type = 'number';
-
-    protected $metaQuery = 'NUMERIC';
-
-
 
     /**
      * Minimum value for this field
@@ -21,9 +16,7 @@ class NumberField extends TextField
     public function min(int $min)
     {
         return $this->set('min', $min);
-
     }
-
 
 
     /**
@@ -36,9 +29,7 @@ class NumberField extends TextField
     public function max(int $max)
     {
         return $this->set('max', $max);
-
     }
-
 
 
     /**
@@ -51,7 +42,14 @@ class NumberField extends TextField
     public function step(int $step)
     {
         return $this->set('step', $step);
+    }
 
+
+    protected function setDefaults()
+    {
+        parent::setDefaults();
+        $this->type('number');
+        $this->metaQuery('NUMERIC');
     }
 
 }

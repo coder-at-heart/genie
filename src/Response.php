@@ -1,24 +1,21 @@
 <?php
 
-namespace Lnk7\Genie\Library;
+namespace Lnk7\Genie;
+
+use Lnk7\Genie\Traits\HasData;
 
 class Response
 {
+
+
+    use HasData;
 
     /**
      * The default http response code
      *
      * @var int
      */
-    private $responseCode = 200;
-
-    /**
-     * Data to return back to the client
-     *
-     * @var array $data
-     */
-    private $data;
-
+    protected $responseCode = 200;
 
 
     /**
@@ -34,12 +31,11 @@ class Response
     }
 
 
-
     /**
-     * @param $data
+     * @param array $data
      * Send a Success response
      */
-    public static function Success($data)
+    public static function success(array $data = [])
     {
         $response = new static(200);
         $response->withData($data)
@@ -47,29 +43,26 @@ class Response
     }
 
 
-
     /**
      * Send the response back to the browser.
      */
-    function send()
+    public function send()
     {
-
         header('Content-Type: application/json', true, $this->responseCode);
 
         echo json_encode($this->data);
-        exit;
+        wp_die();
     }
-
 
 
     /**
      * Specify the data to return
      *
-     * @param $data
+     * @param array $data
      *
      * @return $this
      */
-    function withData($data)
+    function withData(array $data)
     {
         $this->data = $data;
 
@@ -77,13 +70,12 @@ class Response
     }
 
 
-
     /**
      * Send a failure response
      *
-     * @param $data
+     * @param array $data
      */
-    public static function Failure($data)
+    public static function failure(array $data = [])
     {
         $response = new static(400);
         $response->withData($data)
@@ -91,14 +83,12 @@ class Response
     }
 
 
-
-
     /**
      * Send an error response
      *
-     * @param $data
+     * @param array $data
      */
-    public static function Error($data)
+    public static function error(array $data = [])
     {
         $response = new static(500);
         $response->withData($data)
@@ -106,13 +96,12 @@ class Response
     }
 
 
-
     /**
-     * Send a Not found response
+     * Send a not found response
      *
      * @param $data
      */
-    public static function NotFound($data)
+    public static function notFound($data)
     {
         $response = new static(404);
         $response->withData($data)

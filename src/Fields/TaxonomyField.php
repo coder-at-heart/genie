@@ -7,9 +7,6 @@ use Lnk7\Genie\Abstracts\Field;
 class TaxonomyField extends Field
 {
 
-    protected $type = 'taxonomy';
-
-
 
     /**
      * Specify the taxonomy to select terms from. Defaults to 'category'
@@ -21,9 +18,7 @@ class TaxonomyField extends Field
     public function taxonomy(string $taxonomy)
     {
         return $this->set('taxonomy', $taxonomy);
-
     }
-
 
 
     /**
@@ -36,9 +31,7 @@ class TaxonomyField extends Field
     public function allowNull(bool $allowNull)
     {
         return $this->set('allow_null', $allowNull);
-
     }
-
 
 
     /**
@@ -53,9 +46,7 @@ class TaxonomyField extends Field
     public function returnFormat(string $returnFormat)
     {
         return $this->set('return_format', $returnFormat);
-
     }
-
 
 
     /**s
@@ -68,9 +59,7 @@ class TaxonomyField extends Field
     public function loadTerms(bool $loadTerms)
     {
         return $this->set('load_terms', $loadTerms);
-
     }
-
 
 
     /**
@@ -83,9 +72,7 @@ class TaxonomyField extends Field
     public function saveTerms(bool $saveTerms)
     {
         return $this->set('save_terms', $saveTerms);
-
     }
-
 
 
     /**
@@ -98,17 +85,15 @@ class TaxonomyField extends Field
     public function addTerms(bool $addTerms)
     {
         return $this->set('add_term', $addTerms);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
+        $this->type('taxonomy');
         $this->fieldType('select');
     }
-
 
 
     /**
@@ -123,7 +108,6 @@ class TaxonomyField extends Field
     public function fieldType(string $type)
     {
         return $this->set('field_type', $type);
-
     }
 
 }

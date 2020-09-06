@@ -5,7 +5,9 @@ namespace Lnk7\Genie\Abstracts;
 use Illuminate\Support\Collection;
 use JsonSerializable;
 use Lnk7\Genie\Cache;
+use Lnk7\Genie\Interfaces\GenieComponent;
 use Lnk7\Genie\Registry;
+use Lnk7\Genie\Traits\HasData;
 use Lnk7\Genie\Utilities\ConvertString;
 use Lnk7\Genie\Utilities\HookInto;
 use Lnk7\Genie\WordPress;
@@ -39,8 +41,11 @@ use WP_Error;
  * @property string post_mime_type
  * @property string comment_count
  */
-abstract class CustomPost implements JsonSerializable
+abstract class CustomPost implements JsonSerializable, GenieComponent
 {
+
+
+    use HasData;
 
     /**
      * Wordpress Post Type
@@ -49,40 +54,38 @@ abstract class CustomPost implements JsonSerializable
      */
     static $postType;
 
+
     /**
      * Should this be cached ?
      *
      * @var bool
      */
-    static $cache = false;
+    protected static $cache = false;
+
 
     /**
      * Singular version of the post_type
      *
      * @var
      */
-    static $singular;
+    protected static $singular;
+
 
     /**
      * Plural version of the post_type
      *
      * @var
      */
-    static $plural;
+    protected static $plural;
+
 
     /**
      *  Use the gutenberg editor ?
      *
      * @var bool
      */
-    static $useGutenberg = false;
+    protected static $useGutenberg = false;
 
-    /**
-     * Used to store the post data
-     *
-     * @var array
-     */
-    protected $data = [];
 
     /**
      * used as a store of loaded data
@@ -90,7 +93,6 @@ abstract class CustomPost implements JsonSerializable
      * @var array
      */
     protected $originalData = [];
-
 
 
     /**
@@ -102,7 +104,6 @@ abstract class CustomPost implements JsonSerializable
      */
     function __construct($id = null)
     {
-
         // new custom post ?
         if (!$id) {
             $this->setDefaults();
@@ -117,7 +118,6 @@ abstract class CustomPost implements JsonSerializable
 
         // nothing from cache ?
         if (empty($this->data)) {
-
             $postData = get_post($id, ARRAY_A);
 
             // No data ?
@@ -142,9 +142,7 @@ abstract class CustomPost implements JsonSerializable
         }
 
         $this->originalData = $this->data;
-
     }
-
 
 
     /**
@@ -154,9 +152,7 @@ abstract class CustomPost implements JsonSerializable
     {
         $this->post_status = 'publish';
         $this->post_type = static::$postType;
-
     }
-
 
 
     /**
@@ -170,39 +166,19 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
-    /**
-     * Fill data properties from an array
-     *
-     * @param array $array
-     */
-    public function fill(array $array)
-    {
-        foreach ($array as $field => $value) {
-            $this->data[$field] = $value;
-        }
-
-    }
-
-
-
     /**
      *  Update properties on this object
      */
     public function beforeCache()
     {
-
     }
-
 
 
     /**
      * Setup Wordpress Hooks, filters and register necessary method calls.
      */
-    public static function Setup()
+    public static function setup()
     {
-
-
         //Clear out cache on save
         HookInto::action('acf/save_post', 20)
             ->run(function ($post_id) {
@@ -219,15 +195,9 @@ abstract class CustomPost implements JsonSerializable
             });
 
 
-        //Hook for creating the custom Post Type and Schema
-        HookInto::action('init', 20)
-            ->run([static::class, 'init']);
-
-
         // After the post is saved... allow some of wordpress fields to be overWritten
         HookInto::filter('wp_insert_post_data')
             ->run(function ($data, $postArray) {
-
                 // Make sure we have acf data
                 if (empty($postArray['acf'])) {
                     return $data;
@@ -273,7 +243,6 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
     /**
      * Get the field definitions from the registry
      *
@@ -282,9 +251,7 @@ abstract class CustomPost implements JsonSerializable
     public static function getFields()
     {
         return Registry::get('fields', static::class);
-
     }
-
 
 
     /**
@@ -298,22 +265,8 @@ abstract class CustomPost implements JsonSerializable
      */
     public static function override(array $data, array $postArray)
     {
-
         return $data;
-
     }
-
-
-
-    /**
-     * Code to instantiate the Custom Post Type.
-     * Create Posts and schemas here
-     */
-    public static function init()
-    {
-
-    }
-
 
 
     /**
@@ -327,7 +280,6 @@ abstract class CustomPost implements JsonSerializable
      */
     public static function attachSchema($schema)
     {
-
         $fields = Registry::get('fields');
         $schemas = Registry::get('schemas');
 
@@ -354,7 +306,6 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
     /**
      * Create an Object from an array of key value pairs..
      *
@@ -365,16 +316,13 @@ abstract class CustomPost implements JsonSerializable
 
     public static function create($array = [])
     {
-
         $object = new static();
         $object->setDefaults();
         $object->fill($array);
         $object->save();
 
         return $object;
-
     }
-
 
 
     /**
@@ -384,7 +332,6 @@ abstract class CustomPost implements JsonSerializable
      */
     public function save()
     {
-
         $this->beforeSave();
 
         $this->checkValidity();
@@ -393,6 +340,7 @@ abstract class CustomPost implements JsonSerializable
             return $this->ID;
         }
 
+
         $postFields = [];
         foreach (WordPress::$postFields as $field) {
             if ($this->$field) {
@@ -400,12 +348,12 @@ abstract class CustomPost implements JsonSerializable
             }
         }
 
-        wp_insert_post($postFields);
+        $this->ID = wp_insert_post($postFields);
 
         $fields = static::getFields();
 
-        foreach ($fields as $field) {
 
+        foreach ($fields as $field) {
             if ($field['displayOnly']) {
                 continue;
             }
@@ -417,19 +365,17 @@ abstract class CustomPost implements JsonSerializable
                 continue;
             }
 
+
             // Only update if we need to.
             if (!array_key_exists($name, $this->originalData) || $this->originalData[$name] !== $this->data[$name]) {
                 update_field($key, $this->data[$name], $this->ID);
             }
-
         }
 
         $this->clearCache();
 
         return $this->ID;
-
     }
-
 
 
     /**
@@ -440,7 +386,6 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
     /**
      * Check the validity of this object
      * Throw errors from here and catch from save
@@ -448,7 +393,6 @@ abstract class CustomPost implements JsonSerializable
     public function checkValidity()
     {
     }
-
 
 
     /**
@@ -462,7 +406,6 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
     /**
      * clear the cache for this post
      */
@@ -472,7 +415,6 @@ abstract class CustomPost implements JsonSerializable
             Cache::clearCache($this->ID);
         }
     }
-
 
 
     /**
@@ -488,7 +430,6 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
     /**
      * Find a post by it's slug
      *
@@ -498,7 +439,6 @@ abstract class CustomPost implements JsonSerializable
      */
     public static function getBySlug($slug)
     {
-
         $objects = static::get([
             'name'        => $slug,
             'post_status' => 'any',
@@ -513,7 +453,6 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
     /**
      * Wrapper around get_posts. Returns an array of Objects
      *
@@ -523,7 +462,6 @@ abstract class CustomPost implements JsonSerializable
      */
     public static function get(array $params = [])
     {
-
         $defaultArgs = [
             'numberposts' => -1,
             'orderby'     => 'date',
@@ -544,7 +482,6 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
     /**
      * Get All posts based on a Taxonomy Name
      *
@@ -555,7 +492,6 @@ abstract class CustomPost implements JsonSerializable
      */
     public static function getByTaxonomyName($name, $taxonomy)
     {
-
         $term = get_term_by('name', $name, $taxonomy);
 
         return static::get([
@@ -570,7 +506,6 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
     /**
      * Find a post by it's title
      *
@@ -580,10 +515,8 @@ abstract class CustomPost implements JsonSerializable
      */
     public static function getByTitle($title)
     {
-
         $objects = static::get([
-            'title'  => $title,
-            'fields' => 'ids',
+            'title' => $title,
         ]);
 
         if ($objects->isEmpty()) {
@@ -592,7 +525,6 @@ abstract class CustomPost implements JsonSerializable
 
         return $objects->first();
     }
-
 
 
     /**
@@ -606,7 +538,6 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
     /**
      * get the Plural name of the post type
      *
@@ -614,16 +545,14 @@ abstract class CustomPost implements JsonSerializable
      */
     public static function getPlural()
     {
-        return static::$plural ?? ConvertString::From(static::$postType)->toPlural()->toTitleCase()->return();
+        return static::$plural ?? ConvertString::from(static::$postType)->toPlural()->toTitleCase()->return();
     }
-
 
 
     public static function getSingular()
     {
-        return static::$singular ?? ConvertString::From(static::$postType)->toSingular()->toTitleCase()->return();
+        return static::$singular ?? ConvertString::from(static::$postType)->toSingular()->toTitleCase()->return();
     }
-
 
 
     /**
@@ -637,10 +566,10 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
     /**
      * Look through this custom post's schema and return the key for a field.
      * This allows us use the key when creating new data with update_field.
+     * The schema has to be attached from CreateSchema
      *
      * @param string $name
      *
@@ -648,12 +577,10 @@ abstract class CustomPost implements JsonSerializable
      */
     public static function getKey(string $name)
     {
-
         $schema = Registry::get('schemas', static::class);
 
         return static::findKey($name, $schema['fields']);
     }
-
 
 
     /**
@@ -666,7 +593,6 @@ abstract class CustomPost implements JsonSerializable
      */
     protected static function findKey($name, $fields)
     {
-
         foreach ($fields as $field) {
             if ($field['name'] === $name) {
                 return $field['key'];
@@ -683,13 +609,14 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
     /**
      * Return an array of images sizes and urls.
      *
-     * @return array|false
+     * @param string $size
+     *
+     * @return array|object|false
      */
-    public function featuredImage()
+    public function featuredImage($size = '')
     {
         // Does this post have a featured image?
         $attachmentID = get_post_thumbnail_id($this->ID);
@@ -700,20 +627,21 @@ abstract class CustomPost implements JsonSerializable
         $images = [];
 
         $sizes = get_intermediate_image_sizes();
-        foreach ($sizes as $size) {
-            $src = wp_get_attachment_image_src($attachmentID, $size);
+        foreach ($sizes as $imageSize) {
+            $src = wp_get_attachment_image_src($attachmentID, $imageSize);
             $images[$size] = (object)[
                 'url'     => $src[0],
                 'width'   => $src[1],
                 'height'  => $src[2],
                 'resized' => $src[3],
             ];
+            if ($size && $imageSize == $size) {
+                return $images[$size];
+            }
         }
 
         return $images;
-
     }
-
 
 
     /**
@@ -725,66 +653,6 @@ abstract class CustomPost implements JsonSerializable
     {
         return get_permalink($this->ID);
     }
-
-
-
-    /**
-     * magic getter
-     *
-     * @param $var
-     *
-     * @return mixed
-     */
-    public function __get($var)
-    {
-
-        if (array_key_exists($var, $this->data)) {
-            return $this->data[$var];
-        }
-
-        return false;
-
-    }
-
-
-
-    /**
-     * magic set
-     *
-     * @param $var
-     * @param $value
-     */
-    public function __set($var, $value)
-    {
-        $this->data[$var] = $value;
-    }
-
-
-
-    /**
-     * Needed from twig templates
-     *
-     * @param $var
-     *
-     * @return bool
-     */
-    public function __isset($var)
-    {
-        return isset($this->data[$var]);
-    }
-
-
-
-    /**
-     * Return all data for this post
-     *
-     * @return mixed|void
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
 
 
     /**
@@ -804,16 +672,13 @@ abstract class CustomPost implements JsonSerializable
     }
 
 
-
     /**
      * Things to do before delete!
      * Delete other objects / images etc.
      */
     public function preDelete()
     {
-
     }
-
 
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Lnk7\Genie;
 
+use Lnk7\Genie\Interfaces\GenieComponent;
 use Lnk7\Genie\Utilities\HookInto;
 
 /**
@@ -14,8 +15,9 @@ use Lnk7\Genie\Utilities\HookInto;
  *  ->add( Object::class . '::method', [ 'param1' => $x, 'param2' => $y ] )
  *  ->send();
  */
-class BackgroundJob
+class BackgroundJob implements GenieComponent
 {
+
 
     /**
      * The variable used to pass the post ID
@@ -23,6 +25,7 @@ class BackgroundJob
      * @var string
      */
     static $getVariable = 'genie_bj_id';
+
 
     /**
      * The job we're currently processing
@@ -32,6 +35,7 @@ class BackgroundJob
      */
     static $processingId = false;
 
+
     /**
      * Array of function calls to perform on this background Job.
      *
@@ -40,13 +44,11 @@ class BackgroundJob
     var $calls = [];
 
 
-
     /**
      * Wordpress Hooks !
      */
-    public static function Setup()
+    public static function setup()
     {
-
         //  Check if we're processing a background Job
         if (isset($_GET[static::$getVariable]) and $_GET[static::$getVariable]) {
             $id = absint($_GET[static::$getVariable]);
@@ -66,14 +68,12 @@ class BackgroundJob
                 ->run(function () {
                     // Do we have a job to process
                     if (static::$processingId) {
-                        static::ProcessBackGroundJob(static::$processingId);
+                        static::processBackGroundJob(static::$processingId);
                         wp_die();
                     }
                 });
         }
-
     }
-
 
 
     /**
@@ -81,9 +81,8 @@ class BackgroundJob
      *
      * @param int $id
      */
-    public static function ProcessBackGroundJob(int $id)
+    public static function processBackGroundJob(int $id)
     {
-
         set_time_limit(0);
 
         $job = get_post($id);
@@ -94,9 +93,7 @@ class BackgroundJob
             call_user_func_array($callback, $args);
         }
         wp_delete_post($id, true);
-
     }
-
 
 
     /**
@@ -107,9 +104,7 @@ class BackgroundJob
     public static function start()
     {
         return new static();
-
     }
-
 
 
     /**
@@ -123,7 +118,6 @@ class BackgroundJob
     }
 
 
-
     /**
      * Add a job to the call Stack
      *
@@ -135,7 +129,6 @@ class BackgroundJob
 
         return $this;
     }
-
 
 
     /**

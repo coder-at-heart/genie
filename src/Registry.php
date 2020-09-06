@@ -11,13 +11,13 @@ namespace Lnk7\Genie;
 class Registry
 {
 
+
     /**
      * array of values
      *
      * @var
      */
     private static $registry = [];
-
 
 
     /**
@@ -30,9 +30,7 @@ class Registry
      */
     public static function get($group, $index = null)
     {
-
         if (is_null($index)) {
-
             if (!isset(static::$registry[$group])) {
                 static::$registry[$group] = [];
             }
@@ -44,9 +42,7 @@ class Registry
         }
 
         return null;
-
     }
-
 
 
     /**
@@ -58,13 +54,11 @@ class Registry
      */
     public static function push($group, $index, $value)
     {
-
         if (!isset(static::$registry[$group])) {
             static::$registry[$group] = [];
         }
         static::$registry[$group][$index] = $value;
     }
-
 
 
     /**
@@ -75,7 +69,6 @@ class Registry
      */
     public static function set($group, $value)
     {
-
         static::$registry[$group] = $value;
     }
 

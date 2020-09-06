@@ -15,12 +15,14 @@ use Lnk7\Genie\Tools;
 class ApiCall implements JsonSerializable
 {
 
+
     /**
      * url for the API call
      *
      * @var
      */
     var $url;
+
 
     /**
      * Method
@@ -29,12 +31,14 @@ class ApiCall implements JsonSerializable
      */
     var $method = 'POST';
 
+
     /**
      * timeout in seconds
      *
      * @var int
      */
     var $timeout = 10;
+
 
     /**
      * how many redirections allowed?
@@ -43,12 +47,14 @@ class ApiCall implements JsonSerializable
      */
     var $redirection = 5;
 
+
     /**
      * Which http version to use?
      *
      * @var string
      */
     var $httpVersion = '1.0';
+
 
     /**
      * Should this API call block script execution?
@@ -57,12 +63,14 @@ class ApiCall implements JsonSerializable
      */
     var $blocking = true;
 
+
     /**
      * An array of additional headers to send
      *
      * @var array
      */
     var $headers = [];
+
 
     /**
      * API call body
@@ -71,12 +79,14 @@ class ApiCall implements JsonSerializable
      */
     var $body = [];
 
+
     /**
      * Data format
      *
      * @var string
      */
     var $data_format = 'query';
+
 
     /**
      * An Array of cookies to send with the request
@@ -85,6 +95,7 @@ class ApiCall implements JsonSerializable
      */
     var $cookies = [];
 
+
     /**
      * The response
      *
@@ -92,12 +103,14 @@ class ApiCall implements JsonSerializable
      */
     var $response = [];
 
+
     /**
      * Should this API call be cached?
      *
      * @var bool
      */
     var $cache = false;
+
 
     /**
      * How long should the data be cached for?
@@ -107,7 +120,6 @@ class ApiCall implements JsonSerializable
     var $cacheFor = 300;
 
 
-
     /**
      * HttpClient constructor.
      *
@@ -115,12 +127,10 @@ class ApiCall implements JsonSerializable
      */
     public function __construct($url)
     {
-
         $this->url = $url;
 
         return $this;
     }
-
 
 
     /**
@@ -132,7 +142,6 @@ class ApiCall implements JsonSerializable
      */
     public static function get($url, $vars = [])
     {
-
         $call = static::to($url)
             ->usingMethod('GET')
             ->withBody($vars)
@@ -145,7 +154,6 @@ class ApiCall implements JsonSerializable
     }
 
 
-
     /**
      * Do the API call
      *
@@ -153,7 +161,6 @@ class ApiCall implements JsonSerializable
      */
     public function send()
     {
-
         // Build a Transient Key
         $key = Cache::getCachePrefix() . '_api_' . md5(serialize([
                 'url'         => $this->url,
@@ -169,7 +176,6 @@ class ApiCall implements JsonSerializable
             ]));
 
         if (false === ($this->response = get_transient($key)) or !$this->cache) {
-
             // It wasn't there, so regenerate the data and save the transient
             $this->response = wp_remote_post($this->url, [
                     'method'      => $this->method,
@@ -189,9 +195,7 @@ class ApiCall implements JsonSerializable
         }
 
         return $this;
-
     }
-
 
 
     /**
@@ -203,12 +207,10 @@ class ApiCall implements JsonSerializable
      */
     public function withBody($body)
     {
-
         $this->body = $body;
 
         return $this;
     }
-
 
 
     /**
@@ -220,12 +222,10 @@ class ApiCall implements JsonSerializable
      */
     public function usingMethod($method)
     {
-
         $this->method = $method;
 
         return $this;
     }
-
 
 
     /**
@@ -242,10 +242,8 @@ class ApiCall implements JsonSerializable
      */
     public static function to($url)
     {
-
         return new static($url);
     }
-
 
 
     /**
@@ -255,10 +253,8 @@ class ApiCall implements JsonSerializable
      */
     public function wasSuccessful()
     {
-
         return !static::failed();
     }
-
 
 
     /**
@@ -268,14 +264,12 @@ class ApiCall implements JsonSerializable
      */
     public function failed()
     {
-
         if (is_wp_error($this->response)) {
             return true;
         }
         $code = $this->response['response']['code'];
         return $code < 200 or $code > 299;
     }
-
 
 
     /**
@@ -285,14 +279,11 @@ class ApiCall implements JsonSerializable
      */
     public function getResponseBody()
     {
-
         if (!isset($this->response['body'])) {
             return false;
         }
         return Tools::maybeConvertFromJson($this->response['body']);
-
     }
-
 
 
     /**
@@ -306,7 +297,6 @@ class ApiCall implements JsonSerializable
 
     public static function post($url, $vars)
     {
-
         $call = static::to($url)
             ->withBody($vars)
             ->send();
@@ -318,7 +308,6 @@ class ApiCall implements JsonSerializable
     }
 
 
-
     /**
      * Add Multiple Headers
      *
@@ -328,14 +317,12 @@ class ApiCall implements JsonSerializable
      */
     public function addHeaders($headers)
     {
-
         foreach ($headers as $header => $data) {
             $this->addHeader($header, $data);
         }
 
         return $this;
     }
-
 
 
     /**
@@ -348,12 +335,10 @@ class ApiCall implements JsonSerializable
      */
     public function addHeader($header, $data)
     {
-
         $this->headers[$header] = $data;
 
         return $this;
     }
-
 
 
     /**
@@ -365,14 +350,12 @@ class ApiCall implements JsonSerializable
      */
     public function withJson($json)
     {
-
         $this->withBody(Tools::maybeConvertToJson($json));
         $this->setDataFormat('body');
         $this->addHeader('Content-Type', 'application/json; charset=utf-8');
 
         return $this;
     }
-
 
 
     /**
@@ -384,12 +367,10 @@ class ApiCall implements JsonSerializable
      */
     public function setDataFormat($format)
     {
-
         $this->data_format = $format;
 
         return $this;
     }
-
 
 
     /**
@@ -401,13 +382,10 @@ class ApiCall implements JsonSerializable
      */
     public function cacheFor(int $seconds)
     {
-
         $this->enableCache($seconds);
 
         return $this;
-
     }
-
 
 
     /**
@@ -419,14 +397,11 @@ class ApiCall implements JsonSerializable
      */
     public function enableCache(int $seconds = 3600 * 12)
     {
-
         $this->cache = true;
         $this->cacheFor = $seconds;
 
         return $this;
-
     }
-
 
 
     /**
@@ -436,13 +411,10 @@ class ApiCall implements JsonSerializable
      */
     public function disableCache()
     {
-
         $this->cache = false;
 
         return $this;
-
     }
-
 
 
     /**
@@ -452,10 +424,8 @@ class ApiCall implements JsonSerializable
      */
     public function getResponse()
     {
-
         return $this->response;
     }
-
 
 
     /**
@@ -465,10 +435,8 @@ class ApiCall implements JsonSerializable
      */
     public function getResponseHeaders()
     {
-
         return isset($this->response['headers']) ? $this->response['headers'] : false;
     }
-
 
 
     public function jsonSerialize()
@@ -481,7 +449,6 @@ class ApiCall implements JsonSerializable
     }
 
 
-
     /**
      * Get Response Code
      *
@@ -489,10 +456,8 @@ class ApiCall implements JsonSerializable
      */
     public function getResponseCode()
     {
-
         return isset($this->response['response']) ? $this->response['response']['code'] : false;
     }
-
 
 
     /**
@@ -502,7 +467,6 @@ class ApiCall implements JsonSerializable
      */
     public function getResponseMessage()
     {
-
         return isset($this->response['response']) ? $this->response['response']['message'] : false;
     }
 

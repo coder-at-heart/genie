@@ -7,9 +7,6 @@ use Lnk7\Genie\Abstracts\Field;
 class TabField extends Field
 {
 
-    protected $type = 'tab';
-
-
 
     /**
      * Is this tab an Endpoint?
@@ -21,18 +18,16 @@ class TabField extends Field
     public function endpoint(bool $endpoint)
     {
         return $this->set('endpoint', $endpoint);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
+        $this->type('tab');
         $this->displayOnly(true);
         $this->placement('top');
     }
-
 
 
     /**
@@ -45,7 +40,6 @@ class TabField extends Field
     public function placement(string $placement)
     {
         return $this->set('placement', $placement);
-
     }
 
 }

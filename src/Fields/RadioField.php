@@ -7,9 +7,6 @@ use Lnk7\Genie\Abstracts\Field;
 class RadioField extends Field
 {
 
-    protected $type = 'radio';
-
-
 
     /**
      * Choices for this radio set
@@ -21,9 +18,7 @@ class RadioField extends Field
     public function choices(array $choices)
     {
         return $this->set('choices', $choices);
-
     }
-
 
 
     /**
@@ -36,9 +31,7 @@ class RadioField extends Field
     public function otherChoices(bool $otherChoices)
     {
         return $this->set('other_choice', $otherChoices);
-
     }
-
 
 
     /**
@@ -51,18 +44,16 @@ class RadioField extends Field
     public function saveOtherChoice(bool $saveOtherChoice)
     {
         return $this->set('save_other_choice', $saveOtherChoice);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
+        $this->type('radio');
         $this->layout('vertical');
         $this->returnFormat('array');
     }
-
 
 
     /**
@@ -75,9 +66,7 @@ class RadioField extends Field
     public function layout(string $layout)
     {
         return $this->set('layout', $layout);
-
     }
-
 
 
     /**
@@ -90,7 +79,6 @@ class RadioField extends Field
     public function returnFormat($returnFormat)
     {
         return $this->set('return_format', $returnFormat);
-
     }
 
 }

@@ -5,9 +5,6 @@ namespace Lnk7\Genie\Fields;
 class ImageField extends FileField
 {
 
-    protected $type = 'image';
-
-
 
     /**
      * Specify the minimum width of the image
@@ -19,9 +16,7 @@ class ImageField extends FileField
     public function minWidth(int $minWidth)
     {
         return $this->set('min_width', $minWidth);
-
     }
-
 
 
     /**
@@ -34,9 +29,7 @@ class ImageField extends FileField
     public function minHeight(int $minHeight)
     {
         return $this->set('min_height', $minHeight);
-
     }
-
 
 
     /**
@@ -49,9 +42,7 @@ class ImageField extends FileField
     public function maxWidth(int $maxWidth)
     {
         return $this->set('max_width', $maxWidth);
-
     }
-
 
 
     /**
@@ -64,7 +55,13 @@ class ImageField extends FileField
     public function maxHeight(int $maxHeight)
     {
         return $this->set('max_height', $maxHeight);
+    }
 
+
+    protected function setDefaults()
+    {
+        parent::setDefaults();
+        $this->type('image');
     }
 
 }

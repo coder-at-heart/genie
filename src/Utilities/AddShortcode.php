@@ -7,13 +7,13 @@ class AddShortcode
 
 {
 
+
     /**
      * the name of the shortcode
      *
      * @var string
      */
     protected $shortcode;
-
 
 
     /**
@@ -24,9 +24,7 @@ class AddShortcode
     public function __construct(string $shortcode)
     {
         $this->shortcode = $shortcode;
-
     }
-
 
 
     /**
@@ -40,9 +38,7 @@ class AddShortcode
     public static function called(string $shortcode)
     {
         return new static($shortcode);
-
     }
-
 
 
     /**

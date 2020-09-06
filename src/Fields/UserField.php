@@ -7,11 +7,6 @@ use Lnk7\Genie\Abstracts\Field;
 class UserField extends Field
 {
 
-    protected $type = 'user';
-
-    protected $metaQuery = 'NUMERIC';
-
-
 
     /**
      * Limit to Wordpress Role
@@ -23,9 +18,7 @@ class UserField extends Field
     public function role(string $role)
     {
         return $this->set('role', $role);
-
     }
-
 
 
     /**
@@ -38,9 +31,7 @@ class UserField extends Field
     public function allowNull(bool $allowNull)
     {
         return $this->set('allow_null', $allowNull);
-
     }
-
 
 
     /**
@@ -53,7 +44,14 @@ class UserField extends Field
     public function multiple(bool $multiple)
     {
         return $this->set('multiple', $multiple);
+    }
 
+
+    protected function setDefaults()
+    {
+        parent::setDefaults();
+        $this->type('user');
+        $this->metaQuery('NUMERIC');
     }
 
 }

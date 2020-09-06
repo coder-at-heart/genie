@@ -2,6 +2,7 @@
 
 namespace Lnk7\Genie;
 
+use Lnk7\Genie\Interfaces\GenieComponent;
 use Lnk7\Genie\Utilities\AddShortcode;
 use Lnk7\Genie\Utilities\HookInto;
 use Throwable;
@@ -17,8 +18,9 @@ use Twig\TwigFilter;
  *
  * @package Lnk7\Genie
  */
-class View
+class View implements GenieComponent
 {
+
 
     /**
      * Twig Object
@@ -27,6 +29,7 @@ class View
      */
     protected static $twig;
 
+
     /**
      * an array of key value pairs sent to the twig template
      *
@@ -34,12 +37,14 @@ class View
      */
     protected $vars = [];
 
+
     /**
      * The twig template. This could be a filename or a string.
      *
      * @var string
      */
     protected $template;
+
 
     /**
      * Should we process shortcodes in the template?
@@ -57,7 +62,6 @@ class View
     protected $templateType = 'file';
 
 
-
     /**
      * View constructor.
      *
@@ -67,24 +71,22 @@ class View
     {
         $this->template = $template;
         $this->templateType = substr(strtolower($template), -5) === '.twig' ? 'file' : 'string';
-
+        $this->cache = !WP_DEBUG;
+        $this->debug = WP_DEBUG;
     }
-
 
 
     /**
      * Add in our hooks and shortcodes
      */
-    public static function Setup()
+    public static function setup()
     {
-
-        HookInto::action('init')
+        // Note the sequence. this runs before anything else
+        HookInto::action('init', 1)
             ->run(function () {
-
-                $debug = WP_DEBUG;
-                $cache = !WP_DEBUG;
-
-                $pathArray = apply_filters('genie_view_folders', []);
+                $debug = apply_filters('genie_view_debug', WP_DEBUG);
+                $cache = apply_filters('genie_view_cache', !WP_DEBUG);
+                $pathArray = apply_filters('genie_view_folders', Genie::config('viewFolders'));
 
                 $fileLoader = new FilesystemLoader($pathArray);
                 $loader = new ChainLoader([$fileLoader]);
@@ -112,10 +114,11 @@ class View
                 $filter = new TwigFilter('wpautop', 'wpautop');
                 $twig->addFilter($filter);
 
-                self::$twig = apply_filters('genie_twig_init', $twig);
+                self::$twig = apply_filters('genie_view_twig', $twig);
             });
 
 
+        // The shortcode genie_view allows you to have a twig template embedded in content
         AddShortcode::called('genie_view')->run(
             function ($incomingAttributes, $content) {
                 $attributes = shortcode_atts([
@@ -133,10 +136,8 @@ class View
                 return static::with($attributes->view)
                     ->addVars($attributes)
                     ->render();
-
             });
     }
-
 
 
     /**
@@ -146,13 +147,11 @@ class View
      */
     protected static function getCacheFolder()
     {
-
         $upload = wp_upload_dir();
         $upload_dir = $upload['basedir'];
 
         return apply_filters('genie_view_cache_folder', $upload_dir . '/twig_cache');
     }
-
 
 
     /**
@@ -162,11 +161,18 @@ class View
      */
     public function render()
     {
+        $site = apply_filters('genie_get_site_var', [
+            'urls' => [
+                'theme' => get_stylesheet_directory_uri(),
+                'ajax'  => admin_url('admin-ajax.php'),
+                'home'  => home_url(),
+            ],
+        ]);
 
-        $vars = apply_filters('genie_view_before_render', $this->vars);
+        $vars = array_merge(['_site' => $site], $this->vars);
+        $vars = apply_filters('genie_view_variables', $vars);
 
         try {
-
             if ($this->templateType === 'string') {
                 $template = static::$twig->createTemplate($this->template);
                 $html = $template->render($vars);
@@ -179,12 +185,10 @@ class View
             }
 
             return $html;
-
         } catch (Throwable $e) {
             return $e->getMessage();
         }
     }
-
 
 
     /**
@@ -196,13 +200,10 @@ class View
      */
     public function addVars(array $fields)
     {
-
         $this->vars = array_merge($this->vars, $fields);
 
         return $this;
-
     }
-
 
 
     /**
@@ -219,7 +220,6 @@ class View
     }
 
 
-
     /**
      * Enabled shortcode on this template
      *
@@ -231,7 +231,6 @@ class View
 
         return $this;
     }
-
 
 
     /**
@@ -248,7 +247,6 @@ class View
     }
 
 
-
     /**
      * Add a variable to be sent to twig
      *
@@ -263,7 +261,6 @@ class View
 
         return $this;
     }
-
 
 
     /**

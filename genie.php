@@ -16,6 +16,9 @@
 
 namespace Lnk7\Genie;
 
-include_once( 'vendor/autoload.php' );
+include_once('vendor/autoload.php');
 
-Genie::Setup();
+Genie::createPlugin()
+    ->setFilename(__FILE__)
+    ->start();
+

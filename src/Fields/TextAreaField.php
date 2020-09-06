@@ -5,9 +5,6 @@ namespace Lnk7\Genie\Fields;
 class TextAreaField extends TextField
 {
 
-    protected $type = 'textarea';
-
-
 
     /**
      * The number of rows for this input
@@ -19,18 +16,15 @@ class TextAreaField extends TextField
     public function rows(int $rows)
     {
         return $this->set('rows', $rows);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
+        $this->type('textarea');
         $this->newLines('');
-        $this->searchable(true);
     }
-
 
 
     /**
@@ -43,7 +37,6 @@ class TextAreaField extends TextField
     public function newLines(string $newLines)
     {
         return $this->set('new_lines', $newLines);
-
     }
 
 }

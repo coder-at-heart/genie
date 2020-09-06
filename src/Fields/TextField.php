@@ -7,9 +7,6 @@ use Lnk7\Genie\Abstracts\Field;
 class TextField extends Field
 {
 
-    protected $type = 'text';
-
-
 
     /**
      * Sets the placeholder for the field.
@@ -21,9 +18,7 @@ class TextField extends Field
     public function placeholder($placeholder)
     {
         return $this->set('placeholder', $placeholder);
-
     }
-
 
 
     /**
@@ -36,9 +31,7 @@ class TextField extends Field
     public function prepend($prepend)
     {
         return $this->set('prepend', $prepend);
-
     }
-
 
 
     /**
@@ -51,9 +44,7 @@ class TextField extends Field
     public function append($append)
     {
         return $this->set('append', $append);
-
     }
-
 
 
     /**
@@ -67,9 +58,7 @@ class TextField extends Field
     public function readOnly(bool $readOnly)
     {
         return $this->set('readonly', $readOnly);
-
     }
-
 
 
     /**
@@ -82,9 +71,7 @@ class TextField extends Field
     public function disabled(bool $disabled)
     {
         return $this->set('disabled', $disabled);
-
     }
-
 
 
     /**
@@ -97,16 +84,13 @@ class TextField extends Field
     public function maxLength(int $maxLength)
     {
         return $this->set('maxlength', $maxLength);
-
     }
-
 
 
     protected function setDefaults()
     {
-
         parent::setDefaults();
-        $this->searchable(true);
+        $this->type('text');
     }
 
 }

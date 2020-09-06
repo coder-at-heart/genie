@@ -3,7 +3,9 @@
 namespace Lnk7\Genie;
 
 
+use Lnk7\Genie\Interfaces\GenieComponent;
 use Lnk7\Genie\Utilities\HookInto;
+use WP;
 
 /**
  * Class Wordpress
@@ -11,15 +13,17 @@ use Lnk7\Genie\Utilities\HookInto;
  *
  * @package Lnk7\Genie
  */
-class WordPress
+class WordPress implements GenieComponent
 {
+
 
     /**
      * Query Variables
      *
      * @var array
      */
-    static $query_vars;
+    protected static $query_vars;
+
 
     /**
      * a list of wordpress fields
@@ -53,23 +57,21 @@ class WordPress
     ];
 
 
-
     /**
      * Constructor
      */
-    public static function Setup()
+    public static function setup()
     {
-
         // We process all variables here and also capture and query variables.
         HookInto::action('parse_request')
-            ->run(function ($wp) {
+            ->run(function (WP $wp) {
                 static::$query_vars = $wp->query_vars;
             });
 
         // Hook into the views render function and make the session variables available to twig
-        HookInto::filter('genie_view_before_render')
+        HookInto::filter('genie_get_site_var')
             ->run(function ($vars) {
-                return array_merge($vars, ['_query_vars' => static::$query_vars]);
+                return array_merge($vars, ['query_vars' => static::$query_vars]);
             });
     }
 

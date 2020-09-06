@@ -7,9 +7,6 @@ use Lnk7\Genie\Abstracts\Field;
 class MessageField extends Field
 {
 
-    protected $type = 'message';
-
-
 
     /**
      *Text shown
@@ -21,19 +18,17 @@ class MessageField extends Field
     public function message(string $message)
     {
         return $this->set('message', $message);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
+        $this->type('message');
         $this->displayOnly(true);
         $this->newLines('wpautop');
         $this->escapeHTML(false);
     }
-
 
 
     /**
@@ -46,9 +41,7 @@ class MessageField extends Field
     public function newLines(string $newLines)
     {
         return $this->set('new_lines', $newLines);
-
     }
-
 
 
     /**
@@ -61,7 +54,6 @@ class MessageField extends Field
     public function escapeHTML(bool $escape)
     {
         return $this->set('esc_html', $escape);
-
     }
 
 }

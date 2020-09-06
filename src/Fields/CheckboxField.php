@@ -4,11 +4,14 @@ namespace Lnk7\Genie\Fields;
 
 use Lnk7\Genie\Abstracts\Field;
 
+
+/**
+ * Class CheckboxField
+ *
+ * @package Lnk7\Genie\Fields
+ */
 class CheckboxField extends Field
 {
-
-    protected $type = 'checkbox';
-
 
 
     /**
@@ -21,9 +24,7 @@ class CheckboxField extends Field
     public function choices(array $choices)
     {
         return $this->set('choices', $choices);
-
     }
-
 
 
     /**
@@ -36,13 +37,11 @@ class CheckboxField extends Field
     public function message(string $message)
     {
         return $this->set('message', $message);
-
     }
 
 
-
     /**
-     * Specify if there should be an "taggle all" option
+     * Specify if there should be an "toggle all" option
      *
      * @param bool $toggle
      *
@@ -51,18 +50,16 @@ class CheckboxField extends Field
     public function toggle(bool $toggle)
     {
         return $this->set('toggle', $toggle);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
+        $this->type('checkbox');
         $this->layout('vertical');
         $this->returnFormat('array');
     }
-
 
 
     /**
@@ -75,15 +72,13 @@ class CheckboxField extends Field
     public function layout(string $layout)
     {
         return $this->set('layout', $layout);
-
     }
-
 
 
     /**
      * Specify the return format
      *
-     * @param string $returnFormat array|value TODO: Check
+     * @param string $returnFormat array|value
      *
      * @return $this
      */
@@ -91,7 +86,6 @@ class CheckboxField extends Field
     public function returnFormat(string $returnFormat)
     {
         return $this->set('return_format', $returnFormat);
-
     }
 
 }

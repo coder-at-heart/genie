@@ -2,6 +2,7 @@
 
 namespace Lnk7\Genie;
 
+use Lnk7\Genie\Interfaces\GenieComponent;
 use Lnk7\Genie\Utilities\AddShortcode;
 use Lnk7\Genie\Utilities\HookInto;
 
@@ -11,15 +12,15 @@ use Lnk7\Genie\Utilities\HookInto;
  *
  * @package Lnk7\Genie
  */
-class Session
+class Session implements GenieComponent
 {
+
 
     /**
      * Constructor
      */
-    public static function Setup()
+    public static function setup()
     {
-
         // Run once everything has been setup
         HookInto::action('after_setup_theme')
             ->run(function () {
@@ -45,9 +46,7 @@ class Session
 
                 if (!isset($_SESSION['sessionCreated'])) {
                     $_SESSION['sessionCreated'] = time();
-
                 } else if (time() - $_SESSION['sessionCreated'] > $maxTime) {
-
                     // The Session started more than $maxTime seconds ago,
                     // change session ID for the current session and invalidate old session ID
                     session_regenerate_id(true);
@@ -66,7 +65,7 @@ class Session
 
 
         // Plug the session into all views
-        HookInto::filter('genie_view_before_render')
+        HookInto::filter('genie_view_variables')
             ->run(function ($vars) {
                 return array_merge($vars, ['_session' => $_SESSION]);
             });
@@ -85,9 +84,7 @@ class Session
 
                 return static::find($a->var, $a->default);
             });
-
     }
-
 
 
     /**
@@ -103,13 +100,11 @@ class Session
     }
 
 
-
     /**
      * Get the variables that needs to be saved, and then add them to the session.
      */
     public static function processVariables()
     {
-
         $fields = apply_filters('genie_session_parse_request', []);
 
         foreach ($fields as $field) {
@@ -125,7 +120,6 @@ class Session
     }
 
 
-
     /**
      * Save a value to the Session
      *
@@ -138,7 +132,6 @@ class Session
     }
 
 
-
     /**
      * look for a value in the session. can be accessed by dot notation (like twig)
      * $object->property['index']
@@ -149,7 +142,7 @@ class Session
      *
      * @return mixed
      */
-    private static function find($var, $default = false)
+    protected static function find($var, $default = false)
     {
         $lookAt = $_SESSION;
         $keys = explode('.', $var);
@@ -169,7 +162,6 @@ class Session
     }
 
 
-
     /**
      * Check if the session has a value
      *
@@ -181,7 +173,6 @@ class Session
     {
         return self::find($field) ? true : false;
     }
-
 
 
     /**
@@ -198,7 +189,6 @@ class Session
     }
 
 
-
     /**
      * Remove a value for the session
      *
@@ -208,7 +198,6 @@ class Session
     {
         unset($_SESSION[$var]);
     }
-
 
 
     /**
