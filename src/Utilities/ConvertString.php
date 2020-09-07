@@ -2,7 +2,7 @@
 
 namespace Lnk7\Genie\Utilities;
 
-use Doctrine\Common\Inflector\Inflector;
+use Symfony\Component\String\Inflector\EnglishInflector;
 
 /**
  * Class ConvertString
@@ -221,8 +221,10 @@ class ConvertString
      */
     public function toSingular(): ConvertString
     {
-        $string = Inflector::singularize((string)$this);
-        $this->convertToArray($string);
+
+        $inflector = new EnglishInflector();
+        $string = $inflector->singularize((string)$this);
+        $this->convertToArray($string[0]);
 
         return $this;
     }
@@ -235,8 +237,9 @@ class ConvertString
      */
     public function toPlural(): ConvertString
     {
-        $string = Inflector::pluralize((string)$this);
-        $this->convertToArray($string);
+        $inflector = new EnglishInflector();
+        $string = $inflector->pluralize((string)$this);
+        $this->convertToArray($string[0]);
 
         return $this;
     }

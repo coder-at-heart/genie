@@ -1,0 +1,53 @@
+<form id="testimonialForm">
+    <p><label for="title">Title</label><input type="text" id="title" required></p>
+    <p><label for="testimonial">Testimonial</label><textarea id="testimonial"></textarea></p>
+    <p><label for="name">Name</label><input type="text" id="name" required></p>
+    <p><label for="location">Location</label>
+        <select id="location" required>
+            {% for code,text in locations %}
+                <option value="{{ code }}">{{ text }}</option>
+            {% endfor %}
+        </select>
+    </p>
+
+    <button type="submit" id="submitButton">Save</button>
+    <p><span id="message"></span></p>
+</form>
+
+<script>
+
+    jQuery(document).ready(function ($) {
+
+        var buttonClicked = false;
+
+        $('#testimonialForm').submit(function (event) {
+            event.preventDefault();
+
+            if (buttonClicked) {
+                return;
+            }
+
+            buttonClicked = true;
+
+            $.ajax({
+                url: '{{ ajax_url('testimonial/create') }}',
+                data: JSON.stringify({
+                    title: $('#title').val(),
+                    text: $('#testimonial').val(),
+                    name: $('#name').val(),
+                    location: $('#location').find(":selected").val()
+                }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                complete: function (data) {
+                    buttonClicked = false
+                    if (data.status === 200) {
+                        $('#testimonialForm')[0].reset();
+                        $('#message').html(data.responseJSON.message)
+                    }
+                }
+            });
+        })
+    });
+</script>

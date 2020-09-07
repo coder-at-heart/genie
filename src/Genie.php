@@ -92,7 +92,7 @@ class Genie
 
 
     /**
-     * get a value from Genie's COnfig
+     * get a value from Genie's Config
      *
      * @param $var
      *
@@ -147,6 +147,28 @@ class Genie
 
 
     /**
+     * Get the list of components registered with Genie
+     *
+     * @return array
+     */
+    public function getComponents()
+    {
+        return Registry::get('genie_config', 'components');
+    }
+
+
+    /**
+     * get the filename stored in the registry
+     *
+     * @return string
+     */
+    public function getFilename()
+    {
+        return Registry::get('genie_config', 'filename');
+    }
+
+
+    /**
      * get Genie Going.
      */
     public function start()
@@ -161,8 +183,8 @@ class Genie
         //Load all our classes.
         if (is_array($config['components']))
             foreach ($config['components'] as $class) {
-                if (method_exists($class, 'Setup')) {
-                    $class::Setup();
+                if (method_exists($class, 'setup')) {
+                   $class::setup();
                 }
             }
 
