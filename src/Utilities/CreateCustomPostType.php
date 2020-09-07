@@ -66,12 +66,13 @@ class CreateCustomPostType
      */
     public function __construct(string $name)
     {
+
         $string = ConvertString::from($name);
 
         $this->postType = $string->toSingular()->toSlug();
 
-        $singular = (string)$string->toTitleCase()->toSingular();
-        $plural = (string)$string->toPlural();
+        $singular ='sing';// (string)$string->toTitleCase()->toSingular();
+        $plural ='sing';//= (string)$string->toPlural();
 
         $this->setLabels([
             "name"                  => $plural,
