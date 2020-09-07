@@ -248,7 +248,7 @@ abstract class Field
      *
      * @return $this
      */
-    public function wrapperWidth(int $width)
+    public function wrapperWidth( $width)
     {
         $this->data['wrapper']['width'] = $width;
 

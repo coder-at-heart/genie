@@ -118,7 +118,7 @@ class HookInto
      */
     public function run(callable $callback)
     {
-        $vars = Tools::getCallableVariables($callback);
+        $vars = Tools::getCallableParameters($callback);
 
         foreach ($this->actions as $hook => $priority) {
             add_action($hook, $callback, $priority, count($vars));

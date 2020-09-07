@@ -25,8 +25,5 @@
     "psr-4": {
       "Lnk7\\Genie\\": "src"
     }
-  },
-  "require-dev": {
-    "codeception/codeception": "^4.1"
   }
 }

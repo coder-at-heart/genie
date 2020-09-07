@@ -21,14 +21,14 @@ class Tools
     /**
      * Add slashes to a string
      *
-     * @param        $string
+     * @param string $string
      * @param string $chars
      *
      * @return string
      */
-    public static function addSlashes($string, $chars = '"')
+    public static function addSlashes(string $string, $chars = '"')
     {
-        return addcslashes($string, $chars);
+        return addcslashes( $string, $chars);
     }
 
 
@@ -37,7 +37,7 @@ class Tools
      *
      * @return ReflectionParameter[]|WP_Error
      */
-    public static function getCallableVariables(callable $callback)
+    public static function getCallableParameters(callable $callback)
     {
         try {
             is_callable($callback, false, $name);

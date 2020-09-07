@@ -33,6 +33,13 @@ class AjaxHandler implements GenieComponent
     protected static $action;
 
 
+    /**
+     * Check that a path is registered
+     *
+     * @param $requestPath
+     *
+     * @return bool
+     */
     public static function canHandle($requestPath) {
         return isset(static::$paths[$requestPath]);
     }
@@ -72,7 +79,7 @@ class AjaxHandler implements GenieComponent
 
                         // The Callback exists
                         $callback = static::$paths[$requestPath];
-                        $params = Tools::getCallableVariables($callback);
+                        $params = Tools::getCallableParameters($callback);
 
                         if (is_wp_error($params)) {
                             Response::error([
