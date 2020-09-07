@@ -17,52 +17,51 @@ use WP_Error;
 class Tools
 {
 
+
     /**
      * Add slashes to a string
      *
-     * @param        $string
+     * @param string $string
      * @param string $chars
      *
      * @return string
      */
-    public static function addSlashes($string, $chars = '"')
+    public static function addSlashes(string $string, $chars = '"')
     {
-
-        return addcslashes($string, $chars);
-
+        return addcslashes( $string, $chars);
     }
 
 
-
     /**
-     * @param $callback
+     * @param callable $callback
      *
      * @return ReflectionParameter[]|WP_Error
      */
-    public static function getCallableVariables($callback)
+    public static function getCallableParameters(callable $callback)
     {
         try {
+            is_callable($callback, false, $name);
 
-            if ($callback instanceof Closure) {
+            // Closure or normal function
+            if ($callback instanceof Closure || strpos($name, "::") === false) {
                 $reflection = new ReflectionFunction($callback);
             } else {
-                if (is_array($callback)) {
-                    $method = $callback[0] . '::' . $callback[1];
-                } else {
-                    $method = $callback;
-                }
-
-                $reflection = new ReflectionMethod($method);
+                $reflection = new ReflectionMethod($name);
             }
             return $reflection->getParameters();
         } catch (ReflectionException $e) {
             return new WP_Error($e->getMessage());
         }
-
     }
 
 
-
+    /**
+     * Remove slashes from an array
+     *
+     * @param $value
+     *
+     * @return array|string
+     */
     public static function stripSlashesArray($value)
     {
         $value = is_array($value) ?
@@ -71,7 +70,6 @@ class Tools
 
         return $value;
     }
-
 
 
     /**
@@ -83,15 +81,28 @@ class Tools
      */
     public static function maybeConvertFromJson($string)
     {
-
         $json = json_decode($string);
         if (json_last_error() == JSON_ERROR_NONE) {
             return $json;
         }
-
         return $string;
     }
 
+
+    /**
+     * Check if a string is JSON
+     *
+     * @param $jsonString
+     *
+     * @return array
+     */
+    public static function isValidJson($jsonString)
+    {
+        $data = json_decode($jsonString);
+        $isJson = $data && $jsonString != $data;
+        $validJson = $isJson && json_last_error() === JSON_ERROR_NONE;
+        return [$isJson, $validJson];
+    }
 
 
     /**
@@ -108,70 +119,20 @@ class Tools
             if (json_last_error() == JSON_ERROR_NONE) {
                 return $string;
             }
-
         }
-
         return json_encode($string);
     }
-
-
-
-    /**
-     * Dump a variable to the console
-     *
-     * @param $var
-     */
-    public static function console($var)
-    {
-
-        if (is_array($var) or is_object($var)) {
-            $var = print_r($var, true);
-        }
-        print "<script>console.log(" . json_encode($var) . ")</script>";
-    }
-
-
-
-    /**
-     * Dump and die
-     *
-     * @param $var
-     */
-    public static function dd($var)
-    {
-
-        self::d($var);
-        exit;
-    }
-
-
-
-    /**
-     * Dump a variable
-     *
-     * @param $var
-     */
-    public static function d($var)
-    {
-
-        if (is_array($var) or is_object($var)) {
-            $var = print_r($var, true);
-        }
-        print "<pre>$var</pre>";
-    }
-
 
 
     /**
      * Extract the domain name from a url
      *
-     * @param $url
+     * @param string $url
      *
-     * @return bool
+     * @return string|false
      */
-    public static function getDomainName($url)
+    public static function getDomainName(string $url)
     {
-
         $pieces = parse_url($url);
         $domain = isset($pieces['host']) ? $pieces['host'] : $pieces['path'];
         if (preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $regs)) {
@@ -182,7 +143,6 @@ class Tools
     }
 
 
-
     /**
      * Get an IP Address
      *
@@ -190,10 +150,8 @@ class Tools
      */
     public static function getIpAddress()
     {
-
         return $_SERVER['REMOTE_ADDR'];
     }
-
 
 
     /**
@@ -201,7 +159,6 @@ class Tools
      */
     public static function getRequestHeaders()
     {
-
         $headers = [];
         foreach ($_SERVER as $key => $value) {
             if (substr($key, 0, 5) <> 'HTTP_') {
@@ -215,12 +172,16 @@ class Tools
     }
 
 
-
+    /**
+     * Used from a Twig filter to export a json object without single quotes
+     *
+     * @param $data
+     *
+     * @return false|string|string[]
+     */
     public static function jsonSafe($data)
     {
-
         return str_replace("'", '&apos;', json_encode($data));
-
     }
 
 }

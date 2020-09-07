@@ -10,6 +10,7 @@ namespace Lnk7\Genie;
 class Cache
 {
 
+
     /**
      * Clear Cache
      *
@@ -17,7 +18,6 @@ class Cache
      */
     public static function clearCache($id = null)
     {
-
         global $wpdb;
 
         $where = '';
@@ -34,7 +34,6 @@ class Cache
     }
 
 
-
     /**
      * Cache Key prefix is used for post_meta cache
      *
@@ -42,7 +41,6 @@ class Cache
      */
     public static function getCachePrefix()
     {
-
         return apply_filters('genie_get_cache_prefix', 'gcache');
     }
 }

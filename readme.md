@@ -38,10 +38,10 @@ class FAQ extends CustomPost
     static public function init()
     {
 
-        CreateTaxonomy::Called(static::$taxonomy)
+        CreateTaxonomy::called(static::$taxonomy)
             ->register();
 
-        CreateCustomPostType::Called(static::$postType)
+        CreateCustomPostType::called(static::$postType)
             ->icon('dashicons-admin-comments')
             ->addTaxonomy(static::$taxonomy)
             ->backendOnly()

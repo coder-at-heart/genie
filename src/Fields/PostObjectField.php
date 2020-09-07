@@ -7,11 +7,6 @@ use Lnk7\Genie\Abstracts\Field;
 class PostObjectField extends Field
 {
 
-    protected $type = 'post_object';
-
-    protected $metaQuery = 'NUMERIC';
-
-
 
     /**
      * Specify an array of post types to filter the available choices. Defaults to ''
@@ -27,9 +22,7 @@ class PostObjectField extends Field
         }
 
         return $this->set('post_type', $postObject);
-
     }
-
 
 
     /**
@@ -42,19 +35,18 @@ class PostObjectField extends Field
     public function taxonomy(string $taxonomy)
     {
         return $this->set('taxonomy', $taxonomy);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
+        $this->type('post_object');
+        $this->metaQuery('NUMERIC');
         $this->returnFormat('id');
         $this->allowNull(false);
         $this->multiple(false);
     }
-
 
 
     /**
@@ -67,9 +59,7 @@ class PostObjectField extends Field
     public function returnFormat(string $returnFormat)
     {
         return $this->set('return_format', $returnFormat);
-
     }
-
 
 
     /**
@@ -82,9 +72,7 @@ class PostObjectField extends Field
     public function allowNull(bool $allowNull)
     {
         return $this->set('allow_null', $allowNull);
-
     }
-
 
 
     /**
@@ -97,7 +85,6 @@ class PostObjectField extends Field
     public function multiple(bool $multiple)
     {
         return $this->set('multiple', $multiple);
-
     }
 
 }

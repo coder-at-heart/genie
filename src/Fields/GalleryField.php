@@ -2,10 +2,8 @@
 
 namespace Lnk7\Genie\Fields;
 
-class GalleryField extends ImageField {
-
-    protected $type = 'gallery';
-
+class GalleryField extends ImageField
+{
 
 
     /**
@@ -15,12 +13,10 @@ class GalleryField extends ImageField {
      *
      * @return $this
      */
-    public function max( int $number ) {
-
-        return $this->set( 'max', $number );
-
+    public function max(int $number)
+    {
+        return $this->set('max', $number);
     }
-
 
 
     /**
@@ -30,22 +26,21 @@ class GalleryField extends ImageField {
      *
      * @return $this
      */
-    public function min( int $number ) {
-
-        return $this->set( 'min', $number );
-
+    public function min(int $number)
+    {
+        return $this->set('min', $number);
     }
-
 
 
     /**
      * Set defaults for this field
      */
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
-        $this->insert( 'append' );
+        $this->type('gallery');
+        $this->insert('append');
     }
-
 
 
     /**
@@ -55,9 +50,9 @@ class GalleryField extends ImageField {
      *
      * @return $this
      */
-    public function insert( string $insert ) {
-        return $this->set( 'insert', $insert );
-
+    public function insert(string $insert)
+    {
+        return $this->set('insert', $insert);
     }
 
 }

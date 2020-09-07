@@ -16,13 +16,13 @@ use Doctrine\Common\Inflector\Inflector;
 class ConvertString
 {
 
+
     /**
      * An array that hold the words in a string
      *
      * @var array
      */
     var $words = [];
-
 
 
     /**
@@ -32,15 +32,12 @@ class ConvertString
      */
     public function __construct($string, $case = null)
     {
-
         if ($case == 'pascalCase') {
             $string = ltrim(strtolower(preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '_$0', $string)), '_');
-
         }
 
         $this->convertToArray($string);
     }
-
 
 
     /**
@@ -50,14 +47,12 @@ class ConvertString
      */
     private function convertToArray($string)
     {
-
         $string = preg_replace('/[^A-Za-z0-9\-_ ]/', '', $string);
         $string = preg_replace('/[\-_]/', ' ', $string);
         $string = preg_replace('!\s+!', ' ', $string);
 
         $this->words = explode(' ', trim($string));
     }
-
 
 
     /**
@@ -68,12 +63,10 @@ class ConvertString
      *
      * @return ConvertString
      */
-    public static function From($string, $case = null): ConvertString
+    public static function from($string, $case = null): ConvertString
     {
-
         return new static($string, $case);
     }
-
 
 
     /**
@@ -83,10 +76,8 @@ class ConvertString
      */
     public function __toString(): string
     {
-
         return $this->return();
     }
-
 
 
     /**
@@ -96,10 +87,8 @@ class ConvertString
      */
     public function return($with = ' '): string
     {
-
         return implode($with, $this->words);
     }
-
 
 
     /**
@@ -109,16 +98,12 @@ class ConvertString
      */
     public function toUpperCase(): ConvertString
     {
-
         array_walk($this->words, function (&$word) {
-
             $word = strtoupper($word);
         });
 
         return $this;
-
     }
-
 
 
     /**
@@ -128,11 +113,8 @@ class ConvertString
      */
     public function toSlug(): string
     {
-
         return $this->toLowerCase()->return('-');
-
     }
-
 
 
     /**
@@ -142,16 +124,12 @@ class ConvertString
      */
     public function toLowerCase(): ConvertString
     {
-
         array_walk($this->words, function (&$word) {
-
             $word = strtolower($word);
         });
 
         return $this;
-
     }
-
 
 
     /**
@@ -161,14 +139,11 @@ class ConvertString
      */
     public function toCamelCase(): string
     {
-
         $this->toTitleCase();
         $this->words[0] = strtolower($this->words[0]);
 
         return $this->return('');
-
     }
-
 
 
     /**
@@ -178,7 +153,6 @@ class ConvertString
      */
     public function toTitleCase(): ConvertString
     {
-
         $ignoreWords = [
             'of',
             'a',
@@ -208,7 +182,6 @@ class ConvertString
             'like',
         ];
         foreach ($this->words as $key => $word) {
-
             // If this word is the first, or it's not one of our small words, capitalise it with ucwords().
             if ($key == 0 or !in_array(strtolower($word), $ignoreWords)) {
                 $this->words[$key] = ucwords($word);
@@ -219,7 +192,6 @@ class ConvertString
     }
 
 
-
     /**
      * Turn string into a slug
      *
@@ -227,11 +199,8 @@ class ConvertString
      */
     public function toSnakeCase(): string
     {
-
         return $this->toLowerCase()->return('_');
-
     }
-
 
 
     /**
@@ -241,11 +210,8 @@ class ConvertString
      */
     public function toPascalCase(): string
     {
-
         return $this->toTitleCase()->return('');
-
     }
-
 
 
     /**
@@ -255,13 +221,11 @@ class ConvertString
      */
     public function toSingular(): ConvertString
     {
-
         $string = Inflector::singularize((string)$this);
         $this->convertToArray($string);
 
         return $this;
     }
-
 
 
     /**
@@ -271,7 +235,6 @@ class ConvertString
      */
     public function toPlural(): ConvertString
     {
-
         $string = Inflector::pluralize((string)$this);
         $this->convertToArray($string);
 

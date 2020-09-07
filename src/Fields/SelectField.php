@@ -7,9 +7,6 @@ use Lnk7\Genie\Abstracts\Field;
 class SelectField extends Field
 {
 
-    protected $type = 'select';
-
-
 
     /**
      * Choices for this select dropdown
@@ -21,9 +18,7 @@ class SelectField extends Field
     public function choices(array $choices)
     {
         return $this->set('choices', $choices);
-
     }
-
 
 
     /**
@@ -36,9 +31,7 @@ class SelectField extends Field
     public function ajax(bool $ajax)
     {
         return $this->set('ajax', $ajax);
-
     }
-
 
 
     /**
@@ -51,19 +44,17 @@ class SelectField extends Field
     public function multiple(bool $multiple)
     {
         return $this->set('multiple', $multiple);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
+        $this->type('select');
         $this->allowNull(true);
         $this->ui(true);
         $this->returnFormat('array');
     }
-
 
 
     /**
@@ -76,9 +67,7 @@ class SelectField extends Field
     public function allowNull($allowNull)
     {
         return $this->set('allow_null', $allowNull);
-
     }
-
 
 
     /**
@@ -91,9 +80,7 @@ class SelectField extends Field
     public function ui(bool $ui)
     {
         return $this->set('ui', $ui);
-
     }
-
 
 
     /**

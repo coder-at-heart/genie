@@ -7,9 +7,6 @@ use Lnk7\Genie\Abstracts\Field;
 class RelationshipField extends Field
 {
 
-    protected $type = 'relationship';
-
-
 
     /**
      * Specify an array of post types to filter the available choices. Defaults to ''
@@ -27,7 +24,6 @@ class RelationshipField extends Field
     }
 
 
-
     /**
      * Specify the type of value returned by get_field(). Defaults to 'object'.
      * Choices of 'object' (Post object) or 'id' (Post ID)
@@ -40,9 +36,7 @@ class RelationshipField extends Field
     public function returnFormat(string $returnFormat)
     {
         return $this->set('return_format', $returnFormat);
-
     }
-
 
 
     /**
@@ -55,9 +49,7 @@ class RelationshipField extends Field
     public function taxonomy(string $taxonomy)
     {
         return $this->set('taxonomy', $taxonomy);
-
     }
-
 
 
     /**
@@ -70,9 +62,7 @@ class RelationshipField extends Field
     public function min(int $number)
     {
         return $this->set('min', $number);
-
     }
-
 
 
     /**
@@ -85,18 +75,16 @@ class RelationshipField extends Field
     public function max(int $number)
     {
         return $this->set('max', $number);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
+        $this->type('relationship');
         $this->filters(['search']);
         $this->elements(['featured_image']);
     }
-
 
 
     /**
@@ -109,9 +97,7 @@ class RelationshipField extends Field
     public function filters(array $filters)
     {
         return $this->set('filters', $filters);
-
     }
-
 
 
     /**
@@ -124,7 +110,6 @@ class RelationshipField extends Field
     public function elements(array $elements)
     {
         return $this->set('elements', $elements);
-
     }
 
 }

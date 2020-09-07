@@ -7,6 +7,10 @@ use Lnk7\Genie\Abstracts\Field;
 class ColorPickerField extends Field
 {
 
-    protected $type = 'color_picker';
 
+    protected function setDefaults()
+    {
+        parent::setDefaults();
+        $this->type('color_picker');
+    }
 }

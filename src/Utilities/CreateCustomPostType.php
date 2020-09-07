@@ -11,6 +11,7 @@ namespace Lnk7\Genie\Utilities;
 class CreateCustomPostType
 {
 
+
     /**
      * see https://codex.wordpress.org/Function_Reference/register_post_type
      *
@@ -49,6 +50,7 @@ class CreateCustomPostType
 
     ];
 
+
     /**
      * Post Type
      *
@@ -57,16 +59,14 @@ class CreateCustomPostType
     protected $postType;
 
 
-
     /**
      * CreateCustomPostType constructor.
      *
-     * @param $name  Post Type Name
+     * @param string $name Post Type Name
      */
-    public function __construct($name)
+    public function __construct(string $name)
     {
-
-        $string = ConvertString::From($name);
+        $string = ConvertString::from($name);
 
         $this->postType = $string->toSingular()->toSlug();
 
@@ -101,10 +101,8 @@ class CreateCustomPostType
     }
 
 
-
     function setLabels(array $labels)
     {
-
         foreach ($labels as $label => $value) {
             $this->setLabel($label, $value);
         }
@@ -113,25 +111,20 @@ class CreateCustomPostType
     }
 
 
-
     function setLabel($label, $name)
     {
-
         $this->definition['labels'][$label] = $name;
 
         return $this;
     }
 
 
-
     function set($attribute, $value)
     {
-
         $this->definition[$attribute] = $value;
 
         return $this;
     }
-
 
 
     /**
@@ -141,17 +134,14 @@ class CreateCustomPostType
      *
      * @return CreateCustomPostType
      */
-    public static function Called($name)
+    public static function called($name)
     {
-
         return new static($name);
     }
 
 
-
     function addSupportFor($for)
     {
-
         // Turn it into an array if it's not one
         $for = is_array($for) ? $for : [$for];
 
@@ -162,13 +152,11 @@ class CreateCustomPostType
     }
 
 
-
     function addTaxonomy($taxonomy)
     {
         $this->definition['taxonomies'][] = $taxonomy;
         return $this;
     }
-
 
 
     /**
@@ -178,7 +166,6 @@ class CreateCustomPostType
      */
     function backendOnly()
     {
-
         $this->set('rewrite', false);
         $this->set('query_var', false);
         $this->set('publicly_queryable', false);
@@ -188,7 +175,6 @@ class CreateCustomPostType
     }
 
 
-
     /**
      * Set up a custom post type to work in the front-end
      *
@@ -196,7 +182,6 @@ class CreateCustomPostType
      */
     function frontend()
     {
-
         $this->set('rewrite', true);
         $this->set('query_var', true);
         $this->set('publicly_queryable', true);
@@ -204,7 +189,6 @@ class CreateCustomPostType
 
         return $this;
     }
-
 
 
     function adminOnly()
@@ -220,9 +204,7 @@ class CreateCustomPostType
             'read_private_posts' => 'update_core',
         ]);
         return $this;
-
     }
-
 
 
     /**
@@ -232,7 +214,6 @@ class CreateCustomPostType
      */
     function hidden()
     {
-
         $this->set('show_ui', false);
         $this->set('show_in_nav_menus', false);
 
@@ -240,29 +221,30 @@ class CreateCustomPostType
     }
 
 
-
     function icon(string $icon)
     {
-
         $this->set('menu_icon', $icon);
 
         return $this;
     }
 
 
-
-    function register()
+    /**
+     * Register this custom post type
+     *
+     * @param int $sequence
+     */
+    function register($sequence = 20)
     {
-
-        register_post_type($this->postType, $this->definition);
-
+        HookInto::action('init', $sequence)
+            ->run(function () {
+                register_post_type($this->postType, $this->definition);
+            });
     }
-
 
 
     function removeSupportFor($for)
     {
-
         // Turn it into an array if it's not one
         $for = is_array($for) ? $for : [$for];
 
@@ -273,7 +255,6 @@ class CreateCustomPostType
         }
 
         return $this;
-
     }
 
 }

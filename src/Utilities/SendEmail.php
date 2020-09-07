@@ -19,57 +19,63 @@ use InlineStyle\InlineStyle;
 class SendEmail
 {
 
+
     /**
      * To email address
      *
-     * @var
+     * @var array|string
      */
-    var $email;
+    protected $email;
+
 
     /**
      * The name of the person reciving the email
      *
-     * @var
+     * @var string
      */
-    var $name;
+    protected $name;
+
 
     /**
      * The subject
      *
-     * @var
+     * @var string
      */
-    var $subject;
+    protected $subject;
+
 
     /**
      * Additional headers to send with th eemail
      *
-     * @var string[]
+     * @protected string[]
      */
-    var $headers = [
+    protected $headers = [
         'Content-Type: text/html; charset=UTF-8',
     ];
+
 
     /**
      * The email body (HTML)
      *
      * @var string
      */
-    var $body = '';
+    protected $body = '';
+
 
     /**
      * A list of attachments
      *
      * @var array
      */
-    var $attachments = [];
+    protected $attachments = [];
+
 
     /**
      * Should CSS Styles be inlined?
      *
      * @var bool
      */
-    var $inlineStyles = true;
-
+    protected $inlineStyles = true;
 
 
     /**
@@ -80,12 +86,9 @@ class SendEmail
      */
     public function __construct($email, $name = '')
     {
-
         $this->email($email);
         $this->name($name);
-
     }
-
 
 
     /**
@@ -97,12 +100,10 @@ class SendEmail
      */
     function email($email)
     {
-
         $this->email = $email;
 
         return $this;
     }
-
 
 
     /**
@@ -114,12 +115,9 @@ class SendEmail
      */
     function name($name)
     {
-
         $this->name = $name;
-
         return $this;
     }
-
 
 
     /**
@@ -129,17 +127,15 @@ class SendEmail
      * ->subject('....')
      * ->send()
      *
-     * @param string $email
+     * @param string|array $email
      * @param string $name
      *
      * @return static
      */
-    public static function to($email, $name = '')
+    public static function to($email, string $name = '')
     {
-
         return new static($email, $name = '');
     }
-
 
 
     /**
@@ -150,14 +146,12 @@ class SendEmail
      *
      * @return $this
      */
-    function from($email, $name = '')
+    function from(string $email, string $name = '')
     {
-
         $this->addHeader("From: $name <{$email}>");
 
         return $this;
     }
-
 
 
     /**
@@ -165,12 +159,10 @@ class SendEmail
      *
      * @param string $header
      */
-    function addHeader($header)
+    function addHeader(string $header)
     {
-
         $this->headers[] = $header;
     }
-
 
 
     /**
@@ -182,29 +174,25 @@ class SendEmail
      */
     public function addAttachment($file)
     {
-
         $this->attachments[] = $file;
 
         return $this;
     }
 
 
-
     /**
      * Sets the body of the email
      *
-     * @param $body
+     * @param string $body
      *
      * @return $this
      */
-    function body($body)
+    function body(string $body)
     {
-
         $this->body = $body;
 
         return $this;
     }
-
 
 
     /**
@@ -214,11 +202,8 @@ class SendEmail
      */
     function send()
     {
-
         return wp_mail($this->email, $this->subject, $this->format(), $this->headers, $this->attachments);
-
     }
-
 
 
     /**
@@ -228,7 +213,6 @@ class SendEmail
      */
     function format()
     {
-
         if (!$this->inlineStyles) {
             return $this->body;
         }
@@ -237,9 +221,7 @@ class SendEmail
         $htmlDoc->applyStylesheet($htmlDoc->extractStylesheets());
 
         return $htmlDoc->getHTML();
-
     }
-
 
 
     /**
@@ -251,12 +233,10 @@ class SendEmail
      */
     function inlineStyles($bool)
     {
-
         $this->inlineStyles = $bool;
 
         return $this;
     }
-
 
 
     /**
@@ -268,7 +248,6 @@ class SendEmail
      */
     function subject($subject)
     {
-
         $this->subject = $subject;
 
         return $this;

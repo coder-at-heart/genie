@@ -4,6 +4,7 @@ namespace Lnk7\Genie;
 
 use DateTime;
 use Exception;
+use Lnk7\Genie\Interfaces\GenieComponent;
 use Lnk7\Genie\Utilities\HookInto;
 use WP_Scripts;
 
@@ -12,23 +13,21 @@ use WP_Scripts;
  *
  * @package Lnk7\Genie
  */
-class CacheBust
+class CacheBust implements GenieComponent
 {
+
 
     /**
      * Main Wordpress Hook for the Theme
      *
      * @throws Exception
      */
-    public static function Setup()
+    public static function setup()
     {
-
         HookInto::filter('script_loader_src')
             ->orFilter('style_loader_src')
             ->run([static::class, 'cacheSrc']);
-
     }
-
 
 
     /**
@@ -41,7 +40,6 @@ class CacheBust
      */
     public static function cacheSrc($src = '')
     {
-
         global $wp_scripts;
 
         // If $wp_scripts hasn't been initialized then bail.

@@ -7,11 +7,6 @@ use Lnk7\Genie\Abstracts\Field;
 class PageLinkField extends Field
 {
 
-    protected $type = 'page_link';
-
-    protected $metaQuery = 'NUMERIC';
-
-
 
     /**
      * Specify an array of taxonomies to filter the available choices. Defaults to ''
@@ -23,9 +18,7 @@ class PageLinkField extends Field
     public function taxonomy(string $taxonomy)
     {
         return $this->set('taxonomy', $taxonomy);
-
     }
-
 
 
     /**
@@ -38,9 +31,7 @@ class PageLinkField extends Field
     public function allowNull(bool $allowNull)
     {
         return $this->set('allow_null', $allowNull);
-
     }
-
 
 
     /**
@@ -53,9 +44,7 @@ class PageLinkField extends Field
     public function multiple(bool $multiple)
     {
         return $this->set('multiple', $multiple);
-
     }
-
 
 
     /**
@@ -68,17 +57,16 @@ class PageLinkField extends Field
     public function allowArchives(bool $allowArchives)
     {
         return $this->set('allow_archives', $allowArchives);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
-        $this->postObject('page');
+        $this->type('page_link');
+        $this->metaQuery('NUMERIC');
+        $this->postObject(['page']);
     }
-
 
 
     /**
@@ -91,7 +79,6 @@ class PageLinkField extends Field
     public function postObject(array $postObject)
     {
         return $this->set('post_type', $postObject);
-
     }
 
 }

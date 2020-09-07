@@ -4,7 +4,7 @@ namespace Lnk7\Genie\Utilities;
 
 use Lnk7\Genie\Abstracts\Condition;
 use Lnk7\Genie\Abstracts\Field;
-use Lnk7\Genie\Plugins\ACF;
+use Lnk7\Genie\Debug;
 use Lnk7\Genie\Tools;
 
 /**
@@ -18,28 +18,38 @@ use Lnk7\Genie\Tools;
 class CreateSchema
 {
 
+
     private $key;
+
 
     private $title;
 
+
     private $menu_order = 0;
+
 
     private $location;
 
+
     private $position = 'normal';  //acf_after_title|normal|side
+
 
     private $style = 'default';   //default|seamless
 
+
     private $label_placement = 'top'; // top|left
+
 
     private $instruction_placement = 'label'; // label|field
 
+
     private $hide_on_screen = [];
+
 
     private $fields = [];
 
-    private $attachTo = null;
 
+    private $attachTo = null;
 
 
     /**
@@ -49,12 +59,9 @@ class CreateSchema
      */
     public function __construct($title)
     {
-
         $this->key = 'group_' . sanitize_title($title);
         $this->title = $title;
-
     }
-
 
 
     /**
@@ -65,13 +72,10 @@ class CreateSchema
      * @return CreateSchema
      */
 
-    public static function Called($name)
+    public static function called($name)
     {
-
         return new static($name);
-
     }
-
 
 
     /**
@@ -83,13 +87,10 @@ class CreateSchema
      */
     public function attachTo($class)
     {
-
         $this->attachTo = $class;
 
         return $this;
-
     }
-
 
 
     /**
@@ -97,10 +98,8 @@ class CreateSchema
      */
     function dump()
     {
-
-        Tools::dd($this->generateSchemaArray());
+        Debug::dd($this->generateSchemaArray());
     }
-
 
 
     /**
@@ -110,11 +109,9 @@ class CreateSchema
      */
     protected function generateSchemaArray()
     {
-
         $fields = [];
         foreach ($this->fields as $field) {
             $fields[] = $field->generate(sanitize_title($this->title));
-
         }
 
         foreach ($fields as &$field) {
@@ -136,13 +133,11 @@ class CreateSchema
             ];
 
         if ($this->attachTo) {
-
             call_user_func($this->attachTo . '::attachSchema', $schema);
         }
 
         return $schema;
     }
-
 
 
     /**
@@ -158,9 +153,7 @@ class CreateSchema
      */
     protected function convertNameToKey($field, $fields)
     {
-
         if (isset($field['conditions'])) {
-
             foreach ($field['conditions'] as &$condition) {
                 foreach ($condition as &$statement) {
                     if (isset($statement['field'])) {
@@ -171,7 +164,6 @@ class CreateSchema
                         }
                     }
                 }
-
             }
         }
         if (isset($field['sub_fields'])) {
@@ -184,7 +176,6 @@ class CreateSchema
     }
 
 
-
     /**
      * Recursive function to parse sub_fields looking for $name
      *
@@ -195,7 +186,6 @@ class CreateSchema
      */
     protected function findNameInFieldsAndReturnKey($name, $fields)
     {
-
         foreach ($fields as $field) {
             if ($field['name'] === $name) {
                 return $field['key'];
@@ -210,7 +200,6 @@ class CreateSchema
 
         return false;
     }
-
 
 
     /**
@@ -236,12 +225,10 @@ class CreateSchema
      */
     public function hideOnScreen(array $hide_on_screen)
     {
-
         $this->hide_on_screen = $hide_on_screen;
 
         return $this;
     }
-
 
 
     /**
@@ -253,12 +240,10 @@ class CreateSchema
      */
     public function instructionPlacement(string $instruction_placement)
     {
-
         $this->instruction_placement = $instruction_placement;
 
         return $this;
     }
-
 
 
     /**
@@ -270,12 +255,10 @@ class CreateSchema
      */
     public function labelPlacement(string $label_placement)
     {
-
         $this->label_placement = $label_placement;
 
         return $this;
     }
-
 
 
     /**
@@ -287,12 +270,10 @@ class CreateSchema
      */
     public function menuOrder(int $menuOrder)
     {
-
         $this->menu_order = $menuOrder;
 
         return $this;
     }
-
 
 
     /**
@@ -304,27 +285,25 @@ class CreateSchema
      */
     public function position(string $position)
     {
-
         $this->position = $position;
 
         return $this;
     }
 
 
-
     /**
      * Generate and register the schema with ACF
+     *
+     * @param int $sequence
      */
-    function register()
+    function register($sequence = 20)
     {
-
-        if (ACF::isEnabled()) {
-            $schema = $this->return();
-            acf_add_local_field_group($schema);
-        }
-
+        HookInto::action('init', $sequence)
+            ->run(function () {
+                $schema = $this->return();
+                acf_add_local_field_group($schema);
+            });
     }
-
 
 
     /**
@@ -334,10 +313,8 @@ class CreateSchema
      */
     function return()
     {
-
         return $this->generateSchemaArray();
     }
-
 
 
     /**
@@ -349,12 +326,10 @@ class CreateSchema
      */
     public function shown(Condition $condition)
     {
-
-        $this->location = $condition->generate('param');
+        $this->location = $condition->generate();
 
         return $this;
     }
-
 
 
     /**
@@ -366,12 +341,10 @@ class CreateSchema
      */
     public function style(string $style)
     {
-
         $this->style = $style;
 
         return $this;
     }
-
 
 
     /**
@@ -383,12 +356,10 @@ class CreateSchema
      */
     public function withField(Field $field)
     {
-
         $this->fields[] = $field;
 
         return $this;
     }
-
 
 
     /**
@@ -400,7 +371,6 @@ class CreateSchema
      */
     public function withFields(array $fields)
     {
-
         $this->fields = array_merge($this->fields, $fields);
 
         return $this;

@@ -8,14 +8,9 @@ use Lnk7\Genie\Fields\Traits\message;
 class TrueFalseField extends Field
 {
 
-    protected $type = 'true_false';
-
-    protected $metaQuery = 'NUMERIC';
-
-
 
     /**
-     *Text shown along side the field
+     * Text shown along side the field
      *
      * @param string $message
      *
@@ -24,19 +19,18 @@ class TrueFalseField extends Field
     public function message(string $message)
     {
         return $this->set('message', $message);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
+        $this->type('true_false');
+        $this->metaQuery('NUMERIC');
         $this->ui(true);
         $this->onText('Yes');
         $this->offText('No');
     }
-
 
 
     /**
@@ -49,9 +43,7 @@ class TrueFalseField extends Field
     public function ui(bool $ui)
     {
         return $this->set('ui', $ui);
-
     }
-
 
 
     /**
@@ -64,9 +56,7 @@ class TrueFalseField extends Field
     public function onText(string $text)
     {
         return $this->set('ui_on_text', $text);
-
     }
-
 
 
     /**
@@ -79,7 +69,6 @@ class TrueFalseField extends Field
     public function offText(string $text)
     {
         return $this->set('ui_off_text', $text);
-
     }
 
 }

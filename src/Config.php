@@ -9,6 +9,7 @@ namespace Lnk7\Genie;
 class Config
 {
 
+
     /**
      * Get a config value
      *
@@ -24,7 +25,6 @@ class Config
         }
 
         return constant($value);
-
     }
 
 }

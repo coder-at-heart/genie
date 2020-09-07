@@ -4,12 +4,13 @@ namespace Lnk7\Genie\Abstracts;
 
 /**
  * Class Condition
- * Used to generate ACF conditions
+ * Used to generate ACF conditions for fields and schemas
  *
  * @package Lnk7\Genie\Abstracts
  */
 abstract class Condition
 {
+
 
     /**
      * field name
@@ -18,6 +19,7 @@ abstract class Condition
      */
     protected $fieldName = 'field';
 
+
     /**
      * An Array of conditions
      *
@@ -25,12 +27,14 @@ abstract class Condition
      */
     private $conditions = [];
 
+
     /**
      * Parse conditions into groups
      *
      * @var array
      */
     private $group = [];
+
 
     /**
      * The current field.
@@ -40,7 +44,6 @@ abstract class Condition
     private $field = '';
 
 
-
     /**
      * constructor.
      *
@@ -48,12 +51,10 @@ abstract class Condition
      */
     public function __construct($field = null)
     {
-
         if (!is_null($field)) {
             $this->field = $field;
         }
     }
-
 
 
     /**
@@ -65,10 +66,8 @@ abstract class Condition
      */
     public static function field($field)
     {
-
         return new static($field);
     }
-
 
 
     /**
@@ -80,12 +79,10 @@ abstract class Condition
      */
     public function and($field)
     {
-
         $this->field = $field;
 
         return $this;
     }
-
 
 
     /**
@@ -97,7 +94,6 @@ abstract class Condition
      */
     public function contains($value)
     {
-
         $this->group[] = [
             $this->fieldName => $this->field,
             'operator'       => '==contains',
@@ -109,7 +105,6 @@ abstract class Condition
     }
 
 
-
     /**
      * Check the field is empty
      *
@@ -117,7 +112,6 @@ abstract class Condition
      */
     public function empty()
     {
-
         $this->group[] = [
             $this->fieldName => $this->field,
             'operator'       => '==empty',
@@ -126,7 +120,6 @@ abstract class Condition
 
         return $this;
     }
-
 
 
     /**
@@ -138,7 +131,6 @@ abstract class Condition
      */
     public function equals($value)
     {
-
         $this->group[] = [
             $this->fieldName => $this->field,
             'operator'       => '==',
@@ -149,7 +141,6 @@ abstract class Condition
     }
 
 
-
     /**
      * Generate the array condition
      *
@@ -158,14 +149,12 @@ abstract class Condition
 
     public function generate()
     {
-
         if (count($this->group) > 0) {
             $this->conditions[] = $this->group;
         }
 
         return $this->conditions;
     }
-
 
 
     /**
@@ -177,7 +166,6 @@ abstract class Condition
      */
     public function matches($pattern)
     {
-
         $this->group[] = [
             $this->fieldName => $this->field,
             'operator'       => '==pattern',
@@ -189,7 +177,6 @@ abstract class Condition
     }
 
 
-
     /**
      * Check the field is not empty
      *
@@ -197,7 +184,6 @@ abstract class Condition
      */
     public function notEmpty()
     {
-
         $this->group[] = [
             $this->fieldName => $this->field,
             'operator'       => '!=empty',
@@ -206,7 +192,6 @@ abstract class Condition
 
         return $this;
     }
-
 
 
     /**
@@ -218,7 +203,6 @@ abstract class Condition
      */
     public function notEquals($value)
     {
-
         $this->group[] = [
             $this->fieldName => $this->field,
             'operator'       => '!=',
@@ -227,7 +211,6 @@ abstract class Condition
 
         return $this;
     }
-
 
 
     /**
@@ -239,7 +222,6 @@ abstract class Condition
      */
     public function or($field)
     {
-
         $this->field = $field;
         $this->conditions[] = $this->group;
         $this->group = [];

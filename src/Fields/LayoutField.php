@@ -5,9 +5,6 @@ namespace Lnk7\Genie\Fields;
 class LayoutField extends GroupField
 {
 
-    protected $type = 'layout';
-
-
 
     /**
      * Specify the maximum posts allowed to be selected. Defaults to 0
@@ -18,11 +15,8 @@ class LayoutField extends GroupField
      */
     public function max(int $number)
     {
-
         return $this->set('max', $number);
-
     }
-
 
 
     /**
@@ -34,17 +28,14 @@ class LayoutField extends GroupField
      */
     public function min(int $number)
     {
-
         return $this->set('min', $number);
-
     }
-
 
 
     protected function setDefaults()
     {
-
         parent::setDefaults();
+        $this->type('layout');
         $this->layout('block');
     }
 

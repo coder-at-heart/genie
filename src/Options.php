@@ -11,6 +11,7 @@ namespace Lnk7\Genie;
 class Options
 {
 
+
     /**
      * the option key
      *
@@ -18,13 +19,13 @@ class Options
      */
     private static $option = 'genie_options';
 
+
     /**
      * options array
      *
      * @var null
      */
     private static $options = null;
-
 
 
     /**
@@ -37,29 +38,24 @@ class Options
      */
     public static function get($option, $default = false)
     {
-
         static::load();
         if (!isset(static::$options[$option])) {
             return $default;
         }
 
         return static::$options[$option];
-
     }
-
 
 
     /**
      * load options into memory
      */
-    private static function load()
+    protected static function load()
     {
-
         if (is_null(static::$options)) {
             static::$options = get_option(static::$option);
         }
     }
-
 
 
     /**
@@ -70,21 +66,17 @@ class Options
      */
     public static function set($option, $value)
     {
-
         static::load();
         static::$options[$option] = $value;
         static::save();
-
     }
-
 
 
     /**
      * Save options
      */
-    private static function save()
+    protected static function save()
     {
-
         update_option(static::$option, static::$options);
     }
 

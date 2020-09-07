@@ -9,116 +9,29 @@ class HookInto
 
 {
 
+
     /**
      * An array of hooks and sequences
      *
      * @var array
      */
     protected $actions = [];
-    protected $filters = [];
 
+
+    protected $filters = [];
 
 
     /**
      * constructor.
      *
      * @param string $hook
-     * @param int $sequence
+     * @param int $priority
      * @param string $type
      */
-    public function __construct(string $hook, int $sequence = 10, $type = 'action')
+    public function __construct(string $hook, int $priority = 10, $type = 'action')
     {
-        $this->add($hook, $sequence, $type);
-
+        $this->add($hook, $priority, $type);
     }
-
-
-
-    /**
-     * Static constructor
-     *
-     * @param $action
-     * @param int $sequence
-     *
-     * @return static
-     */
-
-    public static function action(string $action, $sequence = 10)
-    {
-        return new static($action, $sequence, 'action');
-
-    }
-
-
-
-    /**
-     * Static constructor
-     *
-     * @param $filter
-     * @param int $sequence
-     *
-     * @return static
-     */
-
-    public static function filter(string $filter, $sequence = 10)
-    {
-        return new static($filter, $sequence, 'filter');
-    }
-
-
-
-    /**
-     * Allow multiple hooks for the same action
-     *
-     * @param $hook
-     * @param int $sequence
-     *
-     * @return $this
-     */
-    public function orFilter($hook, $sequence = 10)
-    {
-        $this->add($hook, $sequence, 'filter');
-        return $this;
-    }
-
-
-
-    /**
-     * Allow multiple hooks for the same action
-     *
-     * @param $hook
-     * @param int $sequence
-     *
-     * @return $this
-     */
-    public function orAction($hook, $sequence = 10)
-    {
-        $this->add($hook, $sequence, 'action');
-        return $this;
-
-    }
-
-
-
-    /**
-     * Set the callback and register the actions and filters
-     *
-     * @param  $callback
-     */
-    public function run($callback)
-    {
-        $vars = Tools::getCallableVariables($callback);
-
-        foreach ($this->actions as $hook => $sequence) {
-            add_action($hook, $callback, $sequence, count($vars));
-        }
-
-        foreach ($this->filters as $hook => $sequence) {
-            add_filter($hook, $callback, $sequence, count($vars));
-        }
-
-    }
-
 
 
     /**
@@ -135,7 +48,85 @@ class HookInto
         } else {
             $this->filters[$hook] = $sequence;
         }
+    }
 
+
+    /**
+     * Static constructor
+     *
+     * @param $action
+     * @param int $priority
+     *
+     * @return static
+     */
+
+    public static function action(string $action, $priority = 10)
+    {
+        return new static($action, $priority, 'action');
+    }
+
+
+    /**
+     * Static constructor
+     *
+     * @param $filter
+     * @param int $priority
+     *
+     * @return static
+     */
+
+    public static function filter(string $filter, $priority = 10)
+    {
+        return new static($filter, $priority, 'filter');
+    }
+
+
+    /**
+     * Allow multiple hooks for the same action
+     *
+     * @param $hook
+     * @param int $priority
+     *
+     * @return $this
+     */
+    public function orFilter($hook, $priority = 10)
+    {
+        $this->add($hook, $priority, 'filter');
+        return $this;
+    }
+
+
+    /**
+     * Allow multiple hooks for the same action
+     *
+     * @param $hook
+     * @param int $priority
+     *
+     * @return $this
+     */
+    public function orAction($hook, $priority = 10)
+    {
+        $this->add($hook, $priority, 'action');
+        return $this;
+    }
+
+
+    /**
+     * Set the callback and register the actions and filters
+     *
+     * @param callable $callback
+     */
+    public function run(callable $callback)
+    {
+        $vars = Tools::getCallableParameters($callback);
+
+        foreach ($this->actions as $hook => $priority) {
+            add_action($hook, $callback, $priority, count($vars));
+        }
+
+        foreach ($this->filters as $hook => $priority) {
+            add_filter($hook, $callback, $priority, count($vars));
+        }
     }
 
 

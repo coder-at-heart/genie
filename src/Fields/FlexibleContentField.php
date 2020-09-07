@@ -7,9 +7,6 @@ use Lnk7\Genie\Abstracts\Field;
 class FlexibleContentField extends Field
 {
 
-    protected $type = 'flexible_content';
-
-
 
     /**
      * Sets a label for the add Button
@@ -20,11 +17,8 @@ class FlexibleContentField extends Field
      */
     public function buttonLabel($label)
     {
-
         return $this->set('button_label', $label);
-
     }
-
 
 
     /**
@@ -36,11 +30,8 @@ class FlexibleContentField extends Field
      */
     public function max(int $number)
     {
-
         return $this->set('max', $number);
-
     }
-
 
 
     /**
@@ -52,11 +43,8 @@ class FlexibleContentField extends Field
      */
     public function min(int $number)
     {
-
         return $this->set('min', $number);
-
     }
-
 
 
     /**
@@ -68,9 +56,14 @@ class FlexibleContentField extends Field
      */
     public function withLayouts(array $fields)
     {
-
         return $this->set('layouts', $fields);
+    }
 
+
+    protected function setDefaults()
+    {
+        parent::setDefaults();
+        $this->type('flexible_content');
     }
 
 }

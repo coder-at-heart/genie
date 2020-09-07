@@ -5,21 +5,15 @@ namespace Lnk7\Genie\Fields;
 class WysiwygField extends TextField
 {
 
-    protected $type = 'wysiwyg';
-
-
 
     protected function setDefaults()
     {
-
         parent::setDefaults();
+        $this->type('wysiwyg');
         $this->tabs('all');
         $this->toolbar('basic');
         $this->mediaUpload(false);
-        $this->searchable(true);
-
     }
-
 
 
     /**
@@ -31,11 +25,8 @@ class WysiwygField extends TextField
      */
     public function tabs(string $tabs)
     {
-
         return $this->set('tabs', $tabs);
-
     }
-
 
 
     /**
@@ -48,11 +39,8 @@ class WysiwygField extends TextField
      */
     public function toolbar(string $toolbar)
     {
-
         return $this->set('toolbar', $toolbar);
-
     }
-
 
 
     /**
@@ -64,9 +52,7 @@ class WysiwygField extends TextField
      */
     public function mediaUpload(bool $mediaUpload)
     {
-
         return $this->set('media_upload', $mediaUpload);
-
     }
 
 }

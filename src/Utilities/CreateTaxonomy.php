@@ -11,12 +11,14 @@ namespace Lnk7\Genie\Utilities;
 class CreateTaxonomy
 {
 
+
     /**
      * Objects to attach this taxonomy to
      *
      * @var array
      */
     protected $attachTo = [];
+
 
     /**
      * see https://codex.wordpress.org/Function_Reference/register_taxonomy
@@ -63,13 +65,13 @@ class CreateTaxonomy
 
     ];
 
+
     /**
      * Taxonomy slug
      *
      * @var string
      */
     protected $taxonomy;
-
 
 
     /**
@@ -79,8 +81,7 @@ class CreateTaxonomy
      */
     public function __construct($name)
     {
-
-        $string = ConvertString::From($name);
+        $string = ConvertString::from($name);
 
         $this->taxonomy = $string->toSingular()->toSnakeCase();
 
@@ -114,10 +115,8 @@ class CreateTaxonomy
     }
 
 
-
     function setLabels(array $labels)
     {
-
         foreach ($labels as $label => $value) {
             $this->setLabel($label, $value);
         }
@@ -126,25 +125,20 @@ class CreateTaxonomy
     }
 
 
-
     function setLabel($label, $name)
     {
-
         $this->definition['labels'][$label] = $name;
 
         return $this;
     }
 
 
-
     function set($attribute, $value)
     {
-
         $this->definition[$attribute] = $value;
 
         return $this;
     }
-
 
 
     /**
@@ -154,12 +148,10 @@ class CreateTaxonomy
      *
      * @return CreateTaxonomy
      */
-    public static function Called($name)
+    public static function called($name)
     {
-
         return new static($name);
     }
-
 
 
     public function attachTo($object)
@@ -170,7 +162,6 @@ class CreateTaxonomy
     }
 
 
-
     /**
      * Sets this taxonomy as being hidden
      *
@@ -178,7 +169,6 @@ class CreateTaxonomy
      */
     function hidden()
     {
-
         $this->set('show_ui', false);
         $this->set('show_in_nav_menus', false);
 
@@ -186,17 +176,19 @@ class CreateTaxonomy
     }
 
 
-
     /**
      * Register the Taxonomy
+     *
+     * @param int $sequence
      */
-    function register()
+    function register($sequence = 20)
     {
+        HookInto::action('init', $sequence)
+            ->run(function () {
+                $attachTo = empty($this->attachTo) ? null : $this->attachTo;
 
-        $attachTo = empty($this->attachTo) ? null : $this->attachTo;
-
-        register_taxonomy($this->taxonomy, $attachTo, $this->definition);
-
+                register_taxonomy($this->taxonomy, $attachTo, $this->definition);
+            });
     }
 
 }

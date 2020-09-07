@@ -7,11 +7,6 @@ use Lnk7\Genie\Abstracts\Field;
 class DateField extends Field
 {
 
-    protected $type = 'date_picker';
-
-    protected $metaQuery = 'DATE';
-
-
 
     /**
      * Set the 1st day of the week
@@ -23,18 +18,18 @@ class DateField extends Field
     public function firstDay(int $day)
     {
         return $this->set('first_day', $day);
-
     }
-
 
 
     protected function setDefaults()
     {
         parent::setDefaults();
+
+        $this->type('date_picker');
+        $this->metaQuery('DATE');
         $this->displayFormat('d/m/Y');
         $this->returnFormat('Y-m-d');
     }
-
 
 
     /**
@@ -47,9 +42,7 @@ class DateField extends Field
     public function displayFormat(string $format)
     {
         return $this->set('display_format', $format);
-
     }
-
 
 
     /**
@@ -63,7 +56,6 @@ class DateField extends Field
     public function returnFormat(string $format)
     {
         return $this->set('return_format', $format);
-
     }
 
 }
