@@ -14,11 +14,23 @@
  * Domain Path:       /languages
  */
 
-namespace Lnk7\Genie;
+namespace GeniePluginExample;
+
+use GeniePluginExample\PostTypes\Page;
+use GeniePluginExample\PostTypes\Post;
+use GeniePluginExample\PostTypes\Testimonial;
+use Lnk7\Genie\Genie;
 
 include_once('vendor/autoload.php');
 
 Genie::createPlugin()
+    ->withComponents([
+        Plugin::class,
+        Post::class,
+        Page::class,
+        Testimonial::class,
+    ])
     ->setFilename(__FILE__)
+    ->useViewsFrom(plugin_dir_path(__FILE__) . 'example/twig')
     ->start();
 

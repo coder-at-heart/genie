@@ -184,7 +184,7 @@ class Genie
         if (is_array($config['components']))
             foreach ($config['components'] as $class) {
                 if (method_exists($class, 'setup')) {
-                    $class::Setup();
+                   $class::setup();
                 }
             }
 
