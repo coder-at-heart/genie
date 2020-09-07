@@ -22,7 +22,7 @@ Quick overview
 ```php
 <?php
 
-namespace CoteAtHome\PostTypes;
+namespace MyPlugin\PostTypes;
 
 use Lnk7\Genie\Abstracts\CustomPost;
 use Lnk7\Genie\Utilities\CreateCustomPostType;
@@ -35,7 +35,7 @@ class FAQ extends CustomPost
 
     static $taxonomy = 'faq_category';
 
-    static public function init()
+    static public function setup()
     {
 
         CreateTaxonomy::called(static::$taxonomy)
