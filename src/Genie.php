@@ -151,7 +151,7 @@ class Genie
      *
      * @return array
      */
-    public function getComponents()
+    public static function getComponents()
     {
         return Registry::get('genie_config', 'components');
     }
@@ -162,7 +162,7 @@ class Genie
      *
      * @return string
      */
-    public function getFilename()
+    public static function getFilename()
     {
         return Registry::get('genie_config', 'filename');
     }
