@@ -33,4 +33,3 @@ Genie::createPlugin()
     ->setFilename(__FILE__)
     ->useViewsFrom(plugin_dir_path(__FILE__) . 'example/twig')
     ->start();
-
