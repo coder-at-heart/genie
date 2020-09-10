@@ -141,7 +141,7 @@ class Genie
      */
     public function setFilename($filename)
     {
-        $config['filename'] = $filename;
+        $this->filename = $filename;
         return $this;
     }
 
