@@ -10,6 +10,7 @@ use Lnk7\Genie\Utilities\AddShortcode;
 use Lnk7\Genie\Utilities\CreateCustomPostType;
 use Lnk7\Genie\Utilities\CreateSchema;
 use Lnk7\Genie\Utilities\RegisterAjax;
+use Lnk7\Genie\Utilities\RegisterApi;
 use Lnk7\Genie\Utilities\Where;
 use Lnk7\Genie\View;
 
@@ -60,6 +61,16 @@ class Testimonial extends CustomPost
 
         RegisterAjax::url('testimonial/create')
             ->run([static::class, 'addTestimonial']);
+
+        RegisterApi::post('testimonial/create')
+            ->run([static::class, 'addTestimonial']);
+
+        RegisterApi::get('testimonials')
+            ->run(function() {
+                return static::get()->toArray();
+            });
+
+
 
         AddShortcode::called('testimonial_form')
             ->run(function () {

@@ -32,6 +32,7 @@ class Genie
             'components'  => [
                 Session::class,
                 AjaxHandler::class,
+                ApiHandler::class,
                 WordPress::class,
                 BackgroundJob::class,
                 View::class,

@@ -89,6 +89,16 @@ class Request
 
 
     /**
+     * Get the request method
+     *
+     * @return mixed
+     */
+    public static function method(){
+        return $_SERVER['REQUEST_METHOD'];
+
+    }
+
+    /**
      * Check if we received valid Json
      *
      * @return bool
