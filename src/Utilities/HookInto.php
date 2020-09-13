@@ -2,7 +2,6 @@
 
 namespace Lnk7\Genie\Utilities;
 
-
 use Lnk7\Genie\Tools;
 
 class HookInto
@@ -19,6 +18,9 @@ class HookInto
 
 
     protected $filters = [];
+
+
+    protected $callback = '';
 
 
     /**
@@ -82,6 +84,43 @@ class HookInto
 
 
     /**
+     * __return_true
+     */
+    public function returnTrue()
+    {
+        $this->callback = '__return_true';
+        $this->register();
+
+    }
+
+
+    protected function register()
+    {
+
+        $vars = Tools::getCallableParameters($this->callback);
+
+        foreach ($this->actions as $hook => $priority) {
+            add_action($hook, $this->callback, $priority, count($vars));
+        }
+
+        foreach ($this->filters as $hook => $priority) {
+            add_filter($hook, $this->callback, $priority, count($vars));
+        }
+
+    }
+
+
+    /**
+     * __return_false
+     */
+    public function returnFalse()
+    {
+        $this->callback = '__return_false';
+        $this->register();
+    }
+
+
+    /**
      * Allow multiple hooks for the same action
      *
      * @param $hook
@@ -118,16 +157,9 @@ class HookInto
      */
     public function run(callable $callback)
     {
-        $vars = Tools::getCallableParameters($callback);
 
-        foreach ($this->actions as $hook => $priority) {
-            add_action($hook, $callback, $priority, count($vars));
-        }
-
-        foreach ($this->filters as $hook => $priority) {
-            add_filter($hook, $callback, $priority, count($vars));
-        }
+        $this->callback = $callback;
+        $this->register();
     }
-
 
 }
