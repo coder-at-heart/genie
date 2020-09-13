@@ -137,13 +137,15 @@ class CreateCustomPostType
     /**
      * Constructor wrapper
      *
-     * @param $name
+     * @param string $name
+     * @param string $singular
+     * @param string $plural
      *
      * @return CreateCustomPostType
      */
-    public static function called($name)
+    public static function called(string $name, string $singular = '', string $plural = '')
     {
-        return new static($name);
+        return new static($name, $singular, $plural);
     }
 
 
