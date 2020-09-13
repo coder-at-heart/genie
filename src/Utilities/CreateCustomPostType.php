@@ -62,17 +62,23 @@ class CreateCustomPostType
     /**
      * CreateCustomPostType constructor.
      *
-     * @param string $name Post Type Name
+     * @param string $postType Post Type
+     * @param string $singular
+     * @param string $plural
      */
-    public function __construct(string $name)
+    public function __construct(string $postType, string $singular = '', string $plural = '')
     {
 
-        $string = ConvertString::from($name);
+        $string = ConvertString::from($postType);
 
-        $this->postType = $string->toSingular()->toSlug();
+        $this->postType = $postType;
 
-        $singular = (string)$string->toTitleCase()->toSingular();
-        $plural = (string)$string->toPlural();
+        if (!$singular) {
+            $singular = (string)$string->toTitleCase()->toSingular();
+        }
+        if (!$plural) {
+            $plural = (string)$string->toPlural();
+        }
 
         $this->setLabels([
             "name"                  => $plural,
@@ -98,7 +104,7 @@ class CreateCustomPostType
         ]);
 
         $this->set('label', $plural);
-        $this->set('description', $name);
+        $this->set('description', $postType);
     }
 
 
