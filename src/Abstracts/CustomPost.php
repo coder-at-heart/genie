@@ -142,6 +142,15 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
         }
 
         $this->originalData = $this->data;
+        $this->afterRead();
+    }
+
+
+    /**
+     * After the post has been loaded from the database
+     */
+    public function afterRead() {
+
     }
 
 
