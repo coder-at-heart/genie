@@ -32,10 +32,10 @@ class Response
 
 
     /**
-     * @param array $data
+     * @param mixed $data
      * Send a Success response
      */
-    public static function success(array $data = [])
+    public static function success( $data = [])
     {
         $response = new static(200);
         $response->withData($data)
@@ -58,11 +58,11 @@ class Response
     /**
      * Specify the data to return
      *
-     * @param array $data
+     * @param mixed $data
      *
      * @return $this
      */
-    function withData(array $data)
+    function withData( $data)
     {
         $this->data = $data;
 
@@ -73,9 +73,9 @@ class Response
     /**
      * Send a failure response
      *
-     * @param array $data
+     * @param mixed $data
      */
-    public static function failure(array $data = [])
+    public static function failure( $data = [])
     {
         $response = new static(400);
         $response->withData($data)
@@ -86,9 +86,9 @@ class Response
     /**
      * Send an error response
      *
-     * @param array $data
+     * @param mixed $data
      */
-    public static function error(array $data = [])
+    public static function error( $data = [])
     {
         $response = new static(500);
         $response->withData($data)
@@ -99,7 +99,7 @@ class Response
     /**
      * Send a not found response
      *
-     * @param $data
+     * @param mixed $data
      */
     public static function notFound($data)
     {
