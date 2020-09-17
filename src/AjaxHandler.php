@@ -2,7 +2,6 @@
 
 namespace Lnk7\Genie;
 
-use Lnk7\Genie\Exceptions\GenieException;
 use Lnk7\Genie\Interfaces\GenieComponent;
 use Lnk7\Genie\Utilities\HookInto;
 use Throwable;
@@ -93,7 +92,10 @@ class AjaxHandler implements GenieComponent
 
                         if (Request::wasJsonReceived() && Request::wasJsonReceivedInvalid()) {
                             Response::error([
-                                'message' => "Invalid json received",
+                                'message'             => "Invalid json received",
+                                'json_last_error'     => json_last_error(),
+                                'json_last_error_msg' => json_last_error_msg(),
+
                             ]);
                         }
 
@@ -111,14 +113,17 @@ class AjaxHandler implements GenieComponent
                             }
                             Response::success(call_user_func_array($callback, $callbackParams));
 
-                        } catch (Throwable $e) {
+                        } catch (Throwable $error) {
 
                             $response = [
-                                'message' => $e->getMessage(),
+                                'message' => $error->getMessage(),
                             ];
 
-                            if ($e instanceof GenieException) {
-                                $response['data'] = $e->getData();
+                            if (method_exists($error, 'getData')) {
+                                $response['data'] = $error->getData();
+                            }
+                            if (WP_DEBUG && method_exists($error, 'getBacktrace')) {
+                                $response['backtrace'] = $error->getBacktrace();
                             }
 
                             Response::failure($response);

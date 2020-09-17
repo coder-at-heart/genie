@@ -12,6 +12,9 @@ class GenieException extends Exception
     protected $data = null;
 
 
+    protected $backtrace = [];
+
+
     function __construct($message = "", $code = 0, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
@@ -43,6 +46,8 @@ class GenieException extends Exception
      */
     public function throw()
     {
+        $this->backtrace = debug_backtrace();
+
         throw $this;
 
     }
@@ -82,6 +87,17 @@ class GenieException extends Exception
     function getData()
     {
         return $this->data;
+    }
+
+
+    /**
+     * get the backtrace
+     *
+     * @return mixed
+     */
+    function getBacktrace()
+    {
+        return $this->backtrace;
     }
 
 }
