@@ -2,6 +2,7 @@
 
 namespace Lnk7\Genie;
 
+use Lnk7\Genie\Exceptions\GenieException;
 use Lnk7\Genie\Interfaces\GenieComponent;
 use Lnk7\Genie\Utilities\HookInto;
 use Throwable;
@@ -31,18 +32,6 @@ class AjaxHandler implements GenieComponent
      * @var string
      */
     protected static $action;
-
-
-    /**
-     * Check that a path is registered
-     *
-     * @param $requestPath
-     *
-     * @return bool
-     */
-    public static function canHandle($requestPath) {
-        return isset(static::$paths[$requestPath]);
-    }
 
 
     /**
@@ -124,9 +113,15 @@ class AjaxHandler implements GenieComponent
 
                         } catch (Throwable $e) {
 
-                            Response::failure([
+                            $response = [
                                 'message' => $e->getMessage(),
-                            ]);
+                            ];
+
+                            if ($e instanceof GenieException) {
+                                $response['data'] = $e->getData();
+                            }
+
+                            Response::failure($response);
                         }
                     });
             });
@@ -154,6 +149,19 @@ class AjaxHandler implements GenieComponent
             static::$action = apply_filters('genie_ajax_action', 'ajax');
         }
         return static::$action;
+    }
+
+
+    /**
+     * Check that a path is registered
+     *
+     * @param $requestPath
+     *
+     * @return bool
+     */
+    public static function canHandle($requestPath)
+    {
+        return isset(static::$paths[$requestPath]);
     }
 
 
