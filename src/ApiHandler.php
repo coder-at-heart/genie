@@ -64,7 +64,7 @@ class ApiHandler implements GenieComponent
 
                         if ($method !== Request::method()) {
                             Response::error([
-                                'message' => "This route does not support ".Request::method()." requests",
+                                'message' => "This route does not support " . Request::method() . " requests",
                             ]);
                         }
 
@@ -78,7 +78,10 @@ class ApiHandler implements GenieComponent
 
                         if (Request::wasJsonReceived() && Request::wasJsonReceivedInvalid()) {
                             Response::error([
-                                'message' => "Invalid json received",
+                                'message'             => "Invalid json received",
+                                'json_last_error'     => json_last_error(),
+                                'json_last_error_msg' => json_last_error_msg(),
+
                             ]);
                         }
 
@@ -96,11 +99,20 @@ class ApiHandler implements GenieComponent
                             }
                             Response::success(call_user_func_array($callback, $callbackParams));
 
-                        } catch (Throwable $e) {
+                        } catch (Throwable $error) {
 
-                            Response::failure([
-                                'message' => $e->getMessage(),
-                            ]);
+                            $response = [
+                                'message' => $error->getMessage(),
+                            ];
+
+                            if (method_exists($error, 'getData')) {
+                                $response['data'] = $error->getData();
+                            }
+                            if (WP_DEBUG && method_exists($error, 'getBacktrace')) {
+                                $response['backtrace'] = $error->getBacktrace();
+                            }
+
+                            Response::failure($response);
                         }
                     });
             });
