@@ -4,7 +4,7 @@
  * Plugin Name:       Genie
  * Plugin URI:        https://lnk7.com/plugins/genie/
  * Description:       Lnk7's Genie: The Advanced Programmer Toolkit
- * Version:           1.2.8
+ * Version:           1.3.0
  * Requires at least: 5.5
  * Author:            Sunil Jaiswal
  * Author URI:        https://lnk7.com/
