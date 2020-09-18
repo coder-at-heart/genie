@@ -3,7 +3,9 @@
 namespace GeniePluginExample;
 
 use GeniePluginExample\Exceptions\GeniePluginExampleException;
+use Lnk7\Genie\Debug;
 use Lnk7\Genie\Interfaces\GenieComponent;
+use Lnk7\Genie\Response;
 use Lnk7\Genie\Utilities\HookInto;
 use Lnk7\Genie\Utilities\RegisterApi;
 
@@ -30,6 +32,10 @@ class Plugin implements GenieComponent
      */
     public static function testException()
     {
+
+        Response::failure(['asdfasdf'=>'asdf']);
+
+
         throw  GeniePluginExampleException::withMessage('test')
             ->withCode(102)
             ->withData('hello');

@@ -15,19 +15,17 @@ class Response
      *
      * @var int
      */
-    protected $responseCode = 200;
+    protected $responseCode;
 
 
     /**
      * Response constructor.
      *
-     * @param int|null $responseCode
+     * @param int $responseCode
      */
-    function __construct(int $responseCode = null)
+    function __construct(int $responseCode = 200)
     {
-        if (!is_null($responseCode)) {
-            $this->responseCode = $responseCode;
-        }
+        $this->responseCode = $responseCode;
     }
 
 
@@ -35,7 +33,7 @@ class Response
      * @param mixed $data
      * Send a Success response
      */
-    public static function success( $data = [])
+    public static function success($data = [])
     {
         $response = new static(200);
         $response->withData($data)
@@ -48,10 +46,11 @@ class Response
      */
     public function send()
     {
-        header('Content-Type: application/json', true, $this->responseCode);
 
+        http_response_code($this->responseCode);
+        header('Content-Type: application/json');
         echo json_encode($this->data);
-        wp_die();
+        exit;
     }
 
 
@@ -62,7 +61,7 @@ class Response
      *
      * @return $this
      */
-    function withData( $data)
+    function withData($data)
     {
         $this->data = $data;
 
@@ -75,7 +74,7 @@ class Response
      *
      * @param mixed $data
      */
-    public static function failure( $data = [])
+    public static function failure($data = [])
     {
         $response = new static(400);
         $response->withData($data)
@@ -88,7 +87,7 @@ class Response
      *
      * @param mixed $data
      */
-    public static function error( $data = [])
+    public static function error($data = [])
     {
         $response = new static(500);
         $response->withData($data)
