@@ -86,7 +86,7 @@ class View implements GenieComponent
             ->run(function () {
                 $debug = apply_filters('genie_view_debug', WP_DEBUG);
                 $cache = apply_filters('genie_view_cache', !WP_DEBUG);
-                $pathArray = apply_filters('genie_view_folders', Genie::config('viewFolders'));
+                $pathArray = apply_filters('genie_view_folders', Genie::getViewFolders());
 
                 $fileLoader = new FilesystemLoader($pathArray);
                 $loader = new ChainLoader([$fileLoader]);

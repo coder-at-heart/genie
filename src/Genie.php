@@ -13,7 +13,9 @@ use Lnk7\Genie\Utilities\HookInto;
  * @property string $type
  * @property array $components
  * @property string $filename
+ * @property string $folder
  * @property array $viewFolders
+ * @property array $releasesFolder
  */
 class Genie
 {
@@ -26,10 +28,33 @@ class Genie
      */
     function __construct()
     {
+
+        $filename = '';
+        $folder = '';
+        foreach (debug_backtrace() as $trace) {
+            if ($trace['file'] !== __FILE__) {
+                $filename = $trace['file'];
+                $parts = pathinfo($filename);
+                $folder = $parts['dirname'];
+                break;
+            }
+        }
+
+        $viewFolders = [];
+        if (file_exists($folder . '/src/twig')) {
+            $viewFolders[] = $folder . '/src/twig';
+        }
+
+        $releasesFolder = '';
+        if (file_exists($folder . '/src/php/releases')) {
+            $releasesFolder = $folder . '/src/php/releases';
+        }
+
         $this->fill([
-            'type'        => 'plugin',  // plugin || theme
-            'filename'    => false,
-            'components'  => [
+            'type'           => 'plugin',  // plugin || theme
+            'filename'       => $filename,
+            'folder'         => $folder,
+            'components'     => [
                 Session::class,
                 AjaxHandler::class,
                 ApiHandler::class,
@@ -37,8 +62,11 @@ class Genie
                 BackgroundJob::class,
                 View::class,
                 CacheBust::class,
+                Deploy::class,
             ],
-            'viewFolders' => [],
+            'viewFolders'    => $viewFolders,
+            'releasesFolder' => $releasesFolder,
+
         ]);
     }
 
@@ -46,6 +74,7 @@ class Genie
     public static function createPlugin()
     {
         $genie = new static();
+
         $genie->type('plugin');
         return $genie;
     }
@@ -93,57 +122,13 @@ class Genie
 
 
     /**
-     * get a value from Genie's Config
-     *
-     * @param $var
+     * get the view folders that are registered
      *
      * @return mixed|null
      */
-    public static function config($var)
+    public static function getViewFolders()
     {
-        return Registry::get('genie_config', $var);
-    }
-
-
-    /**
-     * Add a bunch  of components that should be loaded by Genie
-     *
-     * @param array $components
-     *
-     * @return $this
-     */
-    public function withComponents(array $components)
-    {
-        $this->components = array_merge($this->components, $components);
-        return $this;
-    }
-
-
-    /**
-     * Add a folder to the array of view Folders
-     *
-     * @param string $folder
-     *
-     * @return $this
-     */
-    public function useViewsFrom(string $folder)
-    {
-        $this->viewFolders = array_merge($this->viewFolders, [$folder]);
-        return $this;
-    }
-
-
-    /**
-     * Set the __FILE__ for the plugin - this is needed for activation, deactivation and uninstall hooks
-     *
-     * @param $filename
-     *
-     * @return $this
-     */
-    public function setFilename($filename)
-    {
-        $this->filename = $filename;
-        return $this;
+        return Registry::get('genie_config', 'viewFolders');
     }
 
 
@@ -170,6 +155,76 @@ class Genie
 
 
     /**
+     * get the releases folder
+     *
+     * @return array
+     */
+    public static function getReleasesFolder()
+    {
+        return Registry::get('genie_config', 'releasesFolder');
+    }
+
+
+    /**
+     * Add a bunch of components that should be loaded by Genie
+     *
+     * @param array $components
+     *
+     * @return $this
+     */
+    public function withComponents(array $components)
+    {
+        $this->components = array_merge($this->components, $components);
+        return $this;
+    }
+
+
+    /**
+     * Add a folder to the array of view Folders
+     *
+     * @param string $folder
+     *
+     * @return $this
+     */
+    public function useViewsFrom(string $folder)
+    {
+        $folder = trailingslashit($this->folder) . $folder;
+
+        $this->viewFolders = array_merge($this->viewFolders, [$folder]);
+        return $this;
+    }
+
+
+    /**
+     * Add a folder to the array of view Folders
+     *
+     * @param string $folder
+     *
+     * @return $this
+     */
+    public function releasesFolder(string $folder)
+    {
+        $this->releasesFolder = trailingslashit($this->folder) . $folder;
+        return $this;
+    }
+
+
+    /**
+     * Set the __FILE__ for the plugin - this is needed for activation, deactivation and uninstall hooks
+     *
+     * @param $filename
+     *
+     * @return $this
+     */
+    public function setFilename($filename)
+    {
+        $this->filename = $filename;
+
+        return $this;
+    }
+
+
+    /**
      * get Genie Going.
      */
     public function start()
@@ -185,7 +240,7 @@ class Genie
         if (is_array($config['components']))
             foreach ($config['components'] as $class) {
                 if (method_exists($class, 'setup')) {
-                   $class::setup();
+                    $class::setup();
                 }
             }
 

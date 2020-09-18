@@ -4,6 +4,7 @@ namespace GeniePluginExample\PostTypes;
 
 use Exception;
 use Lnk7\Genie\Abstracts\CustomPost;
+use Lnk7\Genie\Debug;
 use Lnk7\Genie\Fields\SelectField;
 use Lnk7\Genie\Fields\TextField;
 use Lnk7\Genie\Utilities\AddShortcode;
