@@ -3,17 +3,21 @@
 namespace Lnk7\Genie\Exceptions;
 
 use Exception;
+use Lnk7\Genie\Traits\HasData;
 use Throwable;
 
+/**
+ * Class GenieException
+ *
+ * @package Lnk7\Genie\Exceptions
+ * @property $attributes
+ * @property $backtrace
+ */
 class GenieException extends Exception
 {
 
 
-    protected $data = null;
-
-
-    protected $backtrace = [];
-
+    use HasData;
 
     function __construct($message = "", $code = 0, Throwable $previous = null)
     {
@@ -26,41 +30,26 @@ class GenieException extends Exception
      * Static constructor
      *
      * @param $message
-     * @param null $data
      *
      * @return static
      */
-    public static function withMessage($message, $data = null)
+    public static function withMessage($message)
     {
-        $error = new static($message);
-        $error->data = $data;
-        return $error;
-
+        return new static($message);
     }
 
 
     /**
-     * throw this error
+     * Set the code for this Exception
      *
-     * @throws GenieException
-     */
-    public function throw()
-    {
-        $this->backtrace = debug_backtrace();
-
-        throw $this;
-
-    }
-
-
-    /**
-     * does this error message have data?
+     * @param $code
      *
-     * @return bool
+     * @return $this
      */
-    public function hasData()
+    public function withCode($code)
     {
-        return !is_null($this->data);
+        $this->code = $code;
+        return $this;
     }
 
 
@@ -74,30 +63,7 @@ class GenieException extends Exception
     public function withData($data)
     {
         $this->data = $data;
-
         return $this;
-    }
-
-
-    /**
-     * get the data for this exception
-     *
-     * @return mixed
-     */
-    function getData()
-    {
-        return $this->data;
-    }
-
-
-    /**
-     * get the backtrace
-     *
-     * @return mixed
-     */
-    function getBacktrace()
-    {
-        return $this->backtrace;
     }
 
 }
