@@ -21,17 +21,19 @@ class Plugin implements GenieComponent
                 wp_enqueue_script('jQuery');
             });
 
+        RegisterApi::get('test')->run([static::class, 'testException']);
+    }
 
 
-        RegisterApi::get('test')->run(function () {
+    /**
+     * @throws GeniePluginExampleException
+     */
+    public static function testException()
+    {
+        throw  GeniePluginExampleException::withMessage('test')
+            ->withCode(102)
+            ->withData('hello');
 
-            GeniePluginExampleException::withMessage('test')
-                ->withData('hello')
-                ->throw();
-
-
-
-        });
     }
 
 }

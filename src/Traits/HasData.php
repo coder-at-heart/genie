@@ -58,12 +58,15 @@ trait HasData
      * Fill data properties from an array
      *
      * @param array $array
+     *
+     * @return static
      */
     public function fill(array $array)
     {
         foreach ($array as $field => $value) {
             $this->data[$field] = $value;
         }
+        return $this;
     }
 
 
