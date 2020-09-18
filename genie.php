@@ -30,6 +30,6 @@ Genie::createPlugin()
         Page::class,
         Testimonial::class,
     ])
-    ->setFilename(__FILE__)
-    ->useViewsFrom(plugin_dir_path(__FILE__) . 'example/twig')
+    ->useViewsFrom( 'example/src/twig')
+    ->releasesFolder( 'example/src/php/Releases')
     ->start();
