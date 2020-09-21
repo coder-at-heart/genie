@@ -108,8 +108,8 @@ class ApiHandler implements GenieComponent
                             if (method_exists($error, 'getData')) {
                                 $response['data'] = $error->getData();
                             }
-                            if (WP_DEBUG && method_exists($error, 'getBacktrace')) {
-                                $response['backtrace'] = $error->getBacktrace();
+                            if (WP_DEBUG && method_exists($error, 'getTrace')) {
+                                $response['trace'] = $error->getTrace();
                             }
 
                             Response::failure($response);
