@@ -3,6 +3,7 @@
 namespace Lnk7\Genie\Exceptions;
 
 use Exception;
+use JsonSerializable;
 use Lnk7\Genie\Traits\HasData;
 use Throwable;
 
@@ -13,7 +14,7 @@ use Throwable;
  * @property $attributes
  * @property $backtrace
  */
-class GenieException extends Exception
+class GenieException extends Exception implements JsonSerializable
 {
 
 
@@ -66,4 +67,12 @@ class GenieException extends Exception
         return $this;
     }
 
+
+    public function jsonSerialize()
+    {
+        return [
+            'message' => $this->getMessage(),
+            'data'    => $this->getData(),
+        ];
+    }
 }
