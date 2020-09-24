@@ -72,6 +72,7 @@ class GenieException extends Exception implements JsonSerializable
     {
         return [
             'message' => $this->getMessage(),
+            'code'    => $this->getCode(),
             'data'    => $this->getData(),
         ];
     }
