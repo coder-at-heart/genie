@@ -105,11 +105,10 @@ class AjaxHandler implements GenieComponent
 
                             foreach ($params as $param) {
                                 $name = $param->getName();
-                                $value = Request::get($name);
-                                if (!$param->isOptional() and !isset($value)) {
+                                if (!$param->isOptional() && !Request::has($name)) {
                                     Response::failure(['message' => "required parameter {$name} is missing"]);
                                 }
-                                $callbackParams[$name] = $value;
+                                $callbackParams[$name] = Request::get($name);
                             }
                             Response::success(call_user_func_array($callback, $callbackParams));
 
