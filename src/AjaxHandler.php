@@ -47,9 +47,11 @@ class AjaxHandler implements GenieComponent
 
                 HookInto::action('wp_ajax_' . $action)
                     ->orAction('wp_ajax_nopriv_' . $action)
-                    ->run(function () {
+                    ->run(function ()  use ($action){
 
                         Request::maybeParseInput();
+
+                        do_action('genie_received_ajax_request', $action, Request::getData());
 
                         $requestPath = Request::get('request');
 

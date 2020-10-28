@@ -77,6 +77,18 @@ class Request
         }
     }
 
+
+    /**
+     * Return data from the request
+     *
+     * @return null
+     */
+    public static function getData()
+    {
+        return static::$data;
+    }
+
+
     /**
      * Check if we received a json body
      *
@@ -93,10 +105,12 @@ class Request
      *
      * @return mixed
      */
-    public static function method(){
+    public static function method()
+    {
         return $_SERVER['REQUEST_METHOD'];
 
     }
+
 
     /**
      * Check if we received valid Json
