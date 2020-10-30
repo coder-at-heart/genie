@@ -361,23 +361,23 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
 
         $fields = static::getFields();
 
+        if ($fields) {
+            foreach ($fields as $field) {
+                if ($field['displayOnly']) {
+                    continue;
+                }
 
-        foreach ($fields as $field) {
-            if ($field['displayOnly']) {
-                continue;
-            }
+                $name = $field['name'];
+                $key = $field['key'];
 
-            $name = $field['name'];
-            $key = $field['key'];
+                if (!array_key_exists($name, $this->data)) {
+                    continue;
+                }
 
-            if (!array_key_exists($name, $this->data)) {
-                continue;
-            }
-
-
-            // Only update if we need to.
-            if (!array_key_exists($name, $this->originalData) || $this->originalData[$name] !== $this->data[$name]) {
-                update_field($key, $this->data[$name], $this->ID);
+                // Only update if we need to.
+                if (!array_key_exists($name, $this->originalData) || $this->originalData[$name] !== $this->data[$name]) {
+                    update_field($key, $this->data[$name], $this->ID);
+                }
             }
         }
 
