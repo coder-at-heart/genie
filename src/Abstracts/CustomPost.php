@@ -383,6 +383,8 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
 
         $this->clearCache();
 
+        $this->afterSave();
+
         return $this->ID;
     }
 
@@ -391,6 +393,13 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
      * Before save - Set defaults / fill values
      */
     public function beforeSave()
+    {
+    }
+
+    /**
+     * After save - Do something!
+     */
+    public function afterSave()
     {
     }
 
