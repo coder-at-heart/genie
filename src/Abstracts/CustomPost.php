@@ -113,7 +113,10 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
 
         // try and load this object from cache
         if (static::$cache) {
-            $this->data = get_post_meta($id, static::getCacheKey(), true);
+            $data = get_post_meta($id, static::getCacheKey(), true);
+            if (!empty($data) ) {
+                $this->data = $data ;
+            }
         }
 
         // nothing from cache ?
