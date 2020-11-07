@@ -11,7 +11,7 @@ trait HasData
      *
      * @var array
      */
-    protected $data;
+    protected $data = [];
 
 
     /**
