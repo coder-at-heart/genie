@@ -17,12 +17,14 @@ class ConvertString
 {
 
 
+    protected $original = '';
+
     /**
      * An array that hold the words in a string
      *
      * @var array
      */
-    var $words = [];
+    protected $words = [];
 
 
     /**
@@ -32,11 +34,13 @@ class ConvertString
      */
     public function __construct($string, $case = null)
     {
+        $this->original = $string;
+
         if ($case == 'pascalCase') {
             $string = ltrim(strtolower(preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '_$0', $string)), '_');
         }
 
-        $this->convertToArray($string);
+        $this->toArray($string);
     }
 
 
@@ -45,7 +49,7 @@ class ConvertString
      *
      * @param $string
      */
-    private function convertToArray($string)
+    public function toArray($string)
     {
         $string = preg_replace('/[^A-Za-z0-9\-_ ]/', '', $string);
         $string = preg_replace('/[\-_]/', ' ', $string);
@@ -224,7 +228,7 @@ class ConvertString
 
         $inflector = new EnglishInflector();
         $string = $inflector->singularize((string)$this);
-        $this->convertToArray($string[0]);
+        $this->toArray($string[0]);
 
         return $this;
     }
@@ -239,7 +243,7 @@ class ConvertString
     {
         $inflector = new EnglishInflector();
         $string = $inflector->pluralize((string)$this);
-        $this->convertToArray($string[0]);
+        $this->toArray($string[0]);
 
         return $this;
     }
