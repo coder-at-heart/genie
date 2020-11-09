@@ -50,15 +50,66 @@ abstract class Field
 
 
     /**
-     * Static constructor
-     *
-     * @param $name
-     *
-     * @return static
+     * Set defaults for all Fields
      */
-    public static function called($name)
+    protected function setDefaults()
     {
-        return new static($name);
+        $this->_name = $this->name;
+        $this->_prepare = 0;
+        $this->_valid = 0;
+        $this->hooks = [];
+
+        $this->type('text');
+        $this->key('');
+        $this->label((string)ConvertString::from($this->name)->toTitleCase());
+        $this->metaQuery('CHAR');
+        /* (int) Whether or not the field value is required. Defaults to 0 */
+        $this->required(0);
+
+        /* hack - cant seem to figure out how ACF adds _name to locally imported groups.
+            This is needed by the acf_format_value function */
+        $this->append('');
+        $this->prepend('');
+
+        /* (string) Unique identifier for the field. Must begin with 'field_' */
+        $this->instructions('');
+
+        /* (int) read Only. Defaults to 0 */
+        $this->readOnly(0);
+
+        /* (mixed) Conditionally hide or show this field based on other field's values.
+        Best to use the ACF UI and export to understand the array structure. Defaults to 0 */
+        $this->conditionalLogic(0);
+
+        /* (array) An array of attributes given to the field element */
+        $this->wrapperWidth('');
+        $this->wrapperClass('');
+        $this->id('');
+
+        /* (mixed) A default value used by ACF if no value has yet been saved */
+        $this->default('');
+
+        /* Genie Defaults */
+        $this->hidden(false);
+
+        /* Does this field not have any input?  Tab & Message */
+        $this->displayOnly(false);
+
+        /* WordPress post field to override on save (e.g post_title) */
+        $this->override(false);
+    }
+
+
+    /**
+     * Set the field type
+     *
+     * @param $type
+     *
+     * @return $this
+     */
+    protected function type($type)
+    {
+        return $this->set('type', $type);
     }
 
 
@@ -100,6 +151,12 @@ abstract class Field
     public function label($label)
     {
         return $this->set('label', $label);
+    }
+
+
+    protected function metaQuery($metaQuery)
+    {
+        return $this->set('meta_query', $metaQuery);
     }
 
 
@@ -272,6 +329,19 @@ abstract class Field
 
 
     /**
+     * Static constructor
+     *
+     * @param $name
+     *
+     * @return static
+     */
+    public static function called($name)
+    {
+        return new static($name);
+    }
+
+
+    /**
      * use {$key},{$name},{$type} in the hook name
      *
      * @param string $action
@@ -287,6 +357,8 @@ abstract class Field
             'priority' => $priority,
 
         ];
+
+        return $this;
     }
 
 
@@ -300,11 +372,12 @@ abstract class Field
     public function addFilter(string $filter, callable $callback, int $priority = 10)
     {
         $this->hooks[] = (object)[
-            'type'     => 'action',
+            'type'     => 'filter',
             'hook'     => $filter,
             'callback' => $callback,
             'priority' => $priority,
         ];
+        return $this;
     }
 
 
@@ -362,89 +435,6 @@ abstract class Field
 
 
     /**
-     * Field condition
-     *
-     * @param Condition $condition
-     *
-     * @return $this
-     */
-    public function shown(Condition $condition)
-    {
-        return $this->set('conditions', $condition->generate());
-    }
-
-
-    /**
-     * Set defaults for all Fields
-     */
-    protected function setDefaults()
-    {
-        $this->_name = $this->name;
-        $this->_prepare = 0;
-        $this->_valid = 0;
-        $this->hooks = [];
-
-        $this->type('text');
-        $this->key('');
-        $this->label((string)ConvertString::from($this->name)->toTitleCase());
-        $this->metaQuery('CHAR');
-        /* (int) Whether or not the field value is required. Defaults to 0 */
-        $this->required(0);
-
-        /* hack - cant seem to figure out how ACF adds _name to locally imported groups.
-            This is needed by the acf_format_value function */
-        $this->append('');
-        $this->prepend('');
-
-        /* (string) Unique identifier for the field. Must begin with 'field_' */
-        $this->instructions('');
-
-        /* (int) read Only. Defaults to 0 */
-        $this->readOnly(0);
-
-        /* (mixed) Conditionally hide or show this field based on other field's values.
-        Best to use the ACF UI and export to understand the array structure. Defaults to 0 */
-        $this->conditionalLogic(0);
-
-        /* (array) An array of attributes given to the field element */
-        $this->wrapperWidth('');
-        $this->wrapperClass('');
-        $this->id('');
-
-        /* (mixed) A default value used by ACF if no value has yet been saved */
-        $this->default('');
-
-        /* Genie Defaults */
-        $this->hidden(false);
-
-        /* Does this field not have any input?  Tab & Message */
-        $this->displayOnly(false);
-
-        /* WordPress post field to override on save (e.g post_title) */
-        $this->override(false);
-    }
-
-
-    /**
-     * Set the field type
-     *
-     * @param $type
-     *
-     * @return $this
-     */
-    protected function type($type)
-    {
-        return $this->set('type', $type);
-    }
-
-
-    protected function metaQuery($metaQuery)
-    {
-        return $this->set('meta_query', $metaQuery);
-    }
-
-
-    /**
      * Now that we have generated the key, we can return a property hook
      *
      * @param $name
@@ -464,6 +454,19 @@ abstract class Field
             $this->type,
         ];
         return str_replace($find, $replace, $name);
+    }
+
+
+    /**
+     * Field condition
+     *
+     * @param Condition $condition
+     *
+     * @return $this
+     */
+    public function shown(Condition $condition)
+    {
+        return $this->set('conditions', $condition->generate());
     }
 
 }
