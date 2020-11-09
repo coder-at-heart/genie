@@ -16,7 +16,6 @@ use Lnk7\Genie\Utilities\HookInto;
  * @property string $folder
  * @property array $viewFolders
  * @property array $releasesFolder
- * @property string $sessionName
  */
 class Genie
 {
@@ -30,7 +29,6 @@ class Genie
     function __construct()
     {
 
-        // Figure all this out automatically.
         $filename = '';
         $folder = '';
         foreach (debug_backtrace() as $trace) {
@@ -52,7 +50,6 @@ class Genie
             $releasesFolder = $folder . '/src/php/releases';
         }
 
-        //Defaults
         $this->fill([
             'type'           => 'plugin',  // plugin || theme
             'filename'       => $filename,
@@ -67,9 +64,6 @@ class Genie
                 CacheBust::class,
                 Deploy::class,
             ],
-            'sessionName'    => 'genie_session',
-            'optionsKey'     => 'genie_options',
-            'cacheKeyPrefix' => 'gcache',
             'viewFolders'    => $viewFolders,
             'releasesFolder' => $releasesFolder,
 
@@ -139,35 +133,6 @@ class Genie
 
 
     /**
-     * @return mixed|null
-     */
-    public static function getSessionName()
-    {
-        return Registry::get('genie_config', 'sessionName');
-    }
-
-
-    /**
-     * @return mixed|null
-     */
-    public static function getCacheKeyPrefix()
-    {
-        return Registry::get('genie_config', 'cacheKeyPrefix');
-    }
-
-
-    /**
-     * Return the key used for options
-     *
-     * @return mixed|null
-     */
-    public static function getOptionsKey()
-    {
-        return Registry::get('genie_config', 'optionsKey');
-    }
-
-
-    /**
      * Get the list of components registered with Genie
      *
      * @return array
@@ -197,25 +162,6 @@ class Genie
     public static function getReleasesFolder()
     {
         return Registry::get('genie_config', 'releasesFolder');
-    }
-
-
-    /**
-     * Send in some config values
-     *
-     * @param array $config
-     *
-     * @return $this
-     */
-    public function configure(array $config)
-    {
-        foreach ($config as $key => $value) {
-            $this->$key = $value;
-
-        }
-
-        return $this;
-
     }
 
 
@@ -312,12 +258,10 @@ class Genie
             HookInto::action('switch_theme')
                 ->run([static::class, 'deactivation']);
         }
-
-        Registry::set('genie_config', $config);
-
         // Send a message to the outside world!
         do_action('genie_started');
 
+        Registry::set('genie_config', $config);
     }
 
 }

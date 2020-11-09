@@ -30,7 +30,7 @@ class Cache
         $prefix = static::getCachePrefix();
 
         $wpdb->query("DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE '{$prefix}%'  $where ");
-
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name like '%{$prefix}_api%'  ");
     }
 
 
@@ -41,14 +41,6 @@ class Cache
      */
     public static function getCachePrefix()
     {
-        return apply_filters('genie_get_cache_prefix', Genie::getCacheKeyPrefix());
-    }
-
-
-    public static function clearApiResults()
-    {
-        global $wpdb;
-        $prefix = static::getCachePrefix();
-        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name like '%{$prefix}_api%'  ");
+        return apply_filters('genie_get_cache_prefix', 'gcache');
     }
 }

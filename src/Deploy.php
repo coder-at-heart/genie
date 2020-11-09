@@ -39,7 +39,6 @@ class Deploy implements GenieComponent
         static::updateDatabase();
         static::loadReleases();
         Cache::clearCache();
-        Cache::clearApiResults();
         do_action('genie_after_deploy');
     }
 

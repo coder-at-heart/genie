@@ -60,7 +60,7 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
      *
      * @var bool
      */
-    protected static $cache = true;
+    protected static $cache = false;
 
 
     /**
@@ -105,7 +105,7 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
     function __construct($id = null)
     {
         // new custom post ?
-        if (is_null($id)) {
+        if (!$id) {
             $this->setDefaults();
 
             return;
@@ -114,11 +114,12 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
         // try and load this object from cache
         if (static::$cache) {
             $data = get_post_meta($id, static::getCacheKey(), true);
-            if (!empty($data)) {
-                $this->data = $data;
+            if (!empty($data) ) {
+                $this->data = $data ;
             }
         }
 
+        // nothing from cache ?
         if (empty($this->data)) {
             $postData = get_post($id, ARRAY_A);
 
@@ -135,10 +136,24 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
             }
 
             $this->fill($postData);
+
+            //Cache?
+            if (static::$cache) {
+                $this->beforeCache();
+                update_post_meta($this->ID, static::getCacheKey(), $this->data);
+            }
         }
 
         $this->originalData = $this->data;
         $this->afterRead();
+    }
+
+
+    /**
+     * After the post has been loaded from the database
+     */
+    public function afterRead() {
+
     }
 
 
@@ -164,11 +179,10 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
 
 
     /**
-     * After the post has been loaded from the database
+     *  Update properties on this object
      */
-    public function afterRead()
+    public function beforeCache()
     {
-
     }
 
 
@@ -186,44 +200,47 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
                     return;
                 }
 
-                $area = new static($post_id);
-                $area->save();
-
+                // Clear Cache so it's generated next time
+                if (static::$cache) {
+                    Cache::clearCache($post_id);
+                }
             });
 
+
         // After the post is saved... allow some of wordpress fields to be overWritten
-//        HookInto::filter('wp_insert_post_data')
-//            ->run(function ($data, $postArray) {
-//                // Make sure we have acf data
-//                if (empty($postArray['acf'])) {
-//                    return $data;
-//                }
-//
-//                // Not this post type?
-//                $postType = $data['post_type'];
-//                if ($postType != static::$postType) {
-//                    return $data;
-//                }
-//
-//                $fields = static::getFields();
-//
-//                foreach ($fields as $field) {
-//                    if ($field['override']) {
-//                        $value = $postArray['acf'][$field['key']];
-//                        $field = $field['override'];
-//                        if (is_callable($field)) {
-//                            [$field, $value] = call_user_func($field, $value);
-//                        }
-//                        if (in_array($field, WordPress::$postFields)) {
-//                            $data[$field] = $value;
-//                        }
-//                    }
-//                }
-//
-//                $data = static::override($data, $postArray);
-//
-//                return $data;
-//            });
+        HookInto::filter('wp_insert_post_data')
+            ->run(function ($data, $postArray) {
+                // Make sure we have acf data
+                if (empty($postArray['acf'])) {
+                    return $data;
+                }
+
+                // Not this post type?
+                $postType = $data['post_type'];
+                if ($postType != static::$postType) {
+                    return $data;
+                }
+
+                $fields = static::getFields();
+
+                foreach ($fields as $field) {
+                    if ($field['override']) {
+                        $value = $postArray['acf'][$field['key']];
+                        $field = $field['override'];
+                        if (is_callable($field)) {
+                            [$field, $value] = call_user_func($field, $value);
+                        }
+                        if (in_array($field, WordPress::$postFields)) {
+                            $data[$field] = $value;
+                        }
+                    }
+                }
+
+                $data = static::override($data, $postArray);
+
+                return $data;
+            });
+
 
         // Should we use Gutenberg ?
         HookInto::filter('use_block_editor_for_post_type')
@@ -239,87 +256,6 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
 
 
     /**
-     * Save the custom post type
-     *
-     * @return int
-     */
-    public function save()
-    {
-        $this->beforeSave();
-
-        $this->checkValidity();
-
-        if (!$this->isDirty()) {
-            return $this->ID;
-        }
-
-        $postFields = [];
-        foreach (WordPress::$postFields as $field) {
-            if ($this->$field) {
-                $postFields[$field] = $this->$field;
-            }
-        }
-
-        $this->ID = wp_insert_post($postFields);
-
-        $fields = static::getFields();
-
-        if ($fields) {
-            foreach ($fields as $field) {
-                if ($field['displayOnly']) {
-                    continue;
-                }
-
-                $name = $field['name'];
-                $key = $field['key'];
-
-                if (!array_key_exists($name, $this->data)) {
-                    continue;
-                }
-
-                // Only update if we need to.
-                if (!array_key_exists($name, $this->originalData) || $this->originalData[$name] !== $this->data[$name]) {
-                    update_field($key, $this->data[$name], $this->ID);
-                }
-            }
-        }
-
-        $this->afterSave();
-        $this->cache();
-
-        return $this->ID;
-    }
-
-
-    /**
-     * Before save - Set defaults / fill values
-     */
-    public function beforeSave()
-    {
-    }
-
-
-    /**
-     * Check the validity of this object
-     * Throw errors from here and catch from save
-     */
-    public function checkValidity()
-    {
-    }
-
-
-    /**
-     * Check if the post needs saving
-     *
-     * @return bool
-     */
-    public function isDirty()
-    {
-        return $this->data !== $this->originalData;
-    }
-
-
-    /**
      * Get the field definitions from the registry
      *
      * @return mixed|null
@@ -327,22 +263,6 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
     public static function getFields()
     {
         return Registry::get('fields', static::class);
-    }
-
-
-    /**
-     * After save - Do something!
-     */
-    public function afterSave()
-    {
-    }
-
-
-    public function cache()
-    {
-        if (static::$cache) {
-            update_post_meta($this->ID, static::getCacheKey(), $this->data);
-        }
     }
 
 
@@ -414,6 +334,107 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
         $object->save();
 
         return $object;
+    }
+
+
+    /**
+     * Save the custom post type
+     *
+     * @return int
+     */
+    public function save()
+    {
+        $this->beforeSave();
+
+        $this->checkValidity();
+
+        if (!$this->isDirty()) {
+            return $this->ID;
+        }
+
+
+        $postFields = [];
+        foreach (WordPress::$postFields as $field) {
+            if ($this->$field) {
+                $postFields[$field] = $this->$field;
+            }
+        }
+
+        $this->ID = wp_insert_post($postFields);
+
+        $fields = static::getFields();
+
+        if ($fields) {
+            foreach ($fields as $field) {
+                if ($field['displayOnly']) {
+                    continue;
+                }
+
+                $name = $field['name'];
+                $key = $field['key'];
+
+                if (!array_key_exists($name, $this->data)) {
+                    continue;
+                }
+
+                // Only update if we need to.
+                if (!array_key_exists($name, $this->originalData) || $this->originalData[$name] !== $this->data[$name]) {
+                    update_field($key, $this->data[$name], $this->ID);
+                }
+            }
+        }
+
+        $this->clearCache();
+
+        $this->afterSave();
+
+        return $this->ID;
+    }
+
+
+    /**
+     * Before save - Set defaults / fill values
+     */
+    public function beforeSave()
+    {
+    }
+
+    /**
+     * After save - Do something!
+     */
+    public function afterSave()
+    {
+    }
+
+
+    /**
+     * Check the validity of this object
+     * Throw errors from here and catch from save
+     */
+    public function checkValidity()
+    {
+    }
+
+
+    /**
+     * Check if the post needs saving
+     *
+     * @return bool
+     */
+    public function isDirty()
+    {
+        return $this->data !== $this->originalData;
+    }
+
+
+    /**
+     * clear the cache for this post
+     */
+    public function clearCache()
+    {
+        if ($this->ID) {
+            Cache::clearCache($this->ID);
+        }
     }
 
 
@@ -606,25 +627,6 @@ abstract class CustomPost implements JsonSerializable, GenieComponent
         }
 
         return false;
-    }
-
-
-    /**
-     *  Update properties on this object
-     */
-    public function beforeCache()
-    {
-    }
-
-
-    /**
-     * clear the cache for this post
-     */
-    public function clearCache()
-    {
-        if ($this->ID) {
-            Cache::clearCache($this->ID);
-        }
     }
 
 

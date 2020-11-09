@@ -24,7 +24,7 @@ class Session implements GenieComponent
         // Run once everything has been setup
         HookInto::action('after_setup_theme')
             ->run(function () {
-                $sessionName = apply_filters('genie_session_name', Genie::getSessionName());
+                $sessionName = apply_filters('genie_session_name', 'genie_session');
 
                 session_name($sessionName);
 

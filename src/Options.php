@@ -53,7 +53,7 @@ class Options
     protected static function load()
     {
         if (is_null(static::$options)) {
-            static::$options = get_option(Genie::getOptionsKey());
+            static::$options = get_option(static::$option);
         }
     }
 
@@ -77,7 +77,7 @@ class Options
      */
     protected static function save()
     {
-        update_option(Genie::getOptionsKey(), static::$options);
+        update_option(static::$option, static::$options);
     }
 
 }
