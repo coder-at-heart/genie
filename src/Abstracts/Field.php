@@ -350,13 +350,18 @@ abstract class Field
      */
     public function addAction(string $action, callable $callback, int $priority = 10)
     {
-        $this->hooks[] = (object)[
+
+        $hooks = $this->hooks;
+
+        $hooks[] = (object)[
             'type'     => 'action',
             'hook'     => $action,
             'callback' => $callback,
             'priority' => $priority,
 
         ];
+
+        $this->hooks = $hooks;
 
         return $this;
     }
@@ -371,12 +376,15 @@ abstract class Field
      */
     public function addFilter(string $filter, callable $callback, int $priority = 10)
     {
-        $this->hooks[] = (object)[
+        $hooks = $this->hooks;
+        $hooks[] = (object)[
             'type'     => 'filter',
             'hook'     => $filter,
             'callback' => $callback,
             'priority' => $priority,
         ];
+        $this->hooks = $hooks;
+
         return $this;
     }
 
@@ -422,10 +430,10 @@ abstract class Field
         // hooks
         foreach ($this->hooks as $hook) {
             if ($hook->type === 'filter') {
-                HookInto::filter($this->parseHookName($hook->name), $hook->priority)
+                HookInto::filter($this->parseHookName($hook->hook), $hook->priority)
                     ->run($hook->callback);
             } else {
-                HookInto::action($this->parseHookName($hook->name), $hook->priority)
+                HookInto::action($this->parseHookName($hook->hook), $hook->priority)
                     ->run($hook->callback);
             }
         }
