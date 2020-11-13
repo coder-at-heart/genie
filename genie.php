@@ -29,6 +29,7 @@ Genie::createPlugin()
         Post::class,
         Page::class,
         Testimonial::class,
+        Shortcodes::class,
     ])
     ->useViewsFrom( 'example/src/twig')
     ->releasesFolder( 'example/src/php/Releases')
