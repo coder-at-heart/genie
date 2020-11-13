@@ -7,9 +7,11 @@ use Lnk7\Genie\Utilities\AddShortcode;
 use Lnk7\Genie\Utilities\HookInto;
 use Throwable;
 use Twig\Environment;
+use Twig\Error\SyntaxError;
 use Twig\Extension\DebugExtension;
 use Twig\Loader\ChainLoader;
 use Twig\Loader\FilesystemLoader;
+use Twig\Source;
 use Twig\TwigFilter;
 
 /**
@@ -153,6 +155,22 @@ class View implements GenieComponent
         return apply_filters('genie_view_cache_folder', $upload_dir . '/twig_cache');
     }
 
+
+    /**
+     * Check if a string is valid Syntax
+     *
+     * @param $string
+     *
+     * @return bool
+     */
+    public static function isValidTwig($string) {
+        try {
+            static::$twig->tokenize(new Source($string, 'isValidTwig'));
+            return true;
+        } catch (SyntaxError $e) {
+            return false;
+        }
+    }
 
     /**
      * Render a twig Template
