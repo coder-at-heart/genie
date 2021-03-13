@@ -1,6 +1,8 @@
 ---
-layout: page title: Shortcodes permalink: /reference/shortcodes parent:
-Reference
+layout: page 
+title: Shortcodes 
+permalink: /reference/shortcodes 
+parent: Reference
 ---
 
 # Shortcodes

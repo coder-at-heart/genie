@@ -1,5 +1,8 @@
 ---
-layout: page title: Genie Press permalink: / nav_order: 1
+layout: page 
+title: Genie Press 
+permalink: / 
+nav_order: 1
 ---
 
 # Genie: The Wordpress Programmer's Toolkit

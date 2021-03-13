@@ -1,22 +1,24 @@
 ---
-layout: page
-title: Views
-permalink: /reference/views
+layout: page 
+title: Views 
+permalink: /reference/views 
 parent: Reference
 ---
-# Genie Views 
+
+# Genie Views
+
 {: .no_toc }
 
 ## Table of contents
+
 {: .no_toc .text-delta }
 
-1. TOC
-{:toc}
-   
-## Genie uses Twig 
-Genie uses twig behind the scenes to ensure separation of concerns. By 
-default Genie looks for veiws in the `src/views` folder. 
+1. TOC {:toc}
 
+## Genie uses Twig
+
+Genie uses twig behind the scenes to ensure separation of concerns. By default
+Genie looks for veiws in the `src/views` folder.
 
 ## Example Component using a View
 
@@ -42,13 +44,15 @@ class Footer implements GenieComponent
     }
 }
 ```
-Genie will look into the `src/twig` folder for `footer.twig` 
+
+Genie will look into the `src/twig` folder for `footer.twig`
 
 `footer.twig`
 
 ```html
 <p>This is a twig file!</p>
 ```
+
 ## Passing Variables to templates
 
 ### Individual variables
@@ -91,8 +95,8 @@ $html = View::with('footer.twig')
 
 ## Changing the default path for views
 
-When creating a genie plugin or theme you can specify the location of twig 
-files using the `useViewsFrom()` method.
+When creating a genie plugin or theme you can specify the location of twig files
+using the `useViewsFrom()` method.
 
 ```php
 use Lnk7\Genie\Genie;

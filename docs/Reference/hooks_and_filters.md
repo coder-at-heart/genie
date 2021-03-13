@@ -1,5 +1,7 @@
 ---
-layout: page title: Hooks & Filters permalink: /reference/hooks-and-filters
+layout: page 
+title: Hooks & Filters 
+permalink: /reference/hooks-and-filters
 parent: Reference
 ---
 
