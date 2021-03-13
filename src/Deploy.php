@@ -36,44 +36,47 @@ class Deploy implements GenieComponent
     public static function deploy()
     {
         do_action('genie_before_deploy');
-        static::updateDatabase();
-        static::loadReleases();
-        Cache::clearCache();
-        do_action('genie_after_deploy');
-    }
+		static::updateDatabase();
+		static::loadReleases();
+		Cache::clearCache();
+		do_action('genie_after_deploy');
+	}
 
 
-    /**
-     * Update the database
-     */
-    protected static function updateDatabase()
-    {
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        $sqlStatements = apply_filters('genie_update_database', []);
-        foreach ($sqlStatements as $sqlStatement) {
-            dbDelta($sqlStatement);
-        }
-    }
+	/**
+	 * Update the database
+	 */
+	protected static function updateDatabase()
+	{
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+		$sqlStatements = apply_filters('genie_update_database', []);
+		foreach ($sqlStatements as $sqlStatement) {
+			dbDelta($sqlStatement);
+		}
+	}
 
 
-    protected static function loadReleases()
-    {
-        $releaseFolder = apply_filters('genie_release_folder', Genie::getReleasesFolder());
+	/**
+	 * load releases
+	 */
+	protected static function loadReleases()
+	{
+		$releaseFolder = apply_filters('genie_release_folder', Genie::getReleasesFolder());
 
-        if (!file_exists($releaseFolder)) {
-            return;
-        }
+		if (!file_exists($releaseFolder)) {
+			return;
+		}
 
-        $releases = Options::get('genie_releases', []);
+		$releases = Options::get('genie_releases', []);
 
-        foreach (glob(trailingslashit($releaseFolder) . '*.php') as $file) {
-            if (!in_array($file, $releases)) {
-                $releases[] = $file;
-                require_once($file);
-            }
-        }
-        Options::set('genie_releases', $releases);
+		foreach (glob(trailingslashit($releaseFolder) . '*.php') as $file) {
+			if (!in_array($file, $releases)) {
+				$releases[] = $file;
+				require_once($file);
+			}
+		}
+		Options::set('genie_releases', $releases);
 
-    }
+	}
 
 }
