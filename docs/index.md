@@ -1,11 +1,10 @@
 ---
 layout: page 
 title: Genie Press 
-permalink: / 
 nav_order: 1
 ---
 
-# Genie: The Wordpress Programmer's Toolkit
+# Genie: The WordPress Programmer's Toolkit
 
 I got tired of copying and pasting this code from plugin to plugin to theme
 
