@@ -1,19 +1,19 @@
 ---
 layout: page 
 title: Hooks & Filters 
-permalink: /reference/hooks-and-filters
 parent: Reference
 ---
 
-# Hooks & Filters
-
+# Hooks & Filters 
 {: .no_toc }
-
-## Table of contents
-
-{: .no_toc .text-delta }
-
-1. TOC {:toc}
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
 
 ## Main Usage
 

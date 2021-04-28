@@ -1,23 +1,23 @@
 ---
 layout: page 
 title: Views 
-permalink: /reference/views 
 parent: Reference
 ---
 
 # Genie Views
-
 {: .no_toc }
-
-## Table of contents
-
-{: .no_toc .text-delta }
-
-1. TOC {:toc}
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
 
 ## Genie uses Twig
 
-Genie uses twig behind the scenes to ensure separation of concerns. By default
+Genie uses twig behind the scenes to ensure separation of concerns. By default,
 Genie looks for veiws in the `src/views` folder.
 
 ## Example Component using a View
