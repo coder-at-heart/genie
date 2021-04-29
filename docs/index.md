@@ -7,11 +7,12 @@ nav_order: 1
 # GeniePress: The Framework for WordPress Developers 
 
 GeniePress is a plugin and theme framework with expressive elegant syntax. 
-Should we say - It's reinventing poetry?
+Should we say - It's poetry reinvented?
 
 It makes plugin and theme development fun, while never having to mix html 
-and php again. 
+and php again.  
 
-Combined with Vue and Tailwind, you have a new foundation for creating 
-powerful themes and plugins.
+It's fluent and very laravelesque.
 
+The sample theme combines GeniePress with Vue and Tailwind, providing you 
+with a foundation for creating powerful theme.

@@ -1,4 +1,4 @@
-# Genie Press: The Wordpress Programmer's Toolkit
+# GeniePress: The WordPress Programmer's Toolkit
 
 Make writing WordPress code feel like writing Laravel.
 

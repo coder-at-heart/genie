@@ -4,7 +4,7 @@ title: Installation
 nav_order: 2
 ---
 
-# Components
+# Installation
 {: .no_toc }
 <details open markdown="block">
   <summary>
@@ -15,6 +15,20 @@ nav_order: 2
 {:toc}
 </details>
 
-## Via Composer
+## Sample Plugin
 
-`composer require "lnk7\genie"` 
+`composer create-project lnk7/genie-plugin`
+
+The sample plugin contains a sample Testimonial plugin. 
+
+## Sample Theme
+
+`composer create-project lnk7/genie-theme`
+
+Once installed:  
+
+`npm install` 
+
+`npm watch`
+
+Activate the theme
