@@ -16,3 +16,7 @@ It's fluent and very laravelesque.
 
 The sample theme combines GeniePress with Vue and Tailwind, providing you 
 with a foundation for creating powerful theme.
+
+# Current Version
+
+Current Version : 1.4.13
