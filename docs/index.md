@@ -19,4 +19,4 @@ with a foundation for creating powerful theme.
 
 # Current Version
 
-Current Version : 1.4.13
+Current Version : 1.4.14
