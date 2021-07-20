@@ -65,7 +65,9 @@ class Request
 
         if ($body) {
             [static::$receivedJson, static::$jsonValid] = Tools::isValidJson($body);
-            static::$data = array_merge(static::$data, json_decode($body, true));
+            if (static::$receivedJson && static::$jsonValid) { 
+                static::$data = array_merge(static::$data, json_decode($body, true));
+            }
         }
 
         if (!empty($_GET)) {
