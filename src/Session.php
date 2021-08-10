@@ -34,7 +34,9 @@ class Session implements GenieComponent
 				$maxTime = ini_get("session.gc_maxlifetime");
 
 				// Force our cookie expiry date
-				setcookie(session_name(), session_id(), time() + $maxTime, '/');
+				//setcookie(session_name(), session_id(), time() + $maxTime, '/');
+				setcookie(session_name(), session_id(), time() + $maxTime, '/', COOKIE_DOMAIN, true, true);
+
 
 				// Last request was more than $maxTime seconds ago?
 				if (isset($_SESSION['sessionLastActivity']) && (time() - $_SESSION['sessionLastActivity'] > $maxTime)) {
